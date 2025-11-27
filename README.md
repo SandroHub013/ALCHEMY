@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="LLM Fine-tuning Agent Lightning" width="100%">
+  <img src="assets/alchemy.jpg" alt="LLM Fine-tuning Agent Lightning" width="100%">
 </p>
 
 <h1 align="center">🧠 LLM Fine-tuning with Agent Lightning + LUFFY + Search-R1</h1>
@@ -835,3 +835,4 @@ copies of the Software...
 <p align="center">
   <sub>Built with ❤️ and lots of ☕ for the AI community</sub>
 </p>
+
