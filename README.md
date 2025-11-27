@@ -705,8 +705,8 @@ This project builds on research and open-source tools. Here are the contribution
 
 ```bash
 # 1. Clone the project
-git clone https://github.com/yourusername/llm-finetuning-agent-lightning.git
-cd llm-finetuning-agent-lightning
+git clone https://github.com/SandroHub013/ALCHEMY.git
+cd ALCHEMY
 
 # 2. Install dependencies
 pip install -e .
@@ -835,5 +835,6 @@ copies of the Software...
 <p align="center">
   <sub>Built with ❤️ and lots of ☕ for the AI community</sub>
 </p>
+
 
 
