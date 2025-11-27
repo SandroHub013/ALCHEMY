@@ -1,14 +1,14 @@
-# 📚 Citazioni Accademiche e Riferimenti
+# 📚 Academic Citations and References
 
-Questo progetto si basa su ricerca accademica e strumenti open source. Di seguito le citazioni complete per uso accademico.
+This project builds on academic research and open-source tools. Below are the complete citations for academic use.
 
 ---
 
-## 📄 Paper Fondamentali
+## 📄 Foundational Papers
 
 ### QLoRA: Efficient Finetuning of Quantized LLMs
 
-La tecnica di quantizzazione 4-bit che rende possibile il fine-tuning su GPU consumer.
+The 4-bit quantization technique that makes fine-tuning possible on consumer GPUs.
 
 ```bibtex
 @article{dettmers2023qlora,
@@ -25,13 +25,13 @@ La tecnica di quantizzazione 4-bit che rende possibile il fine-tuning su GPU con
 }
 ```
 
-**Contributo al progetto:** Quantizzazione NF4, Double Quantization, gestione paging per optimizer states.
+**Contribution to project:** NF4 quantization, Double Quantization, paging management for optimizer states.
 
 ---
 
 ### LoRA: Low-Rank Adaptation of Large Language Models
 
-La tecnica di adattamento a basso rango che riduce i parametri trainable del 99.9%.
+The low-rank adaptation technique that reduces trainable parameters by 99.9%.
 
 ```bibtex
 @article{hu2021lora,
@@ -49,13 +49,13 @@ La tecnica di adattamento a basso rango che riduce i parametri trainable del 99.
 }
 ```
 
-**Contributo al progetto:** Decomposizione low-rank per layer attention e MLP, strategia di targeting dei moduli.
+**Contribution to project:** Low-rank decomposition for attention and MLP layers, module targeting strategy.
 
 ---
 
 ### GRPO: Group Relative Policy Optimization
 
-L'algoritmo di Reinforcement Learning usato da Agent Lightning per il training di agenti.
+The Reinforcement Learning algorithm used by Agent Lightning for agent training.
 
 ```bibtex
 @article{shao2024deepseekmath,
@@ -74,13 +74,13 @@ L'algoritmo di Reinforcement Learning usato da Agent Lightning per il training d
 }
 ```
 
-**Contributo al progetto:** Algoritmo di training RL, normalizzazione reward relativa, regolarizzazione KL.
+**Contribution to project:** RL training algorithm, relative reward normalization, KL regularization.
 
 ---
 
 ### Sentence-BERT: Sentence Embeddings
 
-Gli embedding semantici per la ricerca nel sistema RAG.
+Semantic embeddings for search in the RAG system.
 
 ```bibtex
 @inproceedings{reimers2019sentence,
@@ -96,13 +96,13 @@ Gli embedding semantici per la ricerca nel sistema RAG.
 }
 ```
 
-**Contributo al progetto:** Embedding per similarità semantica, modelli bi-encoder per retrieval.
+**Contribution to project:** Embeddings for semantic similarity, bi-encoder models for retrieval.
 
 ---
 
 ### ColBERT: Efficient Late Interaction
 
-Ispirazione per il sistema di reranking con CrossEncoder.
+Inspiration for the reranking system with CrossEncoder.
 
 ```bibtex
 @inproceedings{khattab2020colbert,
@@ -118,13 +118,13 @@ Ispirazione per il sistema di reranking con CrossEncoder.
 }
 ```
 
-**Contributo al progetto:** Pattern di reranking a due fasi (bi-encoder + cross-encoder).
+**Contribution to project:** Two-phase reranking pattern (bi-encoder + cross-encoder).
 
 ---
 
 ### Transformer Architecture
 
-L'architettura alla base di tutti i moderni LLM.
+The architecture underlying all modern LLMs.
 
 ```bibtex
 @inproceedings{vaswani2017attention,
@@ -142,7 +142,7 @@ L'architettura alla base di tutti i moderni LLM.
 
 ---
 
-## 🛠️ Software e Framework
+## 🛠️ Software and Frameworks
 
 ### Microsoft Agent Lightning
 
@@ -216,34 +216,34 @@ L'architettura alla base di tutti i moderni LLM.
 
 ---
 
-## 💡 Ispirazioni e Riferimenti
+## 💡 Inspirations and References
 
 ### osgrep - Semantic Code Search
 
-Il sistema di smart chunking è ispirato all'approccio di osgrep per la ricerca semantica nel codice.
+The smart chunking system is inspired by osgrep's approach to semantic code search.
 
 ```
 Repository: https://github.com/Ryandonofrio3/osgrep
-Autore: Ryan Donofrio
-Licenza: MIT
+Author: Ryan Donofrio
+License: MIT
 ```
 
-**Concetti adottati:**
-- Chunking AST-aware con tree-sitter
-- Reranking con CrossEncoder
-- Preservazione dei confini semantici
+**Adopted concepts:**
+- AST-aware chunking with tree-sitter
+- Reranking with CrossEncoder
+- Preservation of semantic boundaries
 
 ---
 
-## 📋 Come Citare Questo Progetto
+## 📋 How to Cite This Project
 
-Se utilizzi questo progetto nella tua ricerca, puoi citarlo come:
+If you use this project in your research, you can cite it as:
 
 ```bibtex
 @software{llm_finetuning_agent_lightning,
   title     = {LLM Fine-tuning with Agent Lightning: A Framework for Local 
                Training with Reinforcement Learning and RAG},
-  author    = {[Il Tuo Nome]},
+  author    = {[Your Name]},
   year      = {2024},
   url       = {https://github.com/[username]/llm-finetuning-agent-lightning},
   note      = {MIT License. Combines QLoRA, Agent Lightning GRPO, 
@@ -253,20 +253,19 @@ Se utilizzi questo progetto nella tua ricerca, puoi citarlo come:
 
 ---
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-Questo progetto non sarebbe stato possibile senza il lavoro della comunità open source:
+This project would not have been possible without the work of the open-source community:
 
-- **Tim Dettmers** e team per QLoRA e bitsandbytes
-- **Microsoft Research** per Agent Lightning
-- **HuggingFace** per Transformers, PEFT, e Datasets
-- **Lightning AI** per PyTorch Lightning
-- **Nils Reimers** per Sentence-Transformers
-- **Max Brunsfeld** per tree-sitter
+- **Tim Dettmers** and team for QLoRA and bitsandbytes
+- **Microsoft Research** for Agent Lightning
+- **HuggingFace** for Transformers, PEFT, and Datasets
+- **Lightning AI** for PyTorch Lightning
+- **Nils Reimers** for Sentence-Transformers
+- **Max Brunsfeld** for tree-sitter
 
-E tutti i contributori ai paper e ai progetti citati sopra.
+And all contributors to the papers and projects cited above.
 
 ---
 
-*Ultimo aggiornamento: Novembre 2024*
-
+*Last updated: November 2024*

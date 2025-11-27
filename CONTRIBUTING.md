@@ -1,154 +1,154 @@
-# 🤝 Guida alla Contribuzione
+# 🤝 Contribution Guide
 
-Grazie per il tuo interesse nel contribuire a questo progetto! Questa guida ti aiuterà a iniziare.
+Thank you for your interest in contributing to this project! This guide will help you get started.
 
-## 📋 Tabella dei Contenuti
+## 📋 Table of Contents
 
-- [Codice di Condotta](#codice-di-condotta)
-- [Come Contribuire](#come-contribuire)
-- [Setup Ambiente di Sviluppo](#setup-ambiente-di-sviluppo)
-- [Stile del Codice](#stile-del-codice)
-- [Pull Request](#pull-request)
-- [Segnalare Bug](#segnalare-bug)
-- [Proporre Features](#proporre-features)
-
----
-
-## 📜 Codice di Condotta
-
-Questo progetto segue il [Contributor Covenant](https://www.contributor-covenant.org/). Partecipando, ti impegni a rispettare questi principi:
-
-- 🤝 **Sii rispettoso** - Trattiamo tutti con rispetto e professionalità
-- 💡 **Sii costruttivo** - Critica il codice, non la persona
-- 🌍 **Sii inclusivo** - Accogliamo contributi da tutti
-- 📚 **Sii paziente** - Non tutti hanno lo stesso livello di esperienza
+- [Code of Conduct](#code-of-conduct)
+- [How to Contribute](#how-to-contribute)
+- [Development Environment Setup](#development-environment-setup)
+- [Code Style](#code-style)
+- [Pull Requests](#pull-requests)
+- [Reporting Bugs](#reporting-bugs)
+- [Proposing Features](#proposing-features)
 
 ---
 
-## 🚀 Come Contribuire
+## 📜 Code of Conduct
 
-### Tipi di Contributi Benvenuti
+This project follows the [Contributor Covenant](https://www.contributor-covenant.org/). By participating, you agree to uphold these principles:
 
-| Tipo | Descrizione |
+- 🤝 **Be respectful** - Treat everyone with respect and professionalism
+- 💡 **Be constructive** - Criticize the code, not the person
+- 🌍 **Be inclusive** - We welcome contributions from everyone
+- 📚 **Be patient** - Not everyone has the same level of experience
+
+---
+
+## 🚀 How to Contribute
+
+### Welcome Contribution Types
+
+| Type | Description |
 |------|-------------|
-| 🐛 **Bug Fix** | Correzioni di bug documentati |
-| ✨ **Features** | Nuove funzionalità (discuti prima in una Issue) |
-| 📖 **Documentazione** | Miglioramenti alla documentazione |
-| 🧪 **Test** | Nuovi test o miglioramento copertura |
-| 🔧 **Refactoring** | Miglioramenti al codice senza cambiare comportamento |
-| 🌍 **Traduzioni** | Traduzione della documentazione |
+| 🐛 **Bug Fix** | Fixes for documented bugs |
+| ✨ **Features** | New functionality (discuss first in an Issue) |
+| 📖 **Documentation** | Documentation improvements |
+| 🧪 **Tests** | New tests or coverage improvements |
+| 🔧 **Refactoring** | Code improvements without changing behavior |
+| 🌍 **Translations** | Documentation translation |
 
 ### Workflow
 
 ```
-1. Fork del repository
+1. Fork the repository
          │
          ▼
-2. Crea un branch
-   git checkout -b feature/nome-feature
+2. Create a branch
+   git checkout -b feature/feature-name
          │
          ▼
-3. Fai le modifiche
+3. Make your changes
          │
          ▼
-4. Esegui i test
+4. Run tests
    pytest tests/
          │
          ▼
-5. Commit con messaggio chiaro
-   git commit -m "feat: aggiungi supporto per X"
+5. Commit with clear message
+   git commit -m "feat: add support for X"
          │
          ▼
-6. Push del branch
-   git push origin feature/nome-feature
+6. Push the branch
+   git push origin feature/feature-name
          │
          ▼
-7. Apri una Pull Request
+7. Open a Pull Request
 ```
 
 ---
 
-## 💻 Setup Ambiente di Sviluppo
+## 💻 Development Environment Setup
 
-### Requisiti
+### Requirements
 
 - Python 3.10+
-- CUDA-capable GPU (opzionale, per test completi)
+- CUDA-capable GPU (optional, for full testing)
 - Git
 
-### Installazione
+### Installation
 
 ```bash
-# 1. Clona il tuo fork
-git clone https://github.com/TUO-USERNAME/llm-finetuning-agent-lightning.git
+# 1. Clone your fork
+git clone https://github.com/YOUR-USERNAME/llm-finetuning-agent-lightning.git
 cd llm-finetuning-agent-lightning
 
-# 2. Crea un ambiente virtuale
+# 2. Create a virtual environment
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# oppure
+# or
 .\venv\Scripts\activate   # Windows
 
-# 3. Installa dipendenze di sviluppo
+# 3. Install development dependencies
 pip install -e ".[dev]"
 
-# 4. Installa pre-commit hooks
+# 4. Install pre-commit hooks
 pre-commit install
 ```
 
-### Verifica Installazione
+### Verify Installation
 
 ```bash
-# Esegui i test
+# Run tests
 pytest tests/ -v
 
-# Controlla linting
+# Check linting
 ruff check src/
 
-# Controlla types
+# Check types
 mypy src/
 ```
 
 ---
 
-## 📝 Stile del Codice
+## 📝 Code Style
 
 ### Python
 
-Seguiamo [PEP 8](https://peps.python.org/pep-0008/) con alcune personalizzazioni:
+We follow [PEP 8](https://peps.python.org/pep-0008/) with some customizations:
 
 ```python
-# ✅ Buono
+# ✅ Good
 def calculate_reward(
     prompt: str,
     generation: str,
     reference: Optional[str] = None,
 ) -> float:
     """
-    Calcola il reward per una generazione.
+    Calculate the reward for a generation.
     
     Args:
-        prompt: Il prompt originale.
-        generation: La risposta generata.
-        reference: Risposta di riferimento (opzionale).
+        prompt: The original prompt.
+        generation: The generated response.
+        reference: Reference response (optional).
         
     Returns:
-        Valore di reward tra -1.0 e 1.0.
+        Reward value between -1.0 and 1.0.
         
     Raises:
-        ValueError: Se prompt è vuoto.
+        ValueError: If prompt is empty.
     """
     if not prompt:
-        raise ValueError("Il prompt non può essere vuoto")
+        raise ValueError("Prompt cannot be empty")
     
     reward = 0.0
     
-    # Logica di calcolo...
+    # Calculation logic...
     
     return max(-1.0, min(1.0, reward))
 
 
-# ❌ Evita
+# ❌ Avoid
 def calc_rew(p, g, r=None):
     if not p: raise ValueError()
     rew = 0
@@ -156,19 +156,19 @@ def calc_rew(p, g, r=None):
     return max(-1, min(1, rew))
 ```
 
-### Convenzioni
+### Conventions
 
-| Elemento | Stile | Esempio |
-|----------|-------|---------|
-| Funzioni | `snake_case` | `calculate_reward()` |
-| Classi | `PascalCase` | `VectorStore` |
-| Costanti | `UPPER_SNAKE` | `MAX_CHUNK_SIZE` |
-| Variabili | `snake_case` | `embedding_model` |
-| Moduli | `snake_case` | `vector_store.py` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Functions | `snake_case` | `calculate_reward()` |
+| Classes | `PascalCase` | `VectorStore` |
+| Constants | `UPPER_SNAKE` | `MAX_CHUNK_SIZE` |
+| Variables | `snake_case` | `embedding_model` |
+| Modules | `snake_case` | `vector_store.py` |
 
-### Docstring
+### Docstrings
 
-Usiamo il formato Google:
+We use Google format:
 
 ```python
 def query(
@@ -178,35 +178,35 @@ def query(
     use_reranker: Optional[bool] = None,
 ) -> List[Tuple[str, float, Dict[str, Any]]]:
     """
-    Cerca i documenti più simili a una query.
+    Search for documents most similar to a query.
     
-    Se il reranker è abilitato, recupera più risultati iniziali e poi
-    li riordina per rilevanza usando CrossEncoder.
+    If the reranker is enabled, retrieves more initial results and then
+    reorders them by relevance using CrossEncoder.
     
     Args:
-        text: Testo della query.
-        n_results: Numero di risultati da restituire.
-        use_reranker: Override per usare/non usare reranker.
-            None = usa default dell'istanza.
+        text: Query text.
+        n_results: Number of results to return.
+        use_reranker: Override to use/not use reranker.
+            None = use instance default.
             
     Returns:
-        Lista di tuple (documento, score, metadata).
-        Score più alto = più rilevante.
+        List of tuples (document, score, metadata).
+        Higher score = more relevant.
         
     Raises:
-        ValueError: Se n_results < 1.
+        ValueError: If n_results < 1.
         
     Example:
         >>> store = VectorStore()
-        >>> store.add_documents(["Python è un linguaggio..."])
-        >>> results = store.query("Cos'è Python?")
-        >>> print(results[0][0])  # Primo documento
+        >>> store.add_documents(["Python is a language..."])
+        >>> results = store.query("What is Python?")
+        >>> print(results[0][0])  # First document
     """
 ```
 
 ### Type Hints
 
-Usiamo type hints ovunque:
+We use type hints everywhere:
 
 ```python
 from typing import Optional, Dict, List, Any, Tuple, Union
@@ -221,43 +221,43 @@ def process_data(
 
 ---
 
-## 🔄 Pull Request
+## 🔄 Pull Requests
 
 ### Checklist
 
-Prima di aprire una PR, verifica:
+Before opening a PR, verify:
 
-- [ ] Il codice segue le convenzioni di stile
-- [ ] I test passano (`pytest tests/`)
-- [ ] Ho aggiunto test per le nuove funzionalità
-- [ ] La documentazione è aggiornata
-- [ ] I commit seguono le convenzioni
+- [ ] Code follows style conventions
+- [ ] Tests pass (`pytest tests/`)
+- [ ] I added tests for new functionality
+- [ ] Documentation is updated
+- [ ] Commits follow conventions
 
-### Formato Commit
+### Commit Format
 
-Usiamo [Conventional Commits](https://www.conventionalcommits.org/):
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-<tipo>(<scope>): <descrizione>
+<type>(<scope>): <description>
 
-[corpo opzionale]
+[optional body]
 
-[footer opzionale]
+[optional footer]
 ```
 
-**Tipi:**
+**Types:**
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `feat` | Nuova funzionalità |
-| `fix` | Correzione bug |
-| `docs` | Solo documentazione |
-| `style` | Formattazione (no logica) |
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation only |
+| `style` | Formatting (no logic) |
 | `refactor` | Refactoring |
-| `test` | Aggiunta/modifica test |
+| `test` | Add/modify tests |
 | `chore` | Maintenance |
 
-**Esempi:**
+**Examples:**
 
 ```bash
 feat(memory): add smart chunking with tree-sitter
@@ -269,121 +269,120 @@ docs(readme): add benchmark results section
 refactor(vector_store): extract reranker to separate class
 ```
 
-### Template PR
+### PR Template
 
 ```markdown
-## Descrizione
+## Description
 
-Breve descrizione delle modifiche.
+Brief description of the changes.
 
-## Tipo di Cambiamento
+## Type of Change
 
 - [ ] Bug fix
-- [ ] Nuova feature
+- [ ] New feature
 - [ ] Breaking change
-- [ ] Documentazione
+- [ ] Documentation
 
-## Come è stato testato?
+## How was it tested?
 
-Descrivi i test eseguiti.
+Describe the tests performed.
 
 ## Checklist
 
-- [ ] Il codice segue lo stile del progetto
-- [ ] Ho eseguito self-review del mio codice
-- [ ] Ho commentato il codice dove necessario
-- [ ] Ho aggiornato la documentazione
-- [ ] I test passano
-- [ ] Ho aggiunto test per le nuove funzionalità
+- [ ] Code follows project style
+- [ ] I performed self-review of my code
+- [ ] I commented the code where necessary
+- [ ] I updated the documentation
+- [ ] Tests pass
+- [ ] I added tests for new functionality
 ```
 
 ---
 
-## 🐛 Segnalare Bug
+## 🐛 Reporting Bugs
 
-### Template Issue Bug
+### Bug Issue Template
 
 ```markdown
-## Descrizione
+## Description
 
-Descrizione chiara del bug.
+Clear description of the bug.
 
-## Come Riprodurre
+## How to Reproduce
 
-1. Esegui '...'
-2. Con parametri '...'
-3. Vedi errore
+1. Run '...'
+2. With parameters '...'
+3. See error
 
-## Comportamento Atteso
+## Expected Behavior
 
-Cosa dovrebbe succedere.
+What should happen.
 
-## Comportamento Attuale
+## Actual Behavior
 
-Cosa succede invece.
+What happens instead.
 
-## Ambiente
+## Environment
 
-- OS: [es. Windows 10, Ubuntu 22.04]
-- Python: [es. 3.10.12]
-- PyTorch: [es. 2.1.0]
-- CUDA: [es. 12.1]
-- GPU: [es. RTX 4090]
+- OS: [e.g. Windows 10, Ubuntu 22.04]
+- Python: [e.g. 3.10.12]
+- PyTorch: [e.g. 2.1.0]
+- CUDA: [e.g. 12.1]
+- GPU: [e.g. RTX 4090]
 
 ## Log/Traceback
 
 ```python
-# Incolla qui l'errore
+# Paste error here
 ```
 
-## Screenshot
+## Screenshots
 
-Se applicabile.
+If applicable.
 ```
 
 ---
 
-## 💡 Proporre Features
+## 💡 Proposing Features
 
-### Prima di Proporre
+### Before Proposing
 
-1. **Cerca nelle Issues** - Potrebbe essere già stata proposta
-2. **Considera la portata** - Feature complesse richiedono discussione
-3. **Pensa all'impatto** - Come influenza gli utenti esistenti?
+1. **Search Issues** - It might already be proposed
+2. **Consider scope** - Complex features require discussion
+3. **Think about impact** - How does it affect existing users?
 
-### Template Issue Feature
+### Feature Issue Template
 
 ```markdown
-## Problema/Motivazione
+## Problem/Motivation
 
-Descrivi il problema che questa feature risolve.
+Describe the problem this feature solves.
 
-## Soluzione Proposta
+## Proposed Solution
 
-Descrivi come vorresti che funzionasse.
+Describe how you want it to work.
 
-## Alternative Considerate
+## Alternatives Considered
 
-Altre soluzioni che hai considerato.
+Other solutions you considered.
 
-## Impatto
+## Impact
 
 - [ ] Breaking change
-- [ ] Nuove dipendenze
-- [ ] Cambiamenti al config
+- [ ] New dependencies
+- [ ] Config changes
 
-## Implementazione
+## Implementation
 
-Sei disposto a implementarla? Hai bisogno di aiuto?
+Are you willing to implement it? Do you need help?
 ```
 
 ---
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-Ogni contributo, grande o piccolo, è apprezzato. Grazie per rendere questo progetto migliore!
+Every contribution, big or small, is appreciated. Thank you for making this project better!
 
 ---
 
-*Per domande, apri una Issue o contatta [il maintainer].*
-
+*For questions, open an [Issue](https://github.com/SandroHub013/ALCHEMY/issues)!*

@@ -1,31 +1,31 @@
-# ✨ Features Tecniche
+# ✨ Technical Features
 
-Panoramica completa delle funzionalità implementate in questo framework.
+Complete overview of the features implemented in this framework.
 
 ---
 
 ## 🎯 Overview
 
-| Categoria | Feature | Status |
-|-----------|---------|--------|
-| **Training** | QLoRA 4-bit | ✅ Completo |
-| | PEFT/LoRA | ✅ Completo |
-| | Multi-Source Training | ✅ Completo |
-| | Gradient Checkpointing | ✅ Completo |
-| **RL** | Agent Lightning Integration | ✅ Completo |
-| | GRPO Algorithm | ✅ Completo |
-| | Custom Reward Functions | ✅ Completo |
-| | APO (Prompt Optimization) | ✅ Completo |
-| **Reasoning** 🆕 | LUFFY Off-Policy Learning | ✅ Completo |
-| | ExGRPO (Self-Experience) | ✅ Completo |
-| | DeepSeek-R1 Integration | ✅ Completo |
-| | Search-R1 (Reasoning + Search) | ✅ Completo |
-| **Memory** | VectorStore (ChromaDB) | ✅ Completo |
-| | CrossEncoder Reranking | ✅ Completo |
-| | Smart Chunking | ✅ Completo |
-| | SOP (Procedural Memory) | ✅ Completo |
-| | FAISS Vector Search 🆕 | ✅ Completo |
-| | Hybrid Search (Vector + BM25) 🆕 | ✅ Completo |
+| Category | Feature | Status |
+|----------|---------|--------|
+| **Training** | QLoRA 4-bit | ✅ Complete |
+| | PEFT/LoRA | ✅ Complete |
+| | Multi-Source Training | ✅ Complete |
+| | Gradient Checkpointing | ✅ Complete |
+| **RL** | Agent Lightning Integration | ✅ Complete |
+| | GRPO Algorithm | ✅ Complete |
+| | Custom Reward Functions | ✅ Complete |
+| | APO (Prompt Optimization) | ✅ Complete |
+| **Reasoning** 🆕 | LUFFY Off-Policy Learning | ✅ Complete |
+| | ExGRPO (Self-Experience) | ✅ Complete |
+| | DeepSeek-R1 Integration | ✅ Complete |
+| | Search-R1 (Reasoning + Search) | ✅ Complete |
+| **Memory** | VectorStore (ChromaDB) | ✅ Complete |
+| | CrossEncoder Reranking | ✅ Complete |
+| | Smart Chunking | ✅ Complete |
+| | SOP (Procedural Memory) | ✅ Complete |
+| | FAISS Vector Search 🆕 | ✅ Complete |
+| | Hybrid Search (Vector + BM25) 🆕 | ✅ Complete |
 
 ---
 
@@ -33,19 +33,19 @@ Panoramica completa delle funzionalità implementate in questo framework.
 
 ### Overview
 
-**[LUFFY](https://arxiv.org/abs/2504.14945)** (Learning to Reason under Off-Policy Guidance) è un framework per migliorare le capacità di ragionamento dei modelli usando tracce off-policy da modelli avanzati come DeepSeek-R1.
+**[LUFFY](https://arxiv.org/abs/2504.14945)** (Learning to Reason under Off-Policy Guidance) is a framework for improving model reasoning capabilities using off-policy traces from advanced models like DeepSeek-R1.
 
-**Accettato a NeurIPS 2025!**
+**Accepted at NeurIPS 2025!**
 
-### Modalità Supportate
+### Supported Modes
 
-| Modalità | Descrizione | Quando Usarlo |
-|----------|-------------|---------------|
-| **luffy** | Usa tracce da modelli esterni (DeepSeek-R1) | Quando hai accesso a reasoning traces di alta qualità |
-| **exgrpo** | Impara dall'esperienza propria | Quando non hai tracce esterne |
-| **hybrid** | Combina entrambi | Per massimizzare le capacità |
+| Mode | Description | When to Use |
+|------|-------------|-------------|
+| **luffy** | Uses traces from external models (DeepSeek-R1) | When you have access to high-quality reasoning traces |
+| **exgrpo** | Learns from own experience | When you don't have external traces |
+| **hybrid** | Combines both | To maximize capabilities |
 
-### Implementazione
+### Implementation
 
 ```python
 # src/reasoning/luffy_trainer.py
@@ -62,7 +62,7 @@ config = LuffyConfig(
 
 trainer = LuffyTrainer(model, tokenizer, config)
 
-# Carica tracce off-policy
+# Load off-policy traces
 trainer.load_off_policy_traces("deepseek_r1_traces.json")
 
 # Training
@@ -73,34 +73,34 @@ results = trainer.train(train_dataset, num_epochs=3)
 
 ```python
 class OffPolicyDataMixer:
-    """Combina dati on-policy e off-policy con prioritized sampling."""
+    """Combines on-policy and off-policy data with prioritized sampling."""
     
     def sample_mixed_batch(self, on_policy_data, batch_size):
-        # Calcola split
+        # Calculate split
         off_policy_count = int(batch_size * self.config.off_policy_weight)
         on_policy_count = batch_size - off_policy_count
         
-        # Campiona off-policy con filtering
+        # Sample off-policy with filtering
         off_policy = self._sample_filtered(
             min_reward=self.config.min_off_policy_reward
         )
         
-        # Combina e shuffle
+        # Combine and shuffle
         return mixed_batch
 ```
 
 ### ExGRPO (Learning from Own Experience)
 
 ```python
-# ExGRPO: Impara dall'esperienza del modello stesso
+# ExGRPO: Learn from the model's own experience
 config = LuffyConfig(
     mode=OffPolicyMode.EXGRPO,
     experience_buffer_size=10000,
     experience_sample_ratio=0.3,
 )
 
-# Il trainer salva automaticamente esperienze positive
-# e le riutilizza nel training successivo
+# The trainer automatically saves positive experiences
+# and reuses them in subsequent training
 ```
 
 ### Benchmark Results
@@ -118,15 +118,15 @@ config = LuffyConfig(
 
 ### Overview
 
-**[Search-R1](https://github.com/PeterGriffinJin/Search-R1)** permette al modello di cercare informazioni durante il ragionamento, combinando retrieval e reasoning in modo fluido.
+**[Search-R1](https://github.com/PeterGriffinJin/Search-R1)** enables the model to search for information during reasoning, combining retrieval and reasoning seamlessly.
 
-### Componenti Principali
+### Main Components
 
-| Componente | Descrizione |
-|------------|-------------|
-| **SearchEngine** | Interfaccia per diversi tipi di ricerca |
-| **ReasoningWithSearch** | Orchestratore che integra search nel reasoning |
-| **SearchR1Trainer** | Trainer RL per ottimizzare la policy di search |
+| Component | Description |
+|-----------|-------------|
+| **SearchEngine** | Interface for different search types |
+| **ReasoningWithSearch** | Orchestrator integrating search into reasoning |
+| **SearchR1Trainer** | RL trainer to optimize search policy |
 
 ### Search Engine Types
 
@@ -139,7 +139,7 @@ vector_engine = create_search_engine("vector", documents=docs)
 # BM25 Search (keyword-based)
 bm25_engine = create_search_engine("bm25", documents=docs)
 
-# Hybrid Search (vector + BM25 con RRF fusion)
+# Hybrid Search (vector + BM25 with RRF fusion)
 hybrid_engine = create_search_engine(
     "hybrid",
     documents=docs,
@@ -155,12 +155,12 @@ hybrid_engine = create_search_engine(
 
 class ReasoningWithSearch:
     def reason(self, question: str) -> Dict[str, Any]:
-        # 1. Genera pensiero iniziale
-        # 2. Rileva <search>query</search>
-        # 3. Esegue ricerca
-        # 4. Inietta <context>risultati</context>
-        # 5. Continua ragionamento
-        # 6. Estrai risposta finale
+        # 1. Generate initial thought
+        # 2. Detect <search>query</search>
+        # 3. Execute search
+        # 4. Inject <context>results</context>
+        # 5. Continue reasoning
+        # 6. Extract final answer
         
         return {
             "question": question,
@@ -172,14 +172,14 @@ class ReasoningWithSearch:
 
 ### Special Tokens
 
-| Token | Descrizione |
+| Token | Description |
 |-------|-------------|
-| `<search>` | Inizia query di ricerca |
-| `</search>` | Fine query |
-| `<context>` | Inizio risultati |
-| `</context>` | Fine risultati |
+| `<search>` | Start search query |
+| `</search>` | End query |
+| `<context>` | Start results |
+| `</context>` | End results |
 
-### Esempio Completo
+### Complete Example
 
 ```python
 from src.reasoning import (
@@ -188,14 +188,14 @@ from src.reasoning import (
     HybridSearchEngine,
 )
 
-# Configura search engine
+# Configure search engine
 search_engine = HybridSearchEngine(
     documents=knowledge_base,
     vector_weight=0.6,
     bm25_weight=0.4,
 )
 
-# Configura trainer
+# Configure trainer
 config = SearchR1Config(
     max_search_calls=3,
     context_window=3,
@@ -223,15 +223,15 @@ results = trainer.train(
 def search_reward(question, answer, reference, search_used):
     reward = 0.0
     
-    # Correttezza risposta (peso: 0.7)
+    # Answer correctness (weight: 0.7)
     if reference.lower() in answer.lower():
         reward += 0.5
     
-    # Bonus per uso efficace della ricerca (peso: 0.1)
+    # Bonus for effective search use (weight: 0.1)
     if search_used:
         reward += 0.1
     
-    # Qualità ragionamento (peso: 0.2)
+    # Reasoning quality (weight: 0.2)
     if "therefore" in answer.lower() or "step" in answer.lower():
         reward += 0.2
     
@@ -240,41 +240,41 @@ def search_reward(question, answer, reference, search_used):
 
 ---
 
-## 🔬 Training Efficiente
+## 🔬 Efficient Training
 
 ### QLoRA 4-bit Quantization
 
-**Problema risolto:** I modelli LLM richiedono troppa memoria per GPU consumer.
+**Problem solved:** LLM models require too much memory for consumer GPUs.
 
-**Soluzione implementata:**
+**Implemented solution:**
 
 ```python
 # src/models/model_loader.py
 
 bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,                    # Carica in 4-bit
+    load_in_4bit=True,                    # Load in 4-bit
     bnb_4bit_compute_dtype=torch.float16, # Compute in FP16
     bnb_4bit_quant_type="nf4",           # Normal Float 4-bit
-    bnb_4bit_use_double_quant=True,       # Quantizza i quantization params
+    bnb_4bit_use_double_quant=True,       # Quantize the quantization params
 )
 ```
 
-**Risultati:**
-- Mistral 7B: da 28GB → 6GB VRAM
-- Riduzione 78% memoria
-- Performance mantenuta
+**Results:**
+- Mistral 7B: from 28GB → 6GB VRAM
+- 78% memory reduction
+- Performance maintained
 
 ### LoRA (Low-Rank Adaptation)
 
-**Problema risolto:** Aggiornare tutti i parametri è costoso e rischia overfitting.
+**Problem solved:** Updating all parameters is expensive and risks overfitting.
 
-**Implementazione:**
+**Implementation:**
 
 ```python
 lora_config = LoraConfig(
-    r=16,                # Rank della decomposizione
+    r=16,                # Decomposition rank
     lora_alpha=32,       # Scaling factor
-    target_modules=[     # Solo layer critici
+    target_modules=[     # Only critical layers
         "q_proj", "k_proj", "v_proj", "o_proj",
         "gate_proj", "up_proj", "down_proj",
     ],
@@ -283,16 +283,16 @@ lora_config = LoraConfig(
 )
 ```
 
-**Risultati:**
-- Parametri trainable: 0.18% (13M su 7B)
-- Training 50x più veloce
-- Adapter modulari e combinabili
+**Results:**
+- Trainable parameters: 0.18% (13M out of 7B)
+- 50x faster training
+- Modular and combinable adapters
 
 ### Multi-Source Training
 
-**Problema risolto:** Training su un solo task causa Catastrophic Forgetting.
+**Problem solved:** Training on a single task causes Catastrophic Forgetting.
 
-**Soluzione:**
+**Solution:**
 
 ```yaml
 # config/config.yaml
@@ -310,10 +310,10 @@ datasets:
       type: "chat"
 ```
 
-**Caratteristiche:**
-- Sampling pesato per bilanciare i task
-- Formatter unificato (ChatML)
-- Preserva competenze esistenti
+**Features:**
+- Weighted sampling to balance tasks
+- Unified formatter (ChatML)
+- Preserves existing skills
 
 ---
 
@@ -321,15 +321,15 @@ datasets:
 
 ### Agent Lightning Integration
 
-**Framework:** Microsoft Agent Lightning per training RL di agenti AI.
+**Framework:** Microsoft Agent Lightning for RL training of AI agents.
 
-**Algoritmi supportati:**
+**Supported algorithms:**
 
-| Algoritmo | Descrizione | Quando usarlo |
-|-----------|-------------|---------------|
-| **SFT** | Supervised Fine-Tuning | Training iniziale |
-| **GRPO** | Group Relative Policy Optimization | Migliorare comportamento |
-| **APO** | Automatic Prompt Optimization | Ottimizzare system prompt |
+| Algorithm | Description | When to use |
+|-----------|-------------|-------------|
+| **SFT** | Supervised Fine-Tuning | Initial training |
+| **GRPO** | Group Relative Policy Optimization | Improve behavior |
+| **APO** | Automatic Prompt Optimization | Optimize system prompt |
 
 ### GRPO Implementation
 
@@ -339,20 +339,20 @@ datasets:
 class AgentLightningTrainer:
     def train(self, train_dataset, ...):
         for batch in train_dataset:
-            # 1. Genera K risposte diverse
+            # 1. Generate K different responses
             generations = self.model.generate(
                 batch["prompt"],
                 num_return_sequences=self.config.num_generations,
                 temperature=self.config.temperature,
             )
             
-            # 2. Calcola reward per ogni risposta
+            # 2. Calculate reward for each response
             rewards = [self.reward_fn(prompt, gen) for gen in generations]
             
-            # 3. Normalizza rewards (relative)
+            # 3. Normalize rewards (relative)
             advantages = (rewards - mean(rewards)) / std(rewards)
             
-            # 4. Policy gradient con KL penalty
+            # 4. Policy gradient with KL penalty
             loss = -log_prob(generations) * advantages + kl_coef * KL_div
             
             # 5. Update
@@ -367,7 +367,7 @@ class AgentLightningTrainer:
 def coding_reward(prompt, generation):
     reward = 0.0
     
-    # Sintassi corretta
+    # Correct syntax
     try:
         compile(code, '<string>', 'exec')
         reward += 0.3
@@ -385,18 +385,18 @@ def coding_reward(prompt, generation):
 **Function Calling Reward:**
 ```python
 def function_calling_reward(prompt, generation):
-    # JSON valido
+    # Valid JSON
     try:
         fc = json.loads(extract_function_call(generation))
         reward += 0.3
     except:
         return -0.3
     
-    # Struttura corretta
+    # Correct structure
     if "name" in fc and "arguments" in fc:
         reward += 0.2
     
-    # Tool esistente
+    # Existing tool
     if fc["name"] in available_tools:
         reward += 0.2
     
@@ -406,7 +406,7 @@ def function_calling_reward(prompt, generation):
 **Combined Reward (Auto-detect):**
 ```python
 def combined_reward(prompt, generation):
-    # Rileva automaticamente il tipo di task
+    # Automatically detect task type
     if is_coding_task(prompt):
         return coding_reward(prompt, generation)
     elif is_function_calling(prompt):
@@ -417,35 +417,35 @@ def combined_reward(prompt, generation):
 
 ---
 
-## 🧠 Sistema di Memoria
+## 🧠 Memory System
 
-### VectorStore con Reranking
+### VectorStore with Reranking
 
-**Architettura a due fasi:**
+**Two-phase architecture:**
 
 ```
-Query → Bi-Encoder (recall) → Top-K candidati → Cross-Encoder (precision) → Top-N finali
+Query → Bi-Encoder (recall) → Top-K candidates → Cross-Encoder (precision) → Top-N final
 ```
 
-**Implementazione:**
+**Implementation:**
 
 ```python
 # src/memory/vector_store.py
 
 class VectorStore:
     def __init__(self, use_reranker=True):
-        # Fase 1: Bi-Encoder per recall veloce
+        # Phase 1: Bi-Encoder for fast recall
         self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
         
-        # Fase 2: Cross-Encoder per precision
+        # Phase 2: Cross-Encoder for precision
         if use_reranker:
             self.reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
     
     def query(self, text, n_results=3):
-        # Fase 1: Recupera candidati (3x n_results)
+        # Phase 1: Retrieve candidates (3x n_results)
         candidates = self._vector_search(text, n_results * 3)
         
-        # Fase 2: Rerank con Cross-Encoder
+        # Phase 2: Rerank with Cross-Encoder
         if self.reranker:
             candidates = self.reranker.rerank(text, candidates, top_k=n_results)
         
@@ -454,9 +454,9 @@ class VectorStore:
 
 ### Smart Chunking
 
-**Problema:** Chunking per caratteri taglia funzioni a metà.
+**Problem:** Character-based chunking cuts functions in half.
 
-**Soluzione:** Parsing AST con tree-sitter.
+**Solution:** AST parsing with tree-sitter.
 
 ```python
 # src/memory/smart_chunker.py
@@ -476,21 +476,21 @@ class SmartChunker:
         return chunks
 ```
 
-**Tipi di chunk:**
+**Chunk types:**
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `FUNCTION` | Funzione completa con docstring |
-| `CLASS` | Classe con header e docstring |
-| `METHOD` | Metodo di classe |
-| `IMPORT` | Blocco import |
-| `DOCSTRING` | Docstring modulo |
+| `FUNCTION` | Complete function with docstring |
+| `CLASS` | Class with header and docstring |
+| `METHOD` | Class method |
+| `IMPORT` | Import block |
+| `DOCSTRING` | Module docstring |
 
-**Embedding text ottimizzato:**
+**Optimized embedding text:**
 
 ```python
 def to_embedding_text(chunk):
-    """Genera testo con contesto per embedding migliori."""
+    """Generate text with context for better embeddings."""
     return f"""
 # {chunk.chunk_type}: {chunk.qualified_name}
 # Description: {chunk.docstring[:200]}
@@ -502,28 +502,28 @@ def to_embedding_text(chunk):
 
 ### SOP (Standard Operating Procedures)
 
-**Scopo:** Guidare il modello attraverso procedure strutturate.
+**Purpose:** Guide the model through structured procedures.
 
-**Struttura SOP:**
+**SOP Structure:**
 
 ```json
 {
   "name": "debug_python_code",
-  "description": "Procedura per identificare e risolvere bug",
-  "trigger": "debug, bug, errore, non funziona",
+  "description": "Procedure for identifying and fixing bugs",
+  "trigger": "debug, bug, error, not working",
   "category": "coding",
   "priority": 8,
   "steps": [
-    {"action": "Leggi il codice e identifica il problema"},
-    {"action": "Classifica l'errore (sintassi, logica, runtime)"},
-    {"action": "Localizza la riga problematica"},
-    {"action": "Proponi una soluzione con spiegazione"},
-    {"action": "Suggerisci test per verificare", "condition": "fix proposto"}
+    {"action": "Read the code and identify the problem"},
+    {"action": "Classify the error (syntax, logic, runtime)"},
+    {"action": "Locate the problematic line"},
+    {"action": "Propose a solution with explanation"},
+    {"action": "Suggest tests to verify", "condition": "fix proposed"}
   ]
 }
 ```
 
-**Matching automatico:**
+**Automatic matching:**
 
 ```python
 class SOPManager:
@@ -542,12 +542,12 @@ class SOPManager:
 
 ---
 
-## 📊 Logging e Monitoraggio
+## 📊 Logging and Monitoring
 
 ### TensorBoard Integration
 
 ```python
-# Metriche loggate automaticamente
+# Metrics logged automatically
 self.log("train/loss", loss)
 self.log("train/perplexity", exp(loss))
 self.log("train/reward_mean", reward.mean())
@@ -557,7 +557,7 @@ self.log("train/kl_div", kl_divergence)
 ### Agent Lightning Tracing
 
 ```python
-# Tracciamento dettagliato
+# Detailed tracing
 with self.tracer.span("generation", {"prompt_len": len(prompt)}):
     output = model.generate(...)
     
@@ -570,11 +570,11 @@ agl.emit_generation(
 
 ---
 
-## ⚙️ Configurazione
+## ⚙️ Configuration
 
 ### YAML-based
 
-Tutta la configurazione è in YAML per flessibilità:
+All configuration is in YAML for flexibility:
 
 ```yaml
 model:
@@ -600,21 +600,21 @@ agent_lightning:
   reward_function: "combined"
 ```
 
-### Override da CLI
+### CLI Override
 
 ```bash
-# Override algoritmo
+# Override algorithm
 python main_agent_lightning.py --config config.yaml --algorithm grpo
 
-# Dry-run per verificare
+# Dry-run to verify
 python main_agent_lightning.py --config config.yaml --dry-run
 ```
 
 ---
 
-## 🔌 Estensibilità
+## 🔌 Extensibility
 
-### Aggiungere un Nuovo Modello
+### Adding a New Model
 
 ```python
 # In model_loader.py
@@ -624,31 +624,30 @@ def _get_target_modules_for_model(self, model_name):
     # ... existing models
 ```
 
-### Aggiungere una Nuova Reward Function
+### Adding a New Reward Function
 
 ```python
 # In agent_lightning_trainer.py
 @staticmethod
 def my_reward(prompt, generation):
-    # Logica custom
+    # Custom logic
     return score
 
-# Registra
+# Register
 RewardFunction.my_reward = my_reward
 ```
 
-### Aggiungere una Nuova SOP
+### Adding a New SOP
 
 ```json
 // data/sops/my_procedure.json
 {
   "name": "my_procedure",
-  "trigger": "parole, chiave",
+  "trigger": "keywords, here",
   "steps": [...]
 }
 ```
 
 ---
 
-*Questa documentazione è generata per il portfolio tecnico.*
-
+*This documentation is generated for the technical portfolio.*

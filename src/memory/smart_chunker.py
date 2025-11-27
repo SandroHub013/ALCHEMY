@@ -1,21 +1,21 @@
 """
-Smart Chunker per codice sorgente.
+Smart Chunker for source code.
 
-Utilizza tree-sitter per splittare codice preservando i confini semantici
-(funzioni, classi, metodi) invece di tagliare arbitrariamente per caratteri.
+Uses tree-sitter to split code preserving semantic boundaries
+(functions, classes, methods) instead of arbitrarily cutting by characters.
 
-Ispirato a osgrep (https://github.com/Ryandonofrio3/osgrep).
+Inspired by osgrep (https://github.com/Ryandonofrio3/osgrep).
 
-Uso:
+Usage:
     ```python
     from src.memory.smart_chunker import SmartChunker, chunk_python_file
     
-    # Chunka un file Python
+    # Chunk a Python file
     chunks = chunk_python_file("path/to/file.py")
     for chunk in chunks:
         print(f"[{chunk.chunk_type}] {chunk.name}: {len(chunk.content)} chars")
     
-    # Usa il chunker generico
+    # Use the generic chunker
     chunker = SmartChunker()
     chunks = chunker.chunk_file("path/to/file.py")
     ```
@@ -32,39 +32,39 @@ from typing import Callable, Optional
 
 logger = logging.getLogger(__name__)
 
-# Lazy import per tree-sitter
+# Lazy import for tree-sitter
 _tree_sitter = None
 _ts_python = None
 
 
 class ChunkType(str, Enum):
-    """Tipo di chunk estratto dal codice."""
+    """Type of chunk extracted from code."""
     
-    MODULE = "module"           # Intero modulo (fallback)
-    CLASS = "class"             # Definizione classe
-    FUNCTION = "function"       # Funzione top-level
-    METHOD = "method"           # Metodo di classe
-    DOCSTRING = "docstring"     # Docstring modulo/classe
-    IMPORT = "import"           # Blocco import
-    COMMENT = "comment"         # Commento significativo
-    OTHER = "other"             # Altro codice
+    MODULE = "module"           # Entire module (fallback)
+    CLASS = "class"             # Class definition
+    FUNCTION = "function"       # Top-level function
+    METHOD = "method"           # Class method
+    DOCSTRING = "docstring"     # Module/class docstring
+    IMPORT = "import"           # Import block
+    COMMENT = "comment"         # Significant comment
+    OTHER = "other"             # Other code
 
 
 @dataclass
 class CodeChunk:
     """
-    Rappresenta un chunk di codice estratto.
+    Represents an extracted code chunk.
     
     Attributes:
-        content: Il codice sorgente del chunk
-        chunk_type: Tipo di chunk (function, class, etc.)
-        name: Nome dell'elemento (nome funzione/classe)
-        start_line: Linea di inizio (1-indexed)
-        end_line: Linea di fine (1-indexed)
-        file_path: Path del file sorgente
-        parent: Nome del parent (es. classe per un metodo)
-        docstring: Docstring estratta se presente
-        metadata: Metadati aggiuntivi
+        content: The source code of the chunk
+        chunk_type: Type of chunk (function, class, etc.)
+        name: Name of the element (function/class name)
+        start_line: Start line (1-indexed)
+        end_line: End line (1-indexed)
+        file_path: Path of the source file
+        parent: Name of the parent (e.g., class for a method)
+        docstring: Extracted docstring if present
+        metadata: Additional metadata
     """
     
     content: str
@@ -79,23 +79,23 @@ class CodeChunk:
     
     @property
     def qualified_name(self) -> str:
-        """Nome qualificato (es. ClassName.method_name)."""
+        """Qualified name (e.g., ClassName.method_name)."""
         if self.parent:
             return f"{self.parent}.{self.name}"
         return self.name
     
     @property
     def char_count(self) -> int:
-        """Numero di caratteri nel chunk."""
+        """Number of characters in the chunk."""
         return len(self.content)
     
     @property
     def line_count(self) -> int:
-        """Numero di linee nel chunk."""
+        """Number of lines in the chunk."""
         return self.content.count("\n") + 1
     
     def to_dict(self) -> dict:
-        """Converte il chunk in dizionario per serializzazione."""
+        """Convert the chunk to dictionary for serialization."""
         return {
             "content": self.content,
             "chunk_type": self.chunk_type.value,
@@ -113,13 +113,13 @@ class CodeChunk:
     
     def to_embedding_text(self) -> str:
         """
-        Genera testo ottimizzato per embedding.
+        Generate text optimized for embedding.
         
-        Include contesto (tipo, nome, docstring) per migliorare la ricerca semantica.
+        Includes context (type, name, docstring) to improve semantic search.
         """
         parts = []
         
-        # Header con contesto
+        # Header with context
         if self.chunk_type == ChunkType.CLASS:
             parts.append(f"# Class: {self.name}")
         elif self.chunk_type == ChunkType.FUNCTION:
@@ -127,22 +127,22 @@ class CodeChunk:
         elif self.chunk_type == ChunkType.METHOD:
             parts.append(f"# Method: {self.qualified_name}")
         
-        # Docstring se presente
+        # Docstring if present
         if self.docstring:
             parts.append(f"# Description: {self.docstring[:200]}")
         
-        # File path per contesto
+        # File path for context
         if self.file_path:
             parts.append(f"# File: {Path(self.file_path).name}")
         
-        # Contenuto
+        # Content
         parts.append(self.content)
         
         return "\n".join(parts)
 
 
 def _get_tree_sitter():
-    """Lazy import di tree-sitter."""
+    """Lazy import of tree-sitter."""
     global _tree_sitter
     if _tree_sitter is None:
         try:
@@ -150,13 +150,13 @@ def _get_tree_sitter():
             _tree_sitter = tree_sitter
         except ImportError:
             raise ImportError(
-                "tree-sitter non installato. Installa con: pip install tree-sitter"
+                "tree-sitter not installed. Install with: pip install tree-sitter"
             )
     return _tree_sitter
 
 
 def _get_tree_sitter_python():
-    """Lazy import di tree-sitter-python."""
+    """Lazy import of tree-sitter-python."""
     global _ts_python
     if _ts_python is None:
         try:
@@ -164,27 +164,27 @@ def _get_tree_sitter_python():
             _ts_python = tree_sitter_python
         except ImportError:
             raise ImportError(
-                "tree-sitter-python non installato. "
-                "Installa con: pip install tree-sitter-python"
+                "tree-sitter-python not installed. "
+                "Install with: pip install tree-sitter-python"
             )
     return _ts_python
 
 
 class SmartChunker:
     """
-    Chunker intelligente che preserva la struttura semantica del codice.
+    Intelligent chunker that preserves the semantic structure of code.
     
-    Usa tree-sitter per parsing AST e estrae chunk basati su:
-    - Definizioni di funzioni
-    - Definizioni di classi (con metodi interni)
-    - Blocchi import
-    - Docstring modulo
+    Uses tree-sitter for AST parsing and extracts chunks based on:
+    - Function definitions
+    - Class definitions (with internal methods)
+    - Import blocks
+    - Module docstring
     
     Attributes:
-        max_chunk_size: Dimensione massima chunk (caratteri). Chunk più grandi vengono splittati.
-        min_chunk_size: Dimensione minima chunk. Chunk più piccoli vengono aggregati.
-        include_imports: Se includere blocchi import come chunk separati.
-        include_docstrings: Se estrarre docstring come chunk separati.
+        max_chunk_size: Maximum chunk size (characters). Larger chunks are split.
+        min_chunk_size: Minimum chunk size. Smaller chunks are aggregated.
+        include_imports: Whether to include import blocks as separate chunks.
+        include_docstrings: Whether to extract docstrings as separate chunks.
     """
     
     SUPPORTED_EXTENSIONS = {
@@ -200,13 +200,13 @@ class SmartChunker:
         include_docstrings: bool = True,
     ):
         """
-        Inizializza lo SmartChunker.
+        Initialize the SmartChunker.
         
         Args:
-            max_chunk_size: Dimensione massima in caratteri per chunk
-            min_chunk_size: Dimensione minima in caratteri per chunk
-            include_imports: Includere blocchi import
-            include_docstrings: Estrarre docstring separatamente
+            max_chunk_size: Maximum size in characters per chunk
+            min_chunk_size: Minimum size in characters per chunk
+            include_imports: Include import blocks
+            include_docstrings: Extract docstrings separately
         """
         self.max_chunk_size = max_chunk_size
         self.min_chunk_size = min_chunk_size
@@ -217,7 +217,7 @@ class SmartChunker:
         self._parsers: dict[str, object] = {}
     
     def _get_parser(self, language: str):
-        """Ottiene o crea un parser per il linguaggio specificato."""
+        """Get or create a parser for the specified language."""
         if language in self._parsers:
             return self._parsers[language]
         
@@ -230,16 +230,16 @@ class SmartChunker:
             self._parsers[language] = parser
             return parser
         
-        raise ValueError(f"Linguaggio non supportato: {language}")
+        raise ValueError(f"Unsupported language: {language}")
     
     def _detect_language(self, file_path: str) -> Optional[str]:
-        """Rileva il linguaggio dal path del file."""
+        """Detect the language from the file path."""
         ext = Path(file_path).suffix.lower()
         return self.SUPPORTED_EXTENSIONS.get(ext)
     
     def _extract_docstring(self, node, source_bytes: bytes) -> Optional[str]:
-        """Estrae la docstring da un nodo (funzione/classe)."""
-        # In Python, la docstring è il primo statement se è una stringa
+        """Extract the docstring from a node (function/class)."""
+        # In Python, the docstring is the first statement if it's a string
         body = None
         for child in node.children:
             if child.type == "block":
@@ -254,17 +254,17 @@ class SmartChunker:
                 expr = child.children[0] if child.children else None
                 if expr and expr.type == "string":
                     docstring = source_bytes[expr.start_byte:expr.end_byte].decode("utf-8")
-                    # Rimuovi triple quotes
+                    # Remove triple quotes
                     docstring = docstring.strip('"""').strip("'''").strip()
                     return docstring
             elif child.type not in ("comment", "newline"):
-                # Non è una docstring se c'è altro codice prima
+                # Not a docstring if there's other code before
                 break
         
         return None
     
     def _get_node_name(self, node, source_bytes: bytes) -> str:
-        """Estrae il nome di un nodo (funzione/classe)."""
+        """Extract the name of a node (function/class)."""
         for child in node.children:
             if child.type == "identifier":
                 return source_bytes[child.start_byte:child.end_byte].decode("utf-8")
@@ -278,7 +278,7 @@ class SmartChunker:
         file_path: str,
         parent: Optional[str] = None,
     ) -> CodeChunk:
-        """Converte un nodo tree-sitter in CodeChunk."""
+        """Convert a tree-sitter node to CodeChunk."""
         content = source_bytes[node.start_byte:node.end_byte].decode("utf-8")
         name = self._get_node_name(node, source_bytes)
         docstring = self._extract_docstring(node, source_bytes)
@@ -296,9 +296,9 @@ class SmartChunker:
     
     def _split_large_chunk(self, chunk: CodeChunk) -> list[CodeChunk]:
         """
-        Splitta un chunk troppo grande in parti più piccole.
+        Split a chunk that's too large into smaller parts.
         
-        Cerca di splittare su linee vuote o dopo statement completi.
+        Tries to split on empty lines or after complete statements.
         """
         if chunk.char_count <= self.max_chunk_size:
             return [chunk]
@@ -308,13 +308,13 @@ class SmartChunker:
         current_start = 0
         current_line = chunk.start_line
         
-        # Split su doppi newline (paragrafi/blocchi)
+        # Split on double newlines (paragraphs/blocks)
         parts = re.split(r'\n\s*\n', content)
         current_content = ""
         
         for part in parts:
             if len(current_content) + len(part) > self.max_chunk_size and current_content:
-                # Salva chunk corrente
+                # Save current chunk
                 line_count = current_content.count("\n") + 1
                 chunks.append(CodeChunk(
                     content=current_content.strip(),
@@ -334,7 +334,7 @@ class SmartChunker:
                 else:
                     current_content = part
         
-        # Ultimo chunk
+        # Last chunk
         if current_content.strip():
             chunks.append(CodeChunk(
                 content=current_content.strip(),
@@ -355,14 +355,14 @@ class SmartChunker:
         file_path: str = "<string>",
     ) -> list[CodeChunk]:
         """
-        Chunka codice Python usando tree-sitter.
+        Chunk Python code using tree-sitter.
         
         Args:
-            code: Codice sorgente Python
-            file_path: Path del file (per metadata)
+            code: Python source code
+            file_path: File path (for metadata)
             
         Returns:
-            Lista di CodeChunk estratti
+            List of extracted CodeChunks
         """
         parser = self._get_parser("python")
         source_bytes = code.encode("utf-8")
@@ -377,7 +377,7 @@ class SmartChunker:
             nonlocal import_lines, import_start_line
             
             if node.type == "import_statement" or node.type == "import_from_statement":
-                # Raccogli import
+                # Collect imports
                 if self.include_imports:
                     if not import_lines:
                         import_start_line = node.start_point[0] + 1
@@ -395,18 +395,18 @@ class SmartChunker:
                 return
             
             if node.type == "class_definition":
-                # Estrai la classe come chunk
+                # Extract the class as a chunk
                 chunk = self._node_to_chunk(
                     node, source_bytes, ChunkType.CLASS, file_path
                 )
                 class_name = chunk.name
                 
-                # Se la classe è piccola, tienila intera
+                # If the class is small, keep it whole
                 if chunk.char_count <= self.max_chunk_size:
                     chunks.append(chunk)
                 else:
-                    # Altrimenti estrai i metodi separatamente
-                    # Prima aggiungi header classe (fino al primo metodo)
+                    # Otherwise extract methods separately
+                    # First add class header (up to the first method)
                     class_header = self._extract_class_header(node, source_bytes)
                     if class_header:
                         chunks.append(CodeChunk(
@@ -420,22 +420,22 @@ class SmartChunker:
                             metadata={"is_header": True},
                         ))
                     
-                    # Poi processa i metodi
+                    # Then process the methods
                     for child in node.children:
                         if child.type == "block":
                             for block_child in child.children:
                                 process_node(block_child, class_name)
                 return
             
-            # Processa figli per altri tipi
+            # Process children for other types
             for child in node.children:
                 process_node(child, parent_class)
         
-        # Processa l'albero
+        # Process the tree
         for child in root.children:
             process_node(child)
         
-        # Aggiungi blocco import se raccolto
+        # Add import block if collected
         if import_lines and self.include_imports:
             import_content = "\n".join(import_lines)
             if len(import_content) >= self.min_chunk_size:
@@ -448,13 +448,13 @@ class SmartChunker:
                     file_path=file_path,
                 ))
         
-        # Filtra chunk troppo piccoli (aggrega con precedente se possibile)
+        # Filter chunks that are too small (aggregate with previous if possible)
         chunks = self._aggregate_small_chunks(chunks)
         
         return chunks
     
     def _extract_class_header(self, node, source_bytes: bytes) -> str:
-        """Estrae l'header di una classe (definizione + docstring, senza metodi)."""
+        """Extract the header of a class (definition + docstring, without methods)."""
         header_lines = []
         content = source_bytes[node.start_byte:node.end_byte].decode("utf-8")
         lines = content.split("\n")
@@ -465,14 +465,14 @@ class SmartChunker:
         for line in lines:
             stripped = line.strip()
             
-            # Gestisci docstring multilinea
+            # Handle multiline docstring
             if in_docstring:
                 header_lines.append(line)
                 if docstring_delimiter and docstring_delimiter in stripped:
                     in_docstring = False
                 continue
             
-            # Inizio docstring
+            # Docstring start
             if stripped.startswith('"""') or stripped.startswith("'''"):
                 docstring_delimiter = stripped[:3]
                 header_lines.append(line)
@@ -480,25 +480,25 @@ class SmartChunker:
                     in_docstring = True
                 continue
             
-            # Linea class o decoratori
+            # Class line or decorators
             if stripped.startswith("class ") or stripped.startswith("@"):
                 header_lines.append(line)
                 continue
             
-            # Attributi di classe (senza def)
+            # Class attributes (without def)
             if not stripped.startswith("def ") and not stripped.startswith("async def"):
-                # Potrebbe essere un attributo o linea vuota
+                # Could be an attribute or empty line
                 if stripped == "" or "=" in stripped or stripped.startswith("#"):
                     header_lines.append(line)
                     continue
             
-            # Trovato un metodo, stop
+            # Found a method, stop
             break
         
         return "\n".join(header_lines)
     
     def _aggregate_small_chunks(self, chunks: list[CodeChunk]) -> list[CodeChunk]:
-        """Aggrega chunk troppo piccoli con i precedenti."""
+        """Aggregate chunks that are too small with the previous ones."""
         if not chunks:
             return chunks
         
@@ -508,7 +508,7 @@ class SmartChunker:
         for chunk in chunks:
             if chunk.char_count < self.min_chunk_size:
                 if pending:
-                    # Aggrega con pending
+                    # Aggregate with pending
                     pending = CodeChunk(
                         content=pending.content + "\n\n" + chunk.content,
                         chunk_type=pending.chunk_type,
@@ -524,12 +524,12 @@ class SmartChunker:
                     pending = chunk
             else:
                 if pending:
-                    # Aggiungi pending se abbastanza grande, altrimenti aggrega
+                    # Add pending if large enough, otherwise aggregate
                     if pending.char_count >= self.min_chunk_size:
                         result.append(pending)
                         result.append(chunk)
                     else:
-                        # Aggrega pending con questo chunk
+                        # Aggregate pending with this chunk
                         result.append(CodeChunk(
                             content=pending.content + "\n\n" + chunk.content,
                             chunk_type=chunk.chunk_type,
@@ -545,10 +545,10 @@ class SmartChunker:
                 else:
                     result.append(chunk)
         
-        # Gestisci ultimo pending
+        # Handle last pending
         if pending:
             if result and pending.char_count < self.min_chunk_size:
-                # Aggrega con ultimo
+                # Aggregate with last
                 last = result[-1]
                 result[-1] = CodeChunk(
                     content=last.content + "\n\n" + pending.content,
@@ -568,28 +568,28 @@ class SmartChunker:
     
     def chunk_file(self, file_path: str) -> list[CodeChunk]:
         """
-        Chunka un file sorgente.
+        Chunk a source file.
         
         Args:
-            file_path: Path al file da processare
+            file_path: Path to the file to process
             
         Returns:
-            Lista di CodeChunk estratti
+            List of extracted CodeChunks
             
         Raises:
-            ValueError: Se il linguaggio non è supportato
-            FileNotFoundError: Se il file non esiste
+            ValueError: If the language is not supported
+            FileNotFoundError: If the file doesn't exist
         """
         path = Path(file_path)
         
         if not path.exists():
-            raise FileNotFoundError(f"File non trovato: {file_path}")
+            raise FileNotFoundError(f"File not found: {file_path}")
         
         language = self._detect_language(file_path)
         if language is None:
             raise ValueError(
-                f"Linguaggio non supportato per estensione: {path.suffix}\n"
-                f"Estensioni supportate: {list(self.SUPPORTED_EXTENSIONS.keys())}"
+                f"Unsupported language for extension: {path.suffix}\n"
+                f"Supported extensions: {list(self.SUPPORTED_EXTENSIONS.keys())}"
             )
         
         code = path.read_text(encoding="utf-8")
@@ -597,7 +597,7 @@ class SmartChunker:
         if language == "python":
             return self.chunk_python_code(code, str(path))
         
-        raise ValueError(f"Linguaggio non implementato: {language}")
+        raise ValueError(f"Language not implemented: {language}")
     
     def chunk_directory(
         self,
@@ -606,28 +606,28 @@ class SmartChunker:
         exclude_patterns: Optional[list[str]] = None,
     ) -> list[CodeChunk]:
         """
-        Chunka tutti i file supportati in una directory.
+        Chunk all supported files in a directory.
         
         Args:
-            directory: Directory da processare
-            recursive: Se cercare ricorsivamente
-            exclude_patterns: Pattern da escludere (es. ["test_*", "__pycache__"])
+            directory: Directory to process
+            recursive: Whether to search recursively
+            exclude_patterns: Patterns to exclude (e.g., ["test_*", "__pycache__"])
             
         Returns:
-            Lista di tutti i CodeChunk estratti
+            List of all extracted CodeChunks
         """
         exclude_patterns = exclude_patterns or ["__pycache__", ".git", ".venv", "venv"]
         path = Path(directory)
         
         if not path.is_dir():
-            raise ValueError(f"Non è una directory: {directory}")
+            raise ValueError(f"Not a directory: {directory}")
         
         all_chunks = []
         pattern = "**/*" if recursive else "*"
         
         for ext in self.SUPPORTED_EXTENSIONS:
             for file_path in path.glob(f"{pattern}{ext}"):
-                # Check esclusioni
+                # Check exclusions
                 skip = False
                 for exclude in exclude_patterns:
                     if exclude in str(file_path):
@@ -640,11 +640,11 @@ class SmartChunker:
                 try:
                     chunks = self.chunk_file(str(file_path))
                     all_chunks.extend(chunks)
-                    logger.debug(f"Chunkato {file_path}: {len(chunks)} chunks")
+                    logger.debug(f"Chunked {file_path}: {len(chunks)} chunks")
                 except Exception as e:
-                    logger.warning(f"Errore chunking {file_path}: {e}")
+                    logger.warning(f"Error chunking {file_path}: {e}")
         
-        logger.info(f"Chunkati {len(all_chunks)} chunks da {directory}")
+        logger.info(f"Chunked {len(all_chunks)} chunks from {directory}")
         return all_chunks
 
 
@@ -658,15 +658,15 @@ def chunk_python_file(
     min_chunk_size: int = 100,
 ) -> list[CodeChunk]:
     """
-    Convenience function per chunkare un file Python.
+    Convenience function to chunk a Python file.
     
     Args:
-        file_path: Path al file Python
-        max_chunk_size: Dimensione massima chunk
-        min_chunk_size: Dimensione minima chunk
+        file_path: Path to the Python file
+        max_chunk_size: Maximum chunk size
+        min_chunk_size: Minimum chunk size
         
     Returns:
-        Lista di CodeChunk
+        List of CodeChunks
     """
     chunker = SmartChunker(
         max_chunk_size=max_chunk_size,
@@ -681,15 +681,15 @@ def chunk_python_code(
     min_chunk_size: int = 100,
 ) -> list[CodeChunk]:
     """
-    Convenience function per chunkare codice Python da stringa.
+    Convenience function to chunk Python code from a string.
     
     Args:
-        code: Codice sorgente Python
-        max_chunk_size: Dimensione massima chunk
-        min_chunk_size: Dimensione minima chunk
+        code: Python source code
+        max_chunk_size: Maximum chunk size
+        min_chunk_size: Minimum chunk size
         
     Returns:
-        Lista di CodeChunk
+        List of CodeChunks
     """
     chunker = SmartChunker(
         max_chunk_size=max_chunk_size,
@@ -700,13 +700,13 @@ def chunk_python_code(
 
 def chunks_to_documents(chunks: list[CodeChunk]) -> list[tuple[str, dict]]:
     """
-    Converte CodeChunk in formato compatibile con VectorStore.
+    Convert CodeChunks to format compatible with VectorStore.
     
     Args:
-        chunks: Lista di CodeChunk
+        chunks: List of CodeChunks
         
     Returns:
-        Lista di tuple (text, metadata) per add_documents
+        List of tuples (text, metadata) for add_documents
     """
     return [
         (
@@ -721,4 +721,3 @@ def chunks_to_documents(chunks: list[CodeChunk]) -> list[tuple[str, dict]]:
         )
         for chunk in chunks
     ]
-

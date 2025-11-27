@@ -1,60 +1,60 @@
 # ⚡ Quick Start Guide
 
-Inizia a usare LLM Fine-tuning con Agent Lightning in 5 minuti.
+Get started with LLM Fine-tuning with Agent Lightning in 5 minutes.
 
 ---
 
-## 📋 Prerequisiti
+## 📋 Prerequisites
 
 - **Python 3.10+**
-- **CUDA GPU** (consigliato: 16GB+ VRAM per modelli 7B)
+- **CUDA GPU** (recommended: 16GB+ VRAM for 7B models)
 - **Git**
 
 ---
 
-## 🚀 Installazione
+## 🚀 Installation
 
-### 1. Clona il Repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/tuousername/llm-finetuning-agent-lightning.git
-cd llm-finetuning-agent-lightning
+git clone https://github.com/SandroHub013/ALCHEMY.git
+cd ALCHEMY
 ```
 
-### 2. Crea un Ambiente Virtuale
+### 2. Create a Virtual Environment
 
 ```bash
-# Con venv
+# With venv
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 .\venv\Scripts\activate   # Windows
 
-# Oppure con conda
+# Or with conda
 conda create -n llm-finetune python=3.10
 conda activate llm-finetune
 ```
 
-### 3. Installa le Dipendenze
+### 3. Install Dependencies
 
 ```bash
-# Installazione completa (include Agent Lightning)
+# Full installation (includes Agent Lightning)
 pip install -e .
 
-# Con dipendenze di sviluppo
+# With development dependencies
 pip install -e ".[dev]"
 
-# NOTA WINDOWS: se bitsandbytes dà errore
+# NOTE WINDOWS: if bitsandbytes gives an error
 pip uninstall bitsandbytes
 pip install bitsandbytes-windows
 ```
 
-### 4. Verifica Installazione
+### 4. Verify Installation
 
 ```bash
 python scripts/check_installation.py
 ```
 
-### 5. Verifica CUDA
+### 5. Verify CUDA
 
 ```bash
 python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, Device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"CPU\"}')"
@@ -62,21 +62,21 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, Device: {tor
 
 ---
 
-## 🎯 Il Tuo Primo Training
+## 🎯 Your First Training
 
-### Opzione 1: Training Classico (SFT)
+### Option 1: Classic Training (SFT)
 
 ```bash
 python main.py --config config/config.yaml
 ```
 
-### Opzione 2: Training con Reinforcement Learning
+### Option 2: Training with Reinforcement Learning
 
 ```bash
 python main_agent_lightning.py --config config/config.yaml
 ```
 
-### Opzione 3: Dry Run (Verifica Configurazione)
+### Option 3: Dry Run (Verify Configuration)
 
 ```bash
 python main_agent_lightning.py --config config/config.yaml --dry-run
@@ -84,11 +84,11 @@ python main_agent_lightning.py --config config/config.yaml --dry-run
 
 ---
 
-## 📝 Configurazione Rapida
+## 📝 Quick Configuration
 
-### Configurazione Minima
+### Minimal Configuration
 
-Crea `config/my_config.yaml`:
+Create `config/my_config.yaml`:
 
 ```yaml
 model:
@@ -118,7 +118,7 @@ agent_lightning:
   enabled: false
 ```
 
-### Esegui con la Tua Config
+### Run with Your Config
 
 ```bash
 python main.py --config config/my_config.yaml
@@ -126,31 +126,31 @@ python main.py --config config/my_config.yaml
 
 ---
 
-## 🧠 Usa il Sistema RAG
+## 🧠 Using the RAG System
 
-### Ingestione Documenti
+### Document Ingestion
 
 ```python
 from src.memory import VectorStore, create_vector_store
 
-# Crea vector store
+# Create vector store
 store = create_vector_store(persist_path="./my_kb")
 
-# Aggiungi documenti
+# Add documents
 store.add_documents([
-    "Python è un linguaggio di programmazione versatile.",
-    "PyTorch è un framework per deep learning.",
-    "I Transformer sono alla base dei moderni LLM.",
+    "Python is a versatile programming language.",
+    "PyTorch is a deep learning framework.",
+    "Transformers are the foundation of modern LLMs.",
 ])
 
-print(f"Documenti nel database: {store.count()}")
+print(f"Documents in database: {store.count()}")
 ```
 
 ### Query
 
 ```python
-# Cerca
-results = store.query("Cos'è Python?", n_results=3)
+# Search
+results = store.query("What is Python?", n_results=3)
 
 for doc, score, meta in results:
     print(f"[{score:.3f}] {doc[:100]}...")
@@ -158,16 +158,16 @@ for doc, score, meta in results:
 
 ---
 
-## 📋 Usa le SOP
+## 📋 Using SOPs
 
 ```python
 from src.memory import SOPManager, get_system_prompt_with_sop
 
-# Carica SOP
+# Load SOPs
 manager = SOPManager(sop_directory="./data/sops")
 
-# Genera prompt con procedura appropriata
-query = "Aiutami a debuggare questo codice"
+# Generate prompt with appropriate procedure
+query = "Help me debug this code"
 system_prompt = get_system_prompt_with_sop(query, manager)
 
 print(system_prompt)
@@ -175,7 +175,7 @@ print(system_prompt)
 
 ---
 
-## 🔍 Usa lo Smart Chunker
+## 🔍 Using Smart Chunker
 
 ```python
 from src.memory import SmartChunker
@@ -185,7 +185,7 @@ chunker = SmartChunker(
     min_chunk_size=100,
 )
 
-# Chunka un file
+# Chunk a file
 chunks = chunker.chunk_file("src/memory/vector_store.py")
 
 for chunk in chunks:
@@ -194,7 +194,7 @@ for chunk in chunks:
 
 ---
 
-## 📊 Monitoraggio
+## 📊 Monitoring
 
 ### TensorBoard
 
@@ -202,7 +202,7 @@ for chunk in chunks:
 tensorboard --logdir logs/llm_finetuning
 ```
 
-Poi apri http://localhost:6006
+Then open http://localhost:6006
 
 ---
 
@@ -211,7 +211,7 @@ Poi apri http://localhost:6006
 ### "CUDA out of memory"
 
 ```yaml
-# Riduci batch size
+# Reduce batch size
 training:
   per_device_train_batch_size: 1
   gradient_accumulation_steps: 16
@@ -223,7 +223,7 @@ training:
 # Linux
 pip install bitsandbytes
 
-# Windows (potrebbe richiedere build da source)
+# Windows (may require building from source)
 pip install bitsandbytes-windows
 ```
 
@@ -232,20 +232,19 @@ pip install bitsandbytes-windows
 ```bash
 pip install agentlightning
 
-# Oppure usa training classico
+# Or use classic training
 python main.py --config config/config.yaml
 ```
 
 ---
 
-## 📚 Prossimi Passi
+## 📚 Next Steps
 
-1. 📖 Leggi [README.md](README.md) per una panoramica completa
-2. 🏗️ Esplora [ARCHITECTURE.md](ARCHITECTURE.md) per capire il sistema
-3. ✨ Consulta [FEATURES.md](FEATURES.md) per tutte le funzionalità
-4. 🎬 Vedi [SHOWCASE.md](SHOWCASE.md) per esempi reali
+1. 📖 Read [README.md](README.md) for a complete overview
+2. 🏗️ Explore [ARCHITECTURE.md](ARCHITECTURE.md) to understand the system
+3. ✨ Consult [FEATURES.md](FEATURES.md) for all features
+4. 🎬 See [SHOWCASE.md](SHOWCASE.md) for real examples
 
 ---
 
-*Hai problemi? Apri una [Issue](https://github.com/tuousername/llm-finetuning-agent-lightning/issues)!*
-
+*Having issues? Open an [Issue](https://github.com/SandroHub013/ALCHEMY/issues)!*

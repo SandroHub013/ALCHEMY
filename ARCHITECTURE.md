@@ -1,15 +1,15 @@
-# 🏗️ Architettura del Sistema
+# 🏗️ System Architecture
 
-Questo documento descrive in dettaglio l'architettura tecnica del sistema di fine-tuning LLM.
+This document describes in detail the technical architecture of the LLM fine-tuning system.
 
-## 📋 Indice
+## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Layer 1: Data Ingestion](#layer-1-data-ingestion)
 - [Layer 2: Model Loading](#layer-2-model-loading)
 - [Layer 3: Training Pipeline](#layer-3-training-pipeline)
 - [Layer 4: Memory System](#layer-4-memory-system)
-- [Flow di Esecuzione](#flow-di-esecuzione)
+- [Execution Flow](#execution-flow)
 
 ---
 
@@ -48,7 +48,7 @@ Questo documento descrive in dettaglio l'architettura tecnica del sistema di fin
 
 ### Multi-Source DataModule
 
-Il sistema supporta il caricamento di dataset multipli con pesi diversi per evitare il catastrophic forgetting.
+The system supports loading multiple datasets with different weights to avoid catastrophic forgetting.
 
 ```
                     MULTI-SOURCE DATA PIPELINE
@@ -90,23 +90,23 @@ Il sistema supporta il caricamento di dataset multipli con pesi diversi per evit
                     └─────────────────┘
 ```
 
-### Formattazione ChatML
+### ChatML Formatting
 
 ```python
-# Input grezzo da dataset
+# Raw input from dataset
 {
-    "instruction": "Scrivi una funzione per calcolare il fattoriale",
+    "instruction": "Write a function to calculate factorial",
     "response": "def factorial(n): ..."
 }
 
-# Output formattato
+# Formatted output
 <|im_start|>system
 You are a helpful AI assistant specialized in coding.<|im_end|>
 <|im_start|>user
-Scrivi una funzione per calcolare il fattoriale<|im_end|>
+Write a function to calculate factorial<|im_end|>
 <|im_start|>assistant
 def factorial(n):
-    """Calcola il fattoriale di n."""
+    """Calculate the factorial of n."""
     if n <= 1:
         return 1
     return n * factorial(n - 1)<|im_end|>
@@ -150,8 +150,8 @@ def factorial(n):
                     │ prepare_model_for_    │
                     │    kbit_training()    │
                     │                       │
-                    │  • Congela base model │
-                    │  • Prepara gradient   │
+                    │  • Freeze base model  │
+                    │  • Prepare gradient   │
                     └───────────┬───────────┘
                                 │
                                 ▼
@@ -176,9 +176,9 @@ def factorial(n):
                     └───────────────────────┘
 ```
 
-### Mapping Target Modules per Architettura
+### Target Modules Mapping by Architecture
 
-| Architettura | Attenzione | MLP |
+| Architecture | Attention | MLP |
 |-------------|------------|-----|
 | Mistral/Llama | q_proj, k_proj, v_proj, o_proj | gate_proj, up_proj, down_proj |
 | GPT-NeoX/Pythia | query_key_value, dense | dense_h_to_4h, dense_4h_to_h |
@@ -201,11 +201,11 @@ def factorial(n):
     │   batch = {                                             │
     │       "input_ids": [B, seq_len],                        │
     │       "attention_mask": [B, seq_len],                   │
-    │       "labels": [B, seq_len]  # -100 per token ignorati │
+    │       "labels": [B, seq_len]  # -100 for ignored tokens │
     │   }                                                     │
     │                                                         │
     │   outputs = model(**batch)                              │
-    │   loss = outputs.loss  # CrossEntropyLoss automatico    │
+    │   loss = outputs.loss  # Automatic CrossEntropyLoss     │
     │                                                         │
     │   self.log("train/loss", loss)                          │
     │   self.log("train/perplexity", exp(loss))               │
@@ -240,7 +240,7 @@ def factorial(n):
                          ─────────────
                          
     ┌─────────────────────────────────────────────────────────┐
-    │                    Per ogni prompt:                      │
+    │                    For each prompt:                      │
     └───────────────────────────┬─────────────────────────────┘
                                 │
                                 ▼
@@ -294,13 +294,13 @@ def factorial(n):
 
 ## Layer 4: Memory System
 
-### RAG Pipeline con Reranking
+### RAG Pipeline with Reranking
 
 ```
                     RAG WITH RERANKING PIPELINE
                     ───────────────────────────
 
-    Query: "Come implemento il pattern Observer?"
+    Query: "How do I implement the Observer pattern?"
                                 │
                                 ▼
                     ┌───────────────────────┐
@@ -324,7 +324,7 @@ def factorial(n):
                     │   Cross-Encoder       │
                     │     Reranking         │
                     │                       │
-                    │   Per ogni (q, doc):  │
+                    │   For each (q, doc):  │
                     │   score = CE(q, doc)  │
                     │                       │
                     │   Top-N = 3           │
@@ -340,7 +340,7 @@ def factorial(n):
                     └───────────────────────┘
 ```
 
-### Smart Chunking con tree-sitter
+### Smart Chunking with tree-sitter
 
 ```
                     SMART CHUNKING PIPELINE
@@ -389,9 +389,9 @@ def factorial(n):
 
 ---
 
-## Flow di Esecuzione
+## Execution Flow
 
-### Training Completo
+### Complete Training
 
 ```
     main_agent_lightning.py
@@ -454,15 +454,15 @@ def factorial(n):
 
 ---
 
-## 🔧 Estensibilità
+## 🔧 Extensibility
 
-### Aggiungere un Nuovo Algoritmo
+### Adding a New Algorithm
 
 ```python
 # src/agent/agent_lightning_trainer.py
 
 class CustomAlgorithm:
-    """Implementa il tuo algoritmo di training."""
+    """Implement your own training algorithm."""
     
     def __init__(self, model, tokenizer, **config):
         self.model = model
@@ -473,7 +473,7 @@ class CustomAlgorithm:
         # 1. Forward pass
         outputs = self.model(**batch)
         
-        # 2. Calcola loss personalizzata
+        # 2. Calculate custom loss
         loss = self.custom_loss(outputs)
         
         # 3. Backward
@@ -482,7 +482,7 @@ class CustomAlgorithm:
         return {"loss": loss.item()}
 ```
 
-### Aggiungere una Nuova Reward Function
+### Adding a New Reward Function
 
 ```python
 # src/agent/agent_lightning_trainer.py
@@ -490,18 +490,18 @@ class CustomAlgorithm:
 @staticmethod
 def my_custom_reward(prompt: str, generation: str) -> float:
     """
-    Reward function personalizzata.
+    Custom reward function.
     
     Returns:
-        float tra -1.0 e 1.0
+        float between -1.0 and 1.0
     """
     reward = 0.0
     
-    # Implementa la tua logica
+    # Implement your logic
     if "keyword" in generation:
         reward += 0.3
     
-    # Penalizza comportamenti indesiderati
+    # Penalize unwanted behaviors
     if len(generation) < 10:
         reward -= 0.5
     
@@ -510,5 +510,4 @@ def my_custom_reward(prompt: str, generation: str) -> float:
 
 ---
 
-*Documento generato per il portfolio tecnico. Per contribuire, vedi CONTRIBUTING.md*
-
+*Document generated for the technical portfolio. To contribute, see CONTRIBUTING.md*

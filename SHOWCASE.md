@@ -1,49 +1,49 @@
 # 🎬 Showcase
 
-Questa pagina mostra il progetto in azione con esempi reali e risultati.
+This page shows the project in action with real examples and results.
 
 ---
 
-## 🚀 Training in Azione
+## 🚀 Training in Action
 
-### Output del Training
+### Training Output
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
-║     ⚡ AGENT LIGHTNING - Training RL per Agenti AI ⚡        ║
+║     ⚡ AGENT LIGHTNING - RL Training for AI Agents ⚡        ║
 ║                                                               ║
 ║     Microsoft Open Source                                     ║
 ║     https://github.com/microsoft/agent-lightning              ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
 
-2024-11-26 14:32:15 - INFO - ✅ Agent Lightning disponibile
-2024-11-26 14:32:15 - INFO - Caricamento configurazione da config/config.yaml
+2024-11-26 14:32:15 - INFO - ✅ Agent Lightning available
+2024-11-26 14:32:15 - INFO - Loading configuration from config/config.yaml
 2024-11-26 14:32:15 - INFO - ============================================================
-2024-11-26 14:32:15 - INFO - CONFIGURAZIONE AGENT LIGHTNING
+2024-11-26 14:32:15 - INFO - AGENT LIGHTNING CONFIGURATION
 2024-11-26 14:32:15 - INFO - ============================================================
-2024-11-26 14:32:15 - INFO -   Algoritmo: GRPO
+2024-11-26 14:32:15 - INFO -   Algorithm: GRPO
 2024-11-26 14:32:15 - INFO -   Reward Function: combined
-2024-11-26 14:32:15 - INFO -   Tracciamento: True
+2024-11-26 14:32:15 - INFO -   Tracing: True
 2024-11-26 14:32:15 - INFO -   GRPO Config:
-2024-11-26 14:32:15 - INFO -     - Generazioni per prompt: 4
+2024-11-26 14:32:15 - INFO -     - Generations per prompt: 4
 2024-11-26 14:32:15 - INFO -     - Temperature: 0.7
 2024-11-26 14:32:15 - INFO -     - KL Coef: 0.1
 2024-11-26 14:32:15 - INFO - ============================================================
-2024-11-26 14:32:18 - INFO - 🔄 Caricamento modello e tokenizer...
-2024-11-26 14:32:18 - INFO - Caricamento tokenizer da mistralai/Mistral-7B-v0.3
-2024-11-26 14:32:19 - INFO - Tokenizer caricato. Vocab size: 32000
-2024-11-26 14:32:19 - INFO - Caricamento modello mistralai/Mistral-7B-v0.3 con QLoRA
-2024-11-26 14:32:19 - INFO - Moduli target LoRA auto-rilevati: ['q_proj', 'k_proj', ...]
+2024-11-26 14:32:18 - INFO - 🔄 Loading model and tokenizer...
+2024-11-26 14:32:18 - INFO - Loading tokenizer from mistralai/Mistral-7B-v0.3
+2024-11-26 14:32:19 - INFO - Tokenizer loaded. Vocab size: 32000
+2024-11-26 14:32:19 - INFO - Loading model mistralai/Mistral-7B-v0.3 with QLoRA
+2024-11-26 14:32:19 - INFO - LoRA target modules auto-detected: ['q_proj', 'k_proj', ...]
 
 Loading checkpoint shards: 100%|███████████████████| 3/3 [00:15<00:00,  5.12s/it]
 
 trainable params: 13,631,488 || all params: 7,241,748,480 || trainable%: 0.1882
 
-2024-11-26 14:32:45 - INFO - ✅ Modello caricato: mistralai/Mistral-7B-v0.3
-2024-11-26 14:32:45 - INFO - 🔄 Preparazione dataset...
-2024-11-26 14:32:45 - INFO - 📊 Multi-Source Training abilitato:
+2024-11-26 14:32:45 - INFO - ✅ Model loaded: mistralai/Mistral-7B-v0.3
+2024-11-26 14:32:45 - INFO - 🔄 Preparing dataset...
+2024-11-26 14:32:45 - INFO - 📊 Multi-Source Training enabled:
 2024-11-26 14:32:45 - INFO -    - glaiveai/glaive-function-calling-v2: 30%
 2024-11-26 14:32:45 - INFO -    - nickrosh/Evol-Instruct-Code-80k-v1: 30%
 2024-11-26 14:32:45 - INFO -    - teknium/OpenHermes-2.5: 30%
@@ -51,9 +51,9 @@ trainable params: 13,631,488 || all params: 7,241,748,480 || trainable%: 0.1882
 
 Downloading dataset: 100%|████████████████████████| 4/4 [00:45<00:00, 11.25s/it]
 
-2024-11-26 14:33:30 - INFO - ✅ Dataset preparato: 150000 training, 15000 validation
+2024-11-26 14:33:30 - INFO - ✅ Dataset prepared: 150000 training, 15000 validation
 2024-11-26 14:33:30 - INFO - ============================================================
-2024-11-26 14:33:30 - INFO - 🚀 AVVIO TRAINING CON AGENT LIGHTNING (GRPO)
+2024-11-26 14:33:30 - INFO - 🚀 STARTING TRAINING WITH AGENT LIGHTNING (GRPO)
 2024-11-26 14:33:30 - INFO - ============================================================
 
 Epoch 1/3: 100%|██████████████████████████████| 9375/9375 [2:15:32<00:00, 1.15it/s]
@@ -72,11 +72,11 @@ Epoch 3/3: 100%|█████████████████████�
   train/kl_div: 0.0523
 
 2024-11-26 21:15:45 - INFO - ============================================================
-2024-11-26 21:15:45 - INFO - ✅ TRAINING COMPLETATO!
+2024-11-26 21:15:45 - INFO - ✅ TRAINING COMPLETED!
 2024-11-26 21:15:45 - INFO - ============================================================
-2024-11-26 21:15:45 - INFO - Checkpoint salvati in: ./checkpoints
+2024-11-26 21:15:45 - INFO - Checkpoints saved to: ./checkpoints
 
-2024-11-26 21:15:45 - INFO - 🧪 Test generazione con modello allenato:
+2024-11-26 21:15:45 - INFO - 🧪 Test generation with trained model:
 
 📝 Prompt: Write a Python function to calculate fibonacci numbers.
 🤖 Response: 
@@ -122,27 +122,27 @@ Based on my capabilities, I can help you with:
 3. **file_operations** - Read and write files
 ⭐ Reward: 0.78
 
-📝 Prompt: Spiega cos'è il machine learning in italiano.
-🤖 Response: Il **Machine Learning** (apprendimento automatico) è un ramo 
-dell'intelligenza artificiale che permette ai computer di imparare 
-dai dati senza essere esplicitamente programmati.
+📝 Prompt: Explain what machine learning is.
+🤖 Response: **Machine Learning** is a branch of artificial intelligence 
+that enables computers to learn from data without being explicitly 
+programmed.
 
-Come funziona? Immagina di insegnare a un bambino a riconoscere i gatti...
+How does it work? Imagine teaching a child to recognize cats...
 ⭐ Reward: 0.82
 
 ============================================================
-🎉 Pipeline Agent Lightning completata con successo!
+🎉 Agent Lightning pipeline completed successfully!
 ============================================================
 ```
 
 ---
 
-## 📊 Metriche di Training
+## 📊 Training Metrics
 
-### Curva di Reward
+### Reward Curve
 
 ```
-Reward medio durante il training
+Average reward during training
 ────────────────────────────────────────────────────
 
   1.0 ┤                                    ╭───────
@@ -156,26 +156,26 @@ Reward medio durante il training
   0.2 ┤│                                           
       ││                                           
   0.0 ┼─────────┬─────────┬─────────┬─────────┬───
-        Ep.1      Ep.2      Ep.3      Fine       
+        Ep.1      Ep.2      Ep.3      End       
 ```
 
-### Loss per Task Type
+### Loss by Task Type
 
 ```
-Loss per tipo di task
+Loss by task type
 ──────────────────────────────────────────────
 
   Coding:           ████████████░░░░░░░░ 0.58
   Function Calling: ██████████░░░░░░░░░░ 0.52
   Chat:             █████████████░░░░░░░ 0.65
-  Italiano:         ████████████████░░░░ 0.78
+  Italian:          ████████████████░░░░ 0.78
 ```
 
 ---
 
-## 🧠 RAG in Azione
+## 🧠 RAG in Action
 
-### Ingestione Knowledge Base
+### Knowledge Base Ingestion
 
 ```bash
 $ python scripts/ingest_knowledge.py --source_dir ./docs
@@ -189,19 +189,19 @@ Processing: DATASETS.md
 Processing: RAG_E_SOP.md
   └─ Chunks created: 23
   
-Processing: GUIDA_DEEPSEEK_R1.md
+Processing: GUIDE_DEEPSEEK_R1.md
   └─ Chunks created: 18
 
 ✅ Ingested 56 chunks into knowledge_base
 📊 Total documents in collection: 56
 ```
 
-### Smart Chunking di Codice
+### Smart Chunking of Code
 
 ```bash
 $ python -c "from src.memory import SmartChunker; c = SmartChunker(); print(c.chunk_file('src/memory/vector_store.py'))"
 
-Chunks estratti da vector_store.py:
+Chunks extracted from vector_store.py:
 ──────────────────────────────────────────────
 
 [IMPORT] imports (lines 1-37)
@@ -226,54 +226,54 @@ Chunks estratti da vector_store.py:
 Total: 8 chunks
 ```
 
-### Query con Reranking
+### Query with Reranking
 
 ```python
 >>> from src.memory import create_vector_store
 >>> store = create_vector_store(use_reranker=True)
->>> store.add_documents([...])  # Aggiungi docs
+>>> store.add_documents([...])  # Add docs
 
->>> results = store.query("Come funziona il training RL?", n_results=3)
+>>> results = store.query("How does RL training work?", n_results=3)
 
-# Fase 1: Bi-Encoder (recupera 20 candidati)
-# Fase 2: Cross-Encoder reranking (top 3)
+# Phase 1: Bi-Encoder (retrieve 20 candidates)
+# Phase 2: Cross-Encoder reranking (top 3)
 
 >>> for doc, score, meta in results:
 ...     print(f"[{score:.3f}] {meta['source']}: {doc[:100]}...")
 
 [0.923] agent_lightning_trainer.py: GRPO (Group Relative Policy Optimization) 
-        è l'algoritmo RL usato per...
+        is the RL algorithm used for...
         
-[0.871] README.md: Il sistema include reward functions per valutare 
-        automaticamente le generazioni...
+[0.871] README.md: The system includes reward functions to automatically 
+        evaluate generations...
         
-[0.834] RAG_E_SOP.md: Agent Lightning permette di allenare agenti con 
+[0.834] RAG_E_SOP.md: Agent Lightning enables training agents with 
         reinforcement learning...
 ```
 
 ---
 
-## 🔧 SOP in Azione
+## 🔧 SOP in Action
 
-### Matching Automatico
+### Automatic Matching
 
 ```python
 >>> from src.memory import SOPManager, get_system_prompt_with_sop
 
 >>> manager = SOPManager(sop_directory="./data/sops")
->>> print(f"SOP caricate: {len(manager.sops)}")
-SOP caricate: 7
+>>> print(f"SOPs loaded: {len(manager.sops)}")
+SOPs loaded: 7
 
->>> query = "Aiutami a debuggare questo codice che dà errore"
+>>> query = "Help me debug this code that gives an error"
 >>> relevant = manager.find_relevant_sop(query)
->>> print(f"SOP selezionata: {relevant[0].name}")
-SOP selezionata: debug_python_code
+>>> print(f"Selected SOP: {relevant[0].name}")
+Selected SOP: debug_python_code
 
 >>> system_prompt = get_system_prompt_with_sop(query, manager)
 >>> print(system_prompt)
 ```
 
-### Output System Prompt con SOP
+### System Prompt Output with SOP
 
 ```
 You are an AI assistant that follows Standard Operating Procedures (SOPs) 
@@ -287,20 +287,20 @@ When you identify that a task matches a known procedure:
 5. Provide a summary at the end
 
 ---
-**PROCEDURA DA SEGUIRE:**
+**PROCEDURE TO FOLLOW:**
 
-## Procedura: debug_python_code
-**Descrizione**: Procedura per identificare e risolvere bug nel codice Python
-**Categoria**: coding
+## Procedure: debug_python_code
+**Description**: Procedure for identifying and fixing bugs in Python code
+**Category**: coding
 
 ### Steps:
-1. Leggi attentamente il codice e l'errore riportato
-2. Identifica il tipo di errore (sintassi, logica, runtime)
-3. Localizza la riga o la funzione problematica
-4. Proponi una soluzione con spiegazione
-5. Suggerisci test per verificare il fix
+1. Carefully read the code and the reported error
+2. Identify the error type (syntax, logic, runtime)
+3. Locate the problematic line or function
+4. Propose a solution with explanation
+5. Suggest tests to verify the fix
 
-Segui questa procedura passo-passo. Indica quale step stai eseguendo.
+Follow this procedure step-by-step. Indicate which step you're executing.
 ---
 
 If no procedure is applicable, respond naturally and helpfully.
@@ -308,12 +308,12 @@ If no procedure is applicable, respond naturally and helpfully.
 
 ---
 
-## 💻 Configurazione YAML
+## 💻 YAML Configuration
 
-### Esempio Completo
+### Complete Example
 
 ```yaml
-# config/config.yaml - Configurazione per training generalista
+# config/config.yaml - Configuration for generalist training
 
 model:
   name_or_path: "mistralai/Mistral-7B-v0.3"
@@ -365,12 +365,12 @@ agent_lightning:
 
 ---
 
-## 📈 Benchmark
+## 📈 Benchmarks
 
 ### Memory Usage
 
-| Modello | Configurazione | VRAM Peak | Batch Size |
-|---------|---------------|-----------|------------|
+| Model | Configuration | VRAM Peak | Batch Size |
+|-------|--------------|-----------|------------|
 | Mistral 7B | QLoRA 4-bit | 6.2 GB | 2 |
 | Mistral 7B | QLoRA 4-bit + GC | 5.1 GB | 2 |
 | Llama 2 7B | QLoRA 4-bit | 6.4 GB | 2 |
@@ -378,15 +378,15 @@ agent_lightning:
 
 ### Training Speed (RTX 4090)
 
-| Algoritmo | Throughput | Tempo/1000 steps |
-|-----------|------------|------------------|
+| Algorithm | Throughput | Time/1000 steps |
+|-----------|------------|-----------------|
 | SFT | 1.8 it/s | ~9 min |
 | GRPO (4 gen) | 0.45 it/s | ~37 min |
 | GRPO (2 gen) | 0.9 it/s | ~18 min |
 
 ---
 
-## 🎯 Esempi di Generazione
+## 🎯 Generation Examples
 
 ### Coding Task
 
@@ -396,7 +396,7 @@ Write a Python class for a thread-safe counter with increment, decrement,
 and get_value methods.
 ```
 
-**Output (dopo training):**
+**Output (after training):**
 ```python
 from threading import Lock
 from typing import Optional
@@ -468,5 +468,4 @@ class ThreadSafeCounter:
 
 ---
 
-*Questi esempi sono tratti da training reali effettuati durante lo sviluppo del progetto.*
-
+*These examples are from real training runs during project development.*

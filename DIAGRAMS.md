@@ -1,12 +1,12 @@
-# Diagrammi Architetturali
+# Architectural Diagrams
 
-Visualizzazioni Mermaid dell'architettura del sistema.
+Mermaid visualizations of the system architecture.
 
-> **Nota:** GitHub renderizza automaticamente i diagrammi Mermaid. Per visualizzarli localmente, usa un editor che supporta Mermaid (VS Code con estensione, Obsidian, etc.)
+> **Note:** GitHub automatically renders Mermaid diagrams. To view them locally, use an editor that supports Mermaid (VS Code with extension, Obsidian, etc.)
 
 ---
 
-## Architettura Generale del Sistema
+## General System Architecture
 
 ```mermaid
 flowchart TB
@@ -16,7 +16,7 @@ flowchart TB
         DOCS["Documents<br/>Knowledge Base"]
     end
 
-    subgraph BRAIN["BRAIN Sistema Centrale"]
+    subgraph BRAIN["BRAIN Central System"]
         subgraph LOADER["Model Loader"]
             HF["HuggingFace<br/>Model"]
             QUANT["QLoRA<br/>4-bit Quantization"]
@@ -72,17 +72,17 @@ flowchart TB
 
 ---
 
-## Workflow di Training Completo
+## Complete Training Workflow
 
 ```mermaid
 flowchart LR
-    subgraph INIT["1. Inizializzazione"]
+    subgraph INIT["1. Initialization"]
         A1["Load Config"] --> A2["Load Model"]
         A2 --> A3["Apply QLoRA"]
         A3 --> A4["Apply LoRA"]
     end
 
-    subgraph DATA["2. Preparazione Dati"]
+    subgraph DATA["2. Data Preparation"]
         B1["Load Datasets"] --> B2["Multi-Source<br/>Mixing"]
         B2 --> B3["Format<br/>ChatML"]
         B3 --> B4["Tokenize"]
@@ -169,12 +169,12 @@ flowchart TD
 
 ---
 
-## Sistema di Memoria (RAG + SOP)
+## Memory System (RAG + SOP)
 
 ```mermaid
 flowchart TB
     subgraph USER["User Query"]
-        Q["Come debuggo questo codice"]
+        Q["How do I debug this code"]
     end
 
     subgraph ROUTER["Query Router"]
@@ -284,11 +284,11 @@ flowchart LR
 
 ---
 
-## RAG con Reranking (Two-Phase Retrieval)
+## RAG with Reranking (Two-Phase Retrieval)
 
 ```mermaid
 flowchart TD
-    Q["Query: Come funziona GRPO"]
+    Q["Query: How does GRPO work?"]
     
     subgraph PHASE1["Phase 1: Recall (Bi-Encoder)"]
         EMB["Embed Query<br/>all-MiniLM-L6-v2"]
@@ -309,8 +309,8 @@ flowchart TD
     
     subgraph RESULTS["Final Results"]
         R1["[0.923] agent_lightning_trainer.py<br/>GRPO algorithm RL..."]
-        R2["[0.871] README.md<br/>Il sistema include reward..."]
-        R3["[0.834] RAG_E_SOP.md<br/>Agent Lightning permette..."]
+        R2["[0.871] README.md<br/>The system includes reward..."]
+        R3["[0.834] RAG_E_SOP.md<br/>Agent Lightning enables..."]
     end
     
     Q --> PHASE1
@@ -710,4 +710,4 @@ flowchart TB
 
 ---
 
-*Questi diagrammi sono renderizzati automaticamente su GitHub. Per modificarli, usa la sintassi [Mermaid](https://mermaid.js.org/).*
+*These diagrams are automatically rendered on GitHub. To edit them, use [Mermaid](https://mermaid.js.org/) syntax.*
