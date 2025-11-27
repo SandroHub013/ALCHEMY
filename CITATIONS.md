@@ -16,12 +16,7 @@ The 4-bit quantization technique that makes fine-tuning possible on consumer GPU
   author    = {Dettmers, Tim and Pagnoni, Artidoro and Holtzman, Ari and Zettlemoyer, Luke},
   journal   = {arXiv preprint arXiv:2305.14314},
   year      = {2023},
-  url       = {https://arxiv.org/abs/2305.14314},
-  abstract  = {We present QLoRA, an efficient finetuning approach that reduces memory 
-               usage enough to finetune a 65B parameter model on a single 48GB GPU 
-               while preserving full 16-bit finetuning task performance. QLoRA 
-               backpropagates gradients through a frozen, 4-bit quantized pretrained 
-               language model into Low Rank Adapters (LoRA).}
+  url       = {https://arxiv.org/abs/2305.14314}
 }
 ```
 
@@ -41,11 +36,7 @@ The low-rank adaptation technique that reduces trainable parameters by 99.9%.
                Wang, Lu and Chen, Weizhu},
   journal   = {arXiv preprint arXiv:2106.09685},
   year      = {2021},
-  url       = {https://arxiv.org/abs/2106.09685},
-  abstract  = {We propose Low-Rank Adaptation, or LoRA, which freezes the pre-trained 
-               model weights and injects trainable rank decomposition matrices into 
-               each layer of the Transformer architecture, greatly reducing the number 
-               of trainable parameters for downstream tasks.}
+  url       = {https://arxiv.org/abs/2106.09685}
 }
 ```
 
@@ -55,7 +46,7 @@ The low-rank adaptation technique that reduces trainable parameters by 99.9%.
 
 ### GRPO: Group Relative Policy Optimization
 
-The Reinforcement Learning algorithm used by Agent Lightning for agent training.
+The Reinforcement Learning algorithm used for agent training.
 
 ```bibtex
 @article{shao2024deepseekmath,
@@ -65,12 +56,7 @@ The Reinforcement Learning algorithm used by Agent Lightning for agent training.
                Song, Junxiao and Zhang, Mingchuan and Li, Y. K. and Wu, Y. and Guo, Daya},
   journal   = {arXiv preprint arXiv:2402.03300},
   year      = {2024},
-  url       = {https://arxiv.org/abs/2402.03300},
-  abstract  = {We introduce DeepSeekMath 7B, which achieves an impressive score of 
-               51.7% on the competition-level MATH benchmark without relying on 
-               external toolkits and voting techniques. In this paper, we also 
-               introduce Group Relative Policy Optimization (GRPO), a variant of 
-               Proximal Policy Optimization (PPO).}
+  url       = {https://arxiv.org/abs/2402.03300}
 }
 ```
 
@@ -78,25 +64,40 @@ The Reinforcement Learning algorithm used by Agent Lightning for agent training.
 
 ---
 
-### Sentence-BERT: Sentence Embeddings
+### LUFFY: Learning to Reason under Off-Policy Guidance
 
-Semantic embeddings for search in the RAG system.
+Off-policy learning for improving reasoning capabilities.
 
 ```bibtex
-@inproceedings{reimers2019sentence,
-  title     = {Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks},
-  author    = {Reimers, Nils and Gurevych, Iryna},
-  booktitle = {Proceedings of the 2019 Conference on Empirical Methods 
-               in Natural Language Processing and the 9th International 
-               Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
-  pages     = {3982--3992},
-  year      = {2019},
-  publisher = {Association for Computational Linguistics},
-  url       = {https://arxiv.org/abs/1908.10084}
+@article{yan2025luffy,
+  title     = {LUFFY: Learning to Reason under Off-Policy Guidance},
+  author    = {Yan, Elliott and others},
+  journal   = {NeurIPS 2025},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2504.14945}
 }
 ```
 
-**Contribution to project:** Embeddings for semantic similarity, bi-encoder models for retrieval.
+**Contribution to project:** Off-policy reasoning traces, ExGRPO self-experience learning.
+
+---
+
+### DeepSeek-R1: Reinforcement Learning for Reasoning
+
+RL techniques for training reasoning models.
+
+```bibtex
+@article{deepseek2025r1,
+  title     = {DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via 
+               Reinforcement Learning},
+  author    = {{DeepSeek-AI}},
+  journal   = {arXiv preprint arXiv:2501.12948},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2501.12948}
+}
+```
+
+**Contribution to project:** Reasoning trace format, GRPO for reasoning tasks.
 
 ---
 
@@ -109,11 +110,8 @@ Inspiration for the reranking system with CrossEncoder.
   title     = {ColBERT: Efficient and Effective Passage Search via Contextualized 
                Late Interaction over BERT},
   author    = {Khattab, Omar and Zaharia, Matei},
-  booktitle = {Proceedings of the 43rd International ACM SIGIR Conference on 
-               Research and Development in Information Retrieval},
-  pages     = {39--48},
+  booktitle = {SIGIR 2020},
   year      = {2020},
-  publisher = {ACM},
   url       = {https://arxiv.org/abs/2004.12832}
 }
 ```
@@ -122,27 +120,43 @@ Inspiration for the reranking system with CrossEncoder.
 
 ---
 
-### Transformer Architecture
+### Sentence-BERT: Sentence Embeddings
 
-The architecture underlying all modern LLMs.
+Semantic embeddings for search in the RAG system.
 
 ```bibtex
-@inproceedings{vaswani2017attention,
-  title     = {Attention is All You Need},
-  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and 
-               Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and 
-               Kaiser, Lukasz and Polosukhin, Illia},
-  booktitle = {Advances in Neural Information Processing Systems},
-  volume    = {30},
-  year      = {2017},
-  publisher = {Curran Associates, Inc.},
-  url       = {https://arxiv.org/abs/1706.03762}
+@inproceedings{reimers2019sentence,
+  title     = {Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks},
+  author    = {Reimers, Nils and Gurevych, Iryna},
+  booktitle = {EMNLP-IJCNLP 2019},
+  year      = {2019},
+  url       = {https://arxiv.org/abs/1908.10084}
 }
 ```
+
+**Contribution to project:** Embeddings for semantic similarity, bi-encoder models for retrieval.
 
 ---
 
 ## 🛠️ Software and Frameworks
+
+### Unsloth
+
+High-performance fine-tuning library providing 2x speed and 70% VRAM reduction.
+
+```bibtex
+@software{unsloth2024,
+  title     = {Unsloth: Fine-tuning & Reinforcement Learning for LLMs},
+  author    = {Han, Daniel and Han, Michael and {Unsloth team}},
+  year      = {2024},
+  url       = {https://github.com/unslothai/unsloth},
+  note      = {Apache License 2.0}
+}
+```
+
+**Contribution to project:** 2x faster training, 70% less VRAM, GGUF export, native GRPO support.
+
+---
 
 ### Microsoft Agent Lightning
 
@@ -157,26 +171,34 @@ The architecture underlying all modern LLMs.
 }
 ```
 
+---
+
 ### HuggingFace Transformers
 
 ```bibtex
 @inproceedings{wolf2020transformers,
   title     = {Transformers: State-of-the-Art Natural Language Processing},
-  author    = {Wolf, Thomas and Debut, Lysandre and Sanh, Victor and 
-               Chaumond, Julien and Delangue, Clement and Moi, Anthony and 
-               Cistac, Pierric and Rault, Tim and Louf, R{\'e}mi and 
-               Funtowicz, Morgan and Davison, Joe and Shleifer, Sam and 
-               von Platen, Patrick and Ma, Clara and Jernite, Yacine and 
-               Plu, Julien and Xu, Canwen and Le Scao, Teven and 
-               Gugger, Sylvain and Drame, Mariama and Lhoest, Quentin and 
-               Rush, Alexander},
-  booktitle = {Proceedings of the 2020 Conference on Empirical Methods 
-               in Natural Language Processing: System Demonstrations},
-  pages     = {38--45},
-  year      = {2020},
-  publisher = {Association for Computational Linguistics}
+  author    = {Wolf, Thomas and others},
+  booktitle = {EMNLP 2020 System Demonstrations},
+  year      = {2020}
 }
 ```
+
+---
+
+### TRL (Transformer Reinforcement Learning)
+
+```bibtex
+@software{trl2023,
+  title     = {TRL: Transformer Reinforcement Learning},
+  author    = {{HuggingFace}},
+  year      = {2023},
+  url       = {https://github.com/huggingface/trl},
+  note      = {Apache License 2.0}
+}
+```
+
+---
 
 ### PyTorch Lightning
 
@@ -190,6 +212,8 @@ The architecture underlying all modern LLMs.
 }
 ```
 
+---
+
 ### ChromaDB
 
 ```bibtex
@@ -201,6 +225,8 @@ The architecture underlying all modern LLMs.
   note      = {Apache License 2.0}
 }
 ```
+
+---
 
 ### tree-sitter
 
@@ -216,38 +242,84 @@ The architecture underlying all modern LLMs.
 
 ---
 
-## 💡 Inspirations and References
+## 💡 Inspirations for New Integrations
 
-### osgrep - Semantic Code Search
+### PocketFlow (Meta-Agent Inspiration)
 
-The smart chunking system is inspired by osgrep's approach to semantic code search.
+Minimalist framework demonstrating "agents building agents" pattern.
 
 ```
-Repository: https://github.com/Ryandonofrio3/osgrep
-Author: Ryan Donofrio
+Repository: https://github.com/The-Pocket/PocketFlow
+Concept: Agents that generate other agents
 License: MIT
 ```
 
 **Adopted concepts:**
-- AST-aware chunking with tree-sitter
-- Reranking with CrossEncoder
-- Preservation of semantic boundaries
+- Dynamic agent blueprint generation
+- Self-generating reward functions
+- Task-adaptive SOP creation
+
+---
+
+### AgentFlow (Adaptive Trainer Inspiration)
+
+"In-the-flow" optimization for agentic systems.
+
+```
+Repository: https://github.com/lupantech/AgentFlow
+Concept: Dynamic optimization during execution
+```
+
+**Adopted concepts:**
+- Real-time metric analysis
+- Curriculum learning
+- Adaptive hyperparameter adjustment
+
+---
+
+### claude-flow (Swarm Trainer Inspiration)
+
+Multi-agent orchestration with swarm intelligence.
+
+```
+Repository: https://github.com/ruvnet/claude-flow
+Concept: Swarm intelligence for AI agents
+```
+
+**Adopted concepts:**
+- Explorer/Exploiter role division
+- Parallel trajectory exploration
+- Inter-agent communication
+
+---
+
+### Flowise (Workflow Patterns)
+
+Visual workflow builder for LLM applications.
+
+```
+Repository: https://github.com/FlowiseAI/Flowise
+License: MIT
+```
+
+**Adopted concepts:**
+- Pipeline orchestration patterns
+- Component-based architecture
 
 ---
 
 ## 📋 How to Cite This Project
 
-If you use this project in your research, you can cite it as:
+If you use ALCHEMY in your research, you can cite it as:
 
 ```bibtex
-@software{llm_finetuning_agent_lightning,
-  title     = {LLM Fine-tuning with Agent Lightning: A Framework for Local 
-               Training with Reinforcement Learning and RAG},
-  author    = {[Your Name]},
+@software{alchemy2024,
+  title     = {ALCHEMY: Advanced LLM Training Framework with Multi-Agent Orchestration},
+  author    = {Boni, Alessandro},
   year      = {2024},
-  url       = {https://github.com/[username]/llm-finetuning-agent-lightning},
-  note      = {MIT License. Combines QLoRA, Agent Lightning GRPO, 
-               and RAG for efficient local LLM training.}
+  url       = {https://github.com/SandroHub013/ALCHEMY},
+  note      = {MIT License. Combines QLoRA, Unsloth, GRPO, Multi-Agent Swarms, 
+               and Adaptive Training for efficient local LLM training.}
 }
 ```
 
@@ -255,17 +327,37 @@ If you use this project in your research, you can cite it as:
 
 ## 🙏 Acknowledgments
 
-This project would not have been possible without the work of the open-source community:
+This project would not have been possible without:
 
-- **Tim Dettmers** and team for QLoRA and bitsandbytes
-- **Microsoft Research** for Agent Lightning
-- **HuggingFace** for Transformers, PEFT, and Datasets
-- **Lightning AI** for PyTorch Lightning
-- **Nils Reimers** for Sentence-Transformers
-- **Max Brunsfeld** for tree-sitter
+- **Daniel Han & Michael Han** — Unsloth team for revolutionary optimizations
+- **Tim Dettmers** — QLoRA and bitsandbytes
+- **Microsoft Research** — Agent Lightning framework
+- **HuggingFace** — Transformers, PEFT, TRL, and Datasets
+- **DeepSeek-AI** — GRPO research and reasoning techniques
+- **Lightning AI** — PyTorch Lightning
+- **Nils Reimers** — Sentence-Transformers
+- **Max Brunsfeld** — tree-sitter
+- **PocketFlow, AgentFlow, claude-flow teams** — Inspiration for new integrations
 
 And all contributors to the papers and projects cited above.
 
 ---
 
-*Last updated: November 2024*
+## 📜 License Summary
+
+| Component | License |
+|-----------|---------|
+| ALCHEMY | MIT |
+| Unsloth | Apache 2.0 |
+| Transformers | Apache 2.0 |
+| PyTorch Lightning | Apache 2.0 |
+| PEFT | Apache 2.0 |
+| TRL | Apache 2.0 |
+| bitsandbytes | MIT |
+| ChromaDB | Apache 2.0 |
+| tree-sitter | MIT |
+| Agent Lightning | MIT |
+
+---
+
+*Last updated: November 2025*
