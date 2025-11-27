@@ -1,10 +1,10 @@
 """
-Modulo per il caricamento di modelli LLM con quantizzazione 4-bit (QLoRA) e PEFT.
+Module for loading LLM models with 4-bit quantization (QLoRA) and PEFT.
 
-Questo modulo gestisce il caricamento di modelli base (Mistral, Llama, GPT-NeoX)
-con ottimizzazioni per memoria:
-- Quantizzazione 4-bit NF4 tramite bitsandbytes
-- PEFT/LoRA per fine-tuning efficiente
+This module handles loading base models (Mistral, Llama, GPT-NeoX, DeepSeek)
+with memory optimizations:
+- 4-bit NF4 quantization via bitsandbytes
+- PEFT/LoRA for efficient fine-tuning
 - Gradient checkpointing
 """
 
@@ -23,12 +23,13 @@ logger = logging.getLogger(__name__)
 
 class ModelLoader:
     """
-    Classe per caricare modelli LLM con quantizzazione 4-bit e configurazione LoRA.
+    Class for loading LLM models with 4-bit quantization and LoRA configuration.
     
-    Supporta modelli come:
+    Supports models such as:
     - Mistral 7B
     - Llama 2/3
     - GPT-NeoX 20B
+    - DeepSeek Qwen Distill
     """
     
     def __init__(
@@ -40,20 +41,20 @@ class ModelLoader:
         use_flash_attention_2: bool = False,
     ):
         """
-        Inizializza il ModelLoader.
+        Initialize the ModelLoader.
         
         Args:
-            model_name_or_path: Path o nome del modello su HuggingFace
-            quantization_config: Configurazione per quantizzazione 4-bit
-            lora_config: Configurazione per LoRA (PEFT)
-            trust_remote_code: Se True, permette l'esecuzione di codice remoto
-            use_flash_attention_2: Se True, usa Flash Attention 2 (richiede installazione)
+            model_name_or_path: Path or name of the model on HuggingFace
+            quantization_config: Configuration for 4-bit quantization
+            lora_config: Configuration for LoRA (PEFT)
+            trust_remote_code: If True, allows execution of remote code
+            use_flash_attention_2: If True, uses Flash Attention 2 (requires installation)
         """
         self.model_name_or_path = model_name_or_path
         self.trust_remote_code = trust_remote_code
         self.use_flash_attention_2 = use_flash_attention_2
         
-        # Configurazione quantizzazione di default (4-bit NF4)
+        # Default quantization configuration (4-bit NF4)
         self.quantization_config = quantization_config or {
             "load_in_4bit": True,
             "bnb_4bit_compute_dtype": torch.float16,
@@ -61,7 +62,7 @@ class ModelLoader:
             "bnb_4bit_use_double_quant": True,
         }
         
-        # Configurazione LoRA di default
+        # Default LoRA configuration
         self.lora_config = lora_config or {
             "r": 16,
             "lora_alpha": 32,
@@ -76,18 +77,18 @@ class ModelLoader:
     
     def _get_target_modules_for_model(self, model_name: str) -> List[str]:
         """
-        Restituisce i moduli target per LoRA in base al tipo di modello.
+        Return target modules for LoRA based on model type.
         
         Args:
-            model_name: Nome del modello (es. "mistral", "llama", "gpt-neox")
+            model_name: Model name (e.g., "mistral", "llama", "gpt-neox")
             
         Returns:
-            Lista di nomi dei moduli da targetizzare con LoRA
+            List of module names to target with LoRA
         """
         model_lower = model_name.lower()
         
-        if "mistral" in model_lower or "llama" in model_lower:
-            # Mistral e Llama hanno architettura simile (Transformer decoder)
+        if "mistral" in model_lower or "llama" in model_lower or "qwen" in model_lower or "deepseek" in model_lower:
+            # Mistral, Llama, Qwen, DeepSeek have similar architecture (Transformer decoder)
             return [
                 "q_proj",
                 "k_proj",
@@ -98,26 +99,26 @@ class ModelLoader:
                 "down_proj",
             ]
         elif "gpt-neox" in model_lower or "pythia" in model_lower:
-            # GPT-NeoX e Pythia usano nomi diversi
+            # GPT-NeoX and Pythia use different names
             return [
-                "query_key_value",  # Equivalente a q_proj, k_proj, v_proj combinati
-                "dense",  # Equivalente a o_proj
-                "dense_h_to_4h",  # Equivalente a gate_proj/up_proj
-                "dense_4h_to_h",  # Equivalente a down_proj
+                "query_key_value",  # Equivalent to combined q_proj, k_proj, v_proj
+                "dense",  # Equivalent to o_proj
+                "dense_h_to_4h",  # Equivalent to gate_proj/up_proj
+                "dense_4h_to_h",  # Equivalent to down_proj
             ]
         elif "gpt2" in model_lower or "gpt-j" in model_lower:
             return ["c_attn", "c_proj", "c_fc"]
         else:
-            # Default: prova con i moduli più comuni
+            # Default: try with most common modules
             logger.warning(
-                f"Modello {model_name} non riconosciuto. "
-                "Usando moduli target di default. "
-                "Potrebbe essere necessario specificare manualmente target_modules."
+                f"Model {model_name} not recognized. "
+                "Using default target modules. "
+                "You may need to manually specify target_modules."
             )
             return ["q_proj", "k_proj", "v_proj", "o_proj"]
     
     def _create_bitsandbytes_config(self) -> Optional[BitsAndBytesConfig]:
-        """Crea la configurazione bitsandbytes per quantizzazione 4-bit."""
+        """Create bitsandbytes configuration for 4-bit quantization."""
         if not self.quantization_config.get("load_in_4bit", False):
             return None
         
@@ -138,82 +139,82 @@ class ModelLoader:
     
     def load_tokenizer(self) -> AutoTokenizer:
         """
-        Carica il tokenizer per il modello.
+        Load the tokenizer for the model.
         
         Returns:
-            Tokenizer configurato
+            Configured tokenizer
         """
-        logger.info(f"Caricamento tokenizer da {self.model_name_or_path}")
+        logger.info(f"Loading tokenizer from {self.model_name_or_path}")
         
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name_or_path,
             trust_remote_code=self.trust_remote_code,
-            padding_side="right",  # Importante per causal LM
+            padding_side="right",  # Important for causal LM
         )
         
-        # Imposta pad_token se non esiste (necessario per alcuni modelli)
+        # Set pad_token if it doesn't exist (required for some models)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         
-        logger.info(f"Tokenizer caricato. Vocab size: {len(self.tokenizer)}")
+        logger.info(f"Tokenizer loaded. Vocab size: {len(self.tokenizer)}")
         return self.tokenizer
     
     def load_model(self, enable_gradient_checkpointing: bool = True) -> torch.nn.Module:
         """
-        Carica il modello con quantizzazione 4-bit e applica LoRA.
+        Load the model with 4-bit quantization and apply LoRA.
         
         Args:
-            enable_gradient_checkpointing: Se True, abilita gradient checkpointing
+            enable_gradient_checkpointing: If True, enables gradient checkpointing
             
         Returns:
-            Modello configurato con PEFT/LoRA
+            Model configured with PEFT/LoRA
         """
-        logger.info(f"Caricamento modello {self.model_name_or_path} con QLoRA")
+        logger.info(f"Loading model {self.model_name_or_path} with QLoRA")
         
-        # Determina i moduli target se non specificati
+        # Determine target modules if not specified
         if "target_modules" not in self.lora_config or not self.lora_config["target_modules"]:
             target_modules = self._get_target_modules_for_model(self.model_name_or_path)
             self.lora_config["target_modules"] = target_modules
-            logger.info(f"Moduli target LoRA auto-rilevati: {target_modules}")
+            logger.info(f"LoRA target modules auto-detected: {target_modules}")
         
-        # Configurazione bitsandbytes
+        # bitsandbytes configuration
         bnb_config = self._create_bitsandbytes_config()
         
-        # Carica il modello base con quantizzazione
+        # Load base model with quantization
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name_or_path,
             quantization_config=bnb_config,
-            device_map="auto",  # Distribuisce automaticamente su GPU disponibili
+            device_map="auto",  # Automatically distribute across available GPUs
             trust_remote_code=self.trust_remote_code,
             torch_dtype=torch.float16,
             use_flash_attention_2=self.use_flash_attention_2,
         )
         
-        # Prepara il modello per training k-bit
+        # Prepare model for k-bit training
         if bnb_config is not None:
             model = prepare_model_for_kbit_training(model)
-            logger.info("Modello preparato per training k-bit")
+            logger.info("Model prepared for k-bit training")
         
-        # Abilita gradient checkpointing per risparmiare memoria
+        # Enable gradient checkpointing to save memory
         if enable_gradient_checkpointing:
             if hasattr(model, "gradient_checkpointing_enable"):
                 model.gradient_checkpointing_enable()
-                logger.info("Gradient checkpointing abilitato")
+                logger.info("Gradient checkpointing enabled")
             else:
-                logger.warning("Gradient checkpointing non supportato da questo modello")
+                logger.warning("Gradient checkpointing not supported by this model")
         
-        # Crea configurazione LoRA
+        # Create LoRA configuration
         lora_config_obj = LoraConfig(**self.lora_config)
         
-        # Applica LoRA al modello
+        # Apply LoRA to the model
         model = get_peft_model(model, lora_config_obj)
         
-        # Log informazioni sul modello
+        # Log model information
         model.print_trainable_parameters()
         
         self.model = model
-        logger.info("Modello caricato e configurato con LoRA")
+        logger.info("Model loaded and configured with LoRA")
         
         return model
     
@@ -221,13 +222,13 @@ class ModelLoader:
         self, enable_gradient_checkpointing: bool = True
     ) -> tuple[torch.nn.Module, AutoTokenizer]:
         """
-        Carica sia il modello che il tokenizer.
+        Load both the model and tokenizer.
         
         Args:
-            enable_gradient_checkpointing: Se True, abilita gradient checkpointing
+            enable_gradient_checkpointing: If True, enables gradient checkpointing
             
         Returns:
-            Tupla (modello, tokenizer)
+            Tuple (model, tokenizer)
         """
         if self.tokenizer is None:
             self.load_tokenizer()
@@ -236,4 +237,3 @@ class ModelLoader:
             self.load_model(enable_gradient_checkpointing=enable_gradient_checkpointing)
         
         return self.model, self.tokenizer
-

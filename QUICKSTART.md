@@ -241,7 +241,7 @@ python main.py --config config/config.yaml
 ## 📚 Next Steps
 
 1. 📖 Read [README.md](README.md) for a complete overview
-2. 🏗️ Explore [ARCHITECTURE.md](ARCHITECTURE.md) to understand the system
+2. 🏗 Explore [ARCHITECTURE.md](ARCHITECTURE.md) to understand the system
 3. ✨ Consult [FEATURES.md](FEATURES.md) for all features
 4. 🎬 See [SHOWCASE.md](SHOWCASE.md) for real examples
 

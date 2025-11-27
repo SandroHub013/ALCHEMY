@@ -1,4 +1,4 @@
-# 🏗️ System Architecture
+# 🏗 System Architecture
 
 This document describes in detail the technical architecture of the LLM fine-tuning system.
 

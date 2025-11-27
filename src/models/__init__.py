@@ -1,4 +1,4 @@
-"""Moduli per il caricamento e gestione dei modelli."""
+"""Modules for loading and managing models."""
 
 from .model_loader import ModelLoader
 

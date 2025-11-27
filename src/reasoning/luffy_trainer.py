@@ -1,17 +1,17 @@
 """
 LUFFY: Learning to Reason under Off-Policy Guidance.
 
-Implementazione ispirata al paper "Learning to Reason under Off-Policy Guidance"
+Implementation inspired by the paper "Learning to Reason under Off-Policy Guidance"
 (https://arxiv.org/abs/2504.14945)
 
-LUFFY è un framework generale per l'apprendimento off-policy in Large Reasoning Models:
-- Integra tracce di ragionamento off-policy (es. da DeepSeek-R1)
-- Combina generazioni on-policy del modello con guidance esterna
-- Migliora significativamente le capacità di ragionamento matematico e logico
+LUFFY is a general framework for off-policy learning in Large Reasoning Models:
+- Integrates off-policy reasoning traces (e.g., from DeepSeek-R1)
+- Combines on-policy model generations with external guidance
+- Significantly improves mathematical and logical reasoning capabilities
 
-Include ExGRPO: una variante che impara dall'esperienza off-policy del modello stesso.
+Includes ExGRPO: a variant that learns from the model's own off-policy experience.
 
-Riferimenti:
+References:
 - GitHub: https://github.com/ElliottYan/LUFFY
 - Paper: https://arxiv.org/abs/2504.14945
 - ExGRPO Paper: https://arxiv.org/abs/2510.02245
@@ -35,29 +35,29 @@ logger = logging.getLogger(__name__)
 
 
 class OffPolicyMode(str, Enum):
-    """Modalità di apprendimento off-policy supportate."""
-    LUFFY = "luffy"           # Off-policy guidance da modello esterno (es. DeepSeek-R1)
-    EXGRPO = "exgrpo"         # Off-policy dall'esperienza del modello stesso
-    HYBRID = "hybrid"         # Combinazione di entrambi
+    """Supported off-policy learning modes."""
+    LUFFY = "luffy"           # Off-policy guidance from external model (e.g., DeepSeek-R1)
+    EXGRPO = "exgrpo"         # Off-policy from model's own experience
+    HYBRID = "hybrid"         # Combination of both
 
 
 @dataclass
 class LuffyConfig:
     """
-    Configurazione per LUFFY trainer.
+    Configuration for LUFFY trainer.
     
     Attributes:
-        mode: Modalità off-policy (luffy, exgrpo, hybrid)
-        off_policy_source: Fonte delle tracce off-policy (es. "deepseek-r1")
-        off_policy_weight: Peso delle tracce off-policy nel training
-        on_policy_weight: Peso delle generazioni on-policy
-        temperature: Temperatura per sampling
-        num_generations: Numero di risposte generate per prompt
-        max_new_tokens: Massimo token generati
-        kl_coef: Coefficiente KL divergence
+        mode: Off-policy mode (luffy, exgrpo, hybrid)
+        off_policy_source: Source of off-policy traces (e.g., "deepseek-r1")
+        off_policy_weight: Weight of off-policy traces in training
+        on_policy_weight: Weight of on-policy generations
+        temperature: Sampling temperature
+        num_generations: Number of responses generated per prompt
+        max_new_tokens: Maximum tokens generated
+        kl_coef: KL divergence coefficient
         clip_range: PPO clip range
-        value_coef: Coefficiente per value loss
-        entropy_coef: Coefficiente per entropy bonus
+        value_coef: Value loss coefficient
+        entropy_coef: Entropy bonus coefficient
     """
     
     mode: OffPolicyMode = OffPolicyMode.LUFFY
@@ -68,13 +68,13 @@ class LuffyConfig:
     on_policy_weight: float = 0.5
     
     # Filtering thresholds
-    min_off_policy_reward: float = 0.5  # Soglia minima reward per usare tracce off-policy
+    min_off_policy_reward: float = 0.5  # Minimum reward threshold for off-policy traces
     
     # Generation parameters
     temperature: float = 0.7
     top_p: float = 0.95
     num_generations: int = 4
-    max_new_tokens: int = 2048  # Più lungo per ragionamento
+    max_new_tokens: int = 2048  # Longer for reasoning
     
     # RL parameters
     kl_coef: float = 0.05
@@ -86,16 +86,16 @@ class LuffyConfig:
     
     # ExGRPO specific
     experience_buffer_size: int = 10000
-    experience_sample_ratio: float = 0.3  # Percentuale di esperienza da riutilizzare
+    experience_sample_ratio: float = 0.3  # Percentage of experience to reuse
 
 
 @dataclass
 class ExGRPOConfig:
     """
-    Configurazione specifica per ExGRPO.
+    Specific configuration for ExGRPO.
     
-    ExGRPO impara dall'esperienza off-policy del modello stesso,
-    senza bisogno di guidance esterna.
+    ExGRPO learns from the model's own off-policy experience,
+    without needing external guidance.
     """
     
     # Experience replay
@@ -115,13 +115,13 @@ class ExGRPOConfig:
 
 class OffPolicyDataMixer:
     """
-    Mixer per combinare dati on-policy e off-policy.
+    Mixer for combining on-policy and off-policy data.
     
-    Gestisce:
-    - Caricamento tracce off-policy (es. da DeepSeek-R1)
-    - Filtraggio basato su reward
-    - Bilanciamento con generazioni on-policy
-    - Experience buffer per ExGRPO
+    Handles:
+    - Loading off-policy traces (e.g., from DeepSeek-R1)
+    - Reward-based filtering
+    - Balancing with on-policy generations
+    - Experience buffer for ExGRPO
     """
     
     def __init__(
@@ -132,14 +132,14 @@ class OffPolicyDataMixer:
         self.config = config
         self.tokenizer = tokenizer
         
-        # Buffer per tracce off-policy
+        # Buffer for off-policy traces
         self.off_policy_traces: List[Dict[str, Any]] = []
         
-        # Experience buffer per ExGRPO
+        # Experience buffer for ExGRPO
         self.experience_buffer: List[Dict[str, Any]] = []
         self.experience_priorities: List[float] = []
         
-        logger.info(f"OffPolicyDataMixer inizializzato in modalità: {config.mode.value}")
+        logger.info(f"OffPolicyDataMixer initialized in mode: {config.mode.value}")
     
     def load_off_policy_traces(
         self,
@@ -147,21 +147,21 @@ class OffPolicyDataMixer:
         source_model: str = "deepseek-r1",
     ) -> int:
         """
-        Carica tracce di ragionamento off-policy.
+        Load off-policy reasoning traces.
         
         Args:
-            traces_path: Path al file JSON con le tracce
-            source_model: Nome del modello sorgente
+            traces_path: Path to JSON file with traces
+            source_model: Name of the source model
             
         Returns:
-            Numero di tracce caricate
+            Number of traces loaded
         """
-        logger.info(f"Caricamento tracce off-policy da: {traces_path}")
+        logger.info(f"Loading off-policy traces from: {traces_path}")
         
         with open(traces_path, "r", encoding="utf-8") as f:
             traces = json.load(f)
         
-        # Filtra per reward minimo
+        # Filter by minimum reward
         filtered_traces = []
         for trace in traces:
             if trace.get("reward", 0) >= self.config.min_off_policy_reward:
@@ -171,8 +171,8 @@ class OffPolicyDataMixer:
         self.off_policy_traces.extend(filtered_traces)
         
         logger.info(
-            f"Caricate {len(filtered_traces)}/{len(traces)} tracce "
-            f"(filtrate per reward >= {self.config.min_off_policy_reward})"
+            f"Loaded {len(filtered_traces)}/{len(traces)} traces "
+            f"(filtered for reward >= {self.config.min_off_policy_reward})"
         )
         
         return len(filtered_traces)
