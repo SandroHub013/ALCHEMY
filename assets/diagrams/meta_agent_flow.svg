@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+  <defs>
+    <linearGradient id="metaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="outputGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="agentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="400" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">🔮 Meta-Agent: Agents Building Agents</text>
+  
+  <!-- Input: Task Description -->
+  <g transform="translate(30, 80)">
+    <polygon points="70,0 140,30 70,60 0,30" fill="#f59e0b" filter="url(#shadow)"/>
+    <text x="70" y="35" text-anchor="middle" fill="#1e293b" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">Task</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <path d="M170 110 L220 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Meta-Agent Box -->
+  <g transform="translate(230, 60)">
+    <rect width="200" height="100" rx="10" fill="url(#metaGrad)" filter="url(#shadow)"/>
+    <text x="100" y="30" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Meta-Agent</text>
+    <line x1="20" y1="45" x2="180" y2="45" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="100" y="65" text-anchor="middle" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Analyze Task</text>
+    <text x="100" y="82" text-anchor="middle" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Generate Blueprint</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <path d="M440 110 L490 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Outputs -->
+  <g transform="translate(500, 55)">
+    <!-- Blueprint -->
+    <rect width="150" height="35" rx="6" fill="url(#outputGrad)" filter="url(#shadow)"/>
+    <text x="75" y="22" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">📋 Agent Blueprint</text>
+    
+    <!-- SOP -->
+    <rect y="45" width="150" height="35" rx="6" fill="url(#outputGrad)" filter="url(#shadow)"/>
+    <text x="75" y="67" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">📝 Generated SOP</text>
+    
+    <!-- Reward Function -->
+    <rect y="90" width="150" height="35" rx="6" fill="url(#outputGrad)" filter="url(#shadow)"/>
+    <text x="75" y="112" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">⚡ Reward Function</text>
+  </g>
+  
+  <!-- Arrows to spawned agents -->
+  <path d="M660 72 L700 72 L700 240" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M700 240 L750 240" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Spawned Agents Row -->
+  <g transform="translate(50, 220)">
+    <!-- Coding Agent -->
+    <rect x="0" y="0" width="130" height="50" rx="8" fill="url(#agentGrad)" filter="url(#shadow)"/>
+    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">👨‍💻 Coding Agent</text>
+    <text x="65" y="38" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="9">temp: 0.3, r: 32</text>
+    
+    <!-- Reasoning Agent -->
+    <rect x="150" y="0" width="130" height="50" rx="8" fill="url(#agentGrad)" filter="url(#shadow)"/>
+    <text x="215" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">🧠 Reasoning Agent</text>
+    <text x="215" y="38" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="9">temp: 0.5, r: 16</text>
+    
+    <!-- RAG Agent -->
+    <rect x="300" y="0" width="130" height="50" rx="8" fill="url(#agentGrad)" filter="url(#shadow)"/>
+    <text x="365" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">🔍 RAG Agent</text>
+    <text x="365" y="38" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="9">temp: 0.4, tools: search</text>
+    
+    <!-- Tool Agent -->
+    <rect x="450" y="0" width="130" height="50" rx="8" fill="url(#agentGrad)" filter="url(#shadow)"/>
+    <text x="515" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">🔧 Tool Agent</text>
+    <text x="515" y="38" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="9">temp: 0.2, func call</text>
+    
+    <!-- Chat Agent -->
+    <rect x="600" y="0" width="130" height="50" rx="8" fill="url(#agentGrad)" filter="url(#shadow)"/>
+    <text x="665" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">💬 Chat Agent</text>
+    <text x="665" y="38" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="9">temp: 0.7, general</text>
+  </g>
+  
+  <!-- Spawn arrows -->
+  <path d="M330 160 L115 220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M330 160 L215 220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M330 160 L365 220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M330 160 L515 220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M330 160 L665 220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Label -->
+  <text x="350" y="195" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="10" font-style="italic">spawn()</text>
+  
+  <!-- Footer -->
+  <text x="450" y="320" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11">Dynamically generates specialized agents from task descriptions</text>
+  
+  <!-- Key -->
+  <g transform="translate(50, 340)">
+    <rect width="12" height="12" rx="2" fill="#7c3aed"/>
+    <text x="20" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Meta-Agent</text>
+    
+    <rect x="120" width="12" height="12" rx="2" fill="#059669"/>
+    <text x="140" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Generated Outputs</text>
+    
+    <rect x="270" width="12" height="12" rx="2" fill="#0284c7"/>
+    <text x="290" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Spawned Agents</text>
+  </g>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+

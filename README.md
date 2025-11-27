@@ -89,32 +89,9 @@ ALCHEMY now includes four powerful integrations inspired by leading open-source 
 
 **Agents that generate other agents.** Dynamically create specialized agent configurations, reward functions, and SOPs based on task descriptions.
 
-```mermaid
-flowchart LR
-    subgraph MetaAgent["🔮 Meta-Agent"]
-        Task[/"Task Description"/]
-        Analyze["Analyze Task"]
-        Generate["Generate Blueprint"]
-        Blueprint["Agent Blueprint"]
-        SOP["Generated SOP"]
-        Reward["Custom Reward Fn"]
-    end
-    
-    Task --> Analyze
-    Analyze --> Generate
-    Generate --> Blueprint
-    Generate --> SOP
-    Generate --> Reward
-    
-    Blueprint --> |spawn| Child1["👤 Coding Agent"]
-    Blueprint --> |spawn| Child2["👤 Reasoning Agent"]
-    Blueprint --> |spawn| Child3["👤 RAG Agent"]
-    
-    style MetaAgent fill:#f5f5f5,stroke:#9c27b0
-    style Blueprint fill:#e1bee7,stroke:#9c27b0
-    style SOP fill:#e1bee7,stroke:#9c27b0
-    style Reward fill:#e1bee7,stroke:#9c27b0
-```
+<p align="center">
+  <img src="assets/diagrams/meta_agent_flow.svg" alt="Meta-Agent Flow" width="100%">
+</p>
 
 ```python
 from src.agent import MetaAgent, create_meta_agent
@@ -139,36 +116,9 @@ reward_fn = meta.generate_reward_function(task="Write documented code")
 
 **Dynamic optimization during training.** Automatically adjusts learning rate, temperature, and difficulty based on real-time training dynamics.
 
-```mermaid
-flowchart TB
-    subgraph AdaptiveTrainer["📈 Adaptive Trainer"]
-        Metrics["Training Metrics"]
-        Analyzer["Metric Analyzer"]
-        State{"Training State"}
-        Curriculum["Curriculum Manager"]
-        Actions["Adaptive Actions"]
-    end
-    
-    Metrics --> Analyzer
-    Analyzer --> State
-    
-    State -->|Improving| Increase["↑ Difficulty"]
-    State -->|Plateauing| Adjust["⚡ Adjust LR/Temp"]
-    State -->|Diverging| Reduce["↓ LR, ↓ Temp"]
-    State -->|Converged| Stop["✓ Early Stop"]
-    
-    Increase --> Curriculum
-    Adjust --> Actions
-    Reduce --> Actions
-    
-    Curriculum --> |progressive| Easy["Easy Tasks"]
-    Curriculum --> |progressive| Medium["Medium Tasks"]
-    Curriculum --> |progressive| Hard["Hard Tasks"]
-    
-    style AdaptiveTrainer fill:#f5f5f5,stroke:#2196f3
-    style State fill:#bbdefb,stroke:#2196f3
-    style Curriculum fill:#bbdefb,stroke:#2196f3
-```
+<p align="center">
+  <img src="assets/diagrams/adaptive_trainer_flow.svg" alt="Adaptive Trainer Flow" width="100%">
+</p>
 
 ```python
 from src.agent import AdaptiveTrainer, create_adaptive_trainer
@@ -196,39 +146,9 @@ for step, batch in enumerate(dataloader):
 
 **Multi-agent orchestration for parallel exploration.** Uses swarm intelligence with Explorer/Exploiter agents to efficiently search the solution space.
 
-```mermaid
-flowchart TB
-    subgraph SwarmTrainer["🐝 Swarm Trainer"]
-        Coordinator["Swarm Coordinator"]
-        
-        subgraph Explorers["🔍 Explorers (High Temp)"]
-            E1["Explorer 1"]
-            E2["Explorer 2"]
-        end
-        
-        subgraph Exploiters["🎯 Exploiters (Low Temp)"]
-            X1["Exploiter 1"]
-            X2["Exploiter 2"]
-        end
-        
-        Aggregator["Trajectory Aggregator"]
-        Best["Best Trajectories"]
-    end
-    
-    Prompt[/"Prompt Batch"/] --> Coordinator
-    Coordinator --> E1 & E2 & X1 & X2
-    
-    E1 & E2 -->|diverse solutions| Aggregator
-    X1 & X2 -->|refined solutions| Aggregator
-    
-    Aggregator -->|top-k| Best
-    Best -->|policy update| Model["Updated Model"]
-    
-    style SwarmTrainer fill:#f5f5f5,stroke:#ff9800
-    style Explorers fill:#fff3e0,stroke:#ff9800
-    style Exploiters fill:#ffe0b2,stroke:#ff9800
-    style Best fill:#ffcc80,stroke:#ff9800
-```
+<p align="center">
+  <img src="assets/diagrams/swarm_trainer_flow.svg" alt="Swarm Trainer Flow" width="100%">
+</p>
 
 ```python
 from src.agent import SwarmTrainer, create_swarm_trainer
@@ -255,35 +175,9 @@ results = swarm.train(
 
 **2x faster training with 70% less VRAM.** High-performance model loading and training with native RL support.
 
-```mermaid
-flowchart LR
-    subgraph Unsloth["🦥 Unsloth Integration"]
-        Load["FastLanguageModel"]
-        Quant["4-bit/8-bit/16-bit"]
-        LoRA["Optimized LoRA"]
-        Train["2x Faster Training"]
-        Save["GGUF Export"]
-    end
-    
-    Model[/"HuggingFace Model"/] --> Load
-    Load --> Quant
-    Quant --> LoRA
-    LoRA --> Train
-    Train --> Save
-    
-    Save --> Ollama["Ollama"]
-    Save --> LlamaCpp["llama.cpp"]
-    Save --> VLLM["vLLM"]
-    
-    subgraph Performance["Performance"]
-        VRAM["70% Less VRAM"]
-        Speed["2x Faster"]
-        Context["13x Longer Context"]
-    end
-    
-    style Unsloth fill:#f5f5f5,stroke:#4caf50
-    style Performance fill:#e8f5e9,stroke:#4caf50
-```
+<p align="center">
+  <img src="assets/diagrams/unsloth_integration.svg" alt="Unsloth Integration" width="100%">
+</p>
 
 | Metric | Standard Training | With Unsloth |
 |--------|-------------------|--------------|
@@ -320,109 +214,17 @@ trainer.save("./model", save_method="gguf")
 
 ## 🏗 Architecture
 
-```mermaid
-flowchart TB
-    subgraph Input["📥 Input Layer"]
-        Config["config.yaml"]
-        Data["Datasets"]
-        KB["Knowledge Base"]
-    end
-    
-    subgraph Models["🧠 Model Layer"]
-        Standard["ModelLoader"]
-        Unsloth["UnslothLoader"]
-        PEFT["PEFT/LoRA"]
-    end
-    
-    subgraph Training["⚡ Training Layer"]
-        SFT["SFT Trainer"]
-        GRPO["GRPO Trainer"]
-        Adaptive["Adaptive Trainer"]
-        Swarm["Swarm Trainer"]
-    end
-    
-    subgraph Agents["🤖 Agent Layer"]
-        Meta["Meta-Agent"]
-        Lightning["Agent Lightning"]
-        LUFFY["LUFFY Trainer"]
-        SearchR1["Search-R1"]
-    end
-    
-    subgraph Memory["💾 Memory Layer"]
-        RAG["RAG System"]
-        SOP["SOP Manager"]
-        Vector["VectorStore"]
-        Chunker["Smart Chunker"]
-    end
-    
-    subgraph Output["📤 Output Layer"]
-        LoRAOut["LoRA Adapter"]
-        Merged["Merged Model"]
-        GGUF["GGUF File"]
-    end
-    
-    Config --> Models
-    Data --> Training
-    KB --> Memory
-    
-    Models --> Training
-    Training --> Agents
-    Memory --> Agents
-    
-    Agents --> Output
-    
-    style Input fill:#e3f2fd,stroke:#1976d2
-    style Models fill:#f3e5f5,stroke:#7b1fa2
-    style Training fill:#fff3e0,stroke:#f57c00
-    style Agents fill:#e8f5e9,stroke:#388e3c
-    style Memory fill:#fce4ec,stroke:#c2185b
-    style Output fill:#f5f5f5,stroke:#616161
-```
+<p align="center">
+  <img src="assets/diagrams/system_architecture.svg" alt="System Architecture" width="100%">
+</p>
 
 ---
 
 ## 📊 System Components
 
-```mermaid
-flowchart LR
-    subgraph Core["Core Components"]
-        direction TB
-        ML["Model Loader<br/>QLoRA + Unsloth"]
-        DM["Data Module<br/>Multi-Source"]
-        TA["Training Agent<br/>Lightning"]
-    end
-    
-    subgraph Advanced["Advanced Systems"]
-        direction TB
-        MA["Meta-Agent<br/>Self-Generating"]
-        AT["Adaptive Trainer<br/>Dynamic Optim"]
-        ST["Swarm Trainer<br/>Multi-Agent"]
-    end
-    
-    subgraph RL["RL Algorithms"]
-        direction TB
-        G["GRPO"]
-        D["DPO"]
-        O["ORPO"]
-        L["LUFFY"]
-    end
-    
-    subgraph Memory["Memory Systems"]
-        direction TB
-        R["RAG + Reranker"]
-        S["SOP Manager"]
-        C["Smart Chunker"]
-    end
-    
-    Core --> Advanced
-    Advanced --> RL
-    Memory --> Advanced
-    
-    style Core fill:#e1f5fe
-    style Advanced fill:#f3e5f5
-    style RL fill:#e8f5e9
-    style Memory fill:#fff3e0
-```
+<p align="center">
+  <img src="assets/diagrams/system_components.svg" alt="System Components" width="100%">
+</p>
 
 ---
 

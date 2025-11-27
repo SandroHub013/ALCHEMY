@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350">
+  <defs>
+    <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="advancedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="rlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="memGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow6" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="350" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">📊 System Components Overview</text>
+  
+  <!-- Core Components -->
+  <g transform="translate(30, 60)">
+    <rect width="180" height="210" rx="10" fill="#0c4a6e" stroke="#0284c7" stroke-width="2" filter="url(#shadow6)"/>
+    <text x="90" y="28" text-anchor="middle" fill="#7dd3fc" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Core Components</text>
+    <line x1="15" y1="42" x2="165" y2="42" stroke="#0284c7" stroke-opacity="0.5" stroke-width="1"/>
+    
+    <!-- Model Loader -->
+    <rect x="15" y="55" width="150" height="45" rx="6" fill="url(#coreGrad)"/>
+    <text x="90" y="75" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Model Loader</text>
+    <text x="90" y="90" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="8">QLoRA + Unsloth</text>
+    
+    <!-- Data Module -->
+    <rect x="15" y="110" width="150" height="45" rx="6" fill="url(#coreGrad)"/>
+    <text x="90" y="130" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Data Module</text>
+    <text x="90" y="145" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="8">Multi-Source</text>
+    
+    <!-- Training Agent -->
+    <rect x="15" y="165" width="150" height="45" rx="6" fill="url(#coreGrad)"/>
+    <text x="90" y="185" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Training Agent</text>
+    <text x="90" y="200" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="8">Lightning</text>
+  </g>
+  
+  <!-- Advanced Systems -->
+  <g transform="translate(250, 60)">
+    <rect width="180" height="210" rx="10" fill="#2e1065" stroke="#7c3aed" stroke-width="2" filter="url(#shadow6)"/>
+    <text x="90" y="28" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Advanced Systems</text>
+    <line x1="15" y1="42" x2="165" y2="42" stroke="#7c3aed" stroke-opacity="0.5" stroke-width="1"/>
+    
+    <!-- Meta-Agent -->
+    <rect x="15" y="55" width="150" height="45" rx="6" fill="url(#advancedGrad)"/>
+    <text x="90" y="75" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Meta-Agent 🆕</text>
+    <text x="90" y="90" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="8">Self-Generating</text>
+    
+    <!-- Adaptive Trainer -->
+    <rect x="15" y="110" width="150" height="45" rx="6" fill="url(#advancedGrad)"/>
+    <text x="90" y="130" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Adaptive Trainer 🆕</text>
+    <text x="90" y="145" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="8">Dynamic Optim</text>
+    
+    <!-- Swarm Trainer -->
+    <rect x="15" y="165" width="150" height="45" rx="6" fill="url(#advancedGrad)"/>
+    <text x="90" y="185" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Swarm Trainer 🆕</text>
+    <text x="90" y="200" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="8">Multi-Agent</text>
+  </g>
+  
+  <!-- RL Algorithms -->
+  <g transform="translate(470, 60)">
+    <rect width="180" height="210" rx="10" fill="#14532d" stroke="#059669" stroke-width="2" filter="url(#shadow6)"/>
+    <text x="90" y="28" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">RL Algorithms</text>
+    <line x1="15" y1="42" x2="165" y2="42" stroke="#059669" stroke-opacity="0.5" stroke-width="1"/>
+    
+    <!-- GRPO -->
+    <rect x="15" y="55" width="70" height="35" rx="6" fill="url(#rlGrad)"/>
+    <text x="50" y="77" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">GRPO</text>
+    
+    <!-- DPO -->
+    <rect x="95" y="55" width="70" height="35" rx="6" fill="url(#rlGrad)"/>
+    <text x="130" y="77" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">DPO</text>
+    
+    <!-- ORPO -->
+    <rect x="15" y="100" width="70" height="35" rx="6" fill="url(#rlGrad)"/>
+    <text x="50" y="122" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">ORPO</text>
+    
+    <!-- LUFFY -->
+    <rect x="95" y="100" width="70" height="35" rx="6" fill="url(#rlGrad)"/>
+    <text x="130" y="122" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">LUFFY</text>
+    
+    <!-- Search-R1 -->
+    <rect x="15" y="145" width="70" height="35" rx="6" fill="url(#rlGrad)"/>
+    <text x="50" y="167" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Search-R1</text>
+    
+    <!-- Unsloth RL -->
+    <rect x="95" y="145" width="70" height="35" rx="6" fill="#16a34a"/>
+    <text x="130" y="162" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Unsloth</text>
+    <text x="130" y="175" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="8">RL 🆕</text>
+  </g>
+  
+  <!-- Memory Systems -->
+  <g transform="translate(690, 60)">
+    <rect width="180" height="210" rx="10" fill="#7c2d12" stroke="#ea580c" stroke-width="2" filter="url(#shadow6)"/>
+    <text x="90" y="28" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Memory Systems</text>
+    <line x1="15" y1="42" x2="165" y2="42" stroke="#ea580c" stroke-opacity="0.5" stroke-width="1"/>
+    
+    <!-- RAG + Reranker -->
+    <rect x="15" y="55" width="150" height="45" rx="6" fill="url(#memGrad)"/>
+    <text x="90" y="75" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">RAG + Reranker</text>
+    <text x="90" y="90" text-anchor="middle" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="8">Two-Phase Retrieval</text>
+    
+    <!-- SOP Manager -->
+    <rect x="15" y="110" width="150" height="45" rx="6" fill="url(#memGrad)"/>
+    <text x="90" y="130" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">SOP Manager</text>
+    <text x="90" y="145" text-anchor="middle" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="8">Procedural Memory</text>
+    
+    <!-- Smart Chunker -->
+    <rect x="15" y="165" width="150" height="45" rx="6" fill="url(#memGrad)"/>
+    <text x="90" y="185" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">Smart Chunker</text>
+    <text x="90" y="200" text-anchor="middle" fill="#ffedd5" font-family="Inter, system-ui, sans-serif" font-size="8">tree-sitter AST</text>
+  </g>
+  
+  <!-- Connecting Arrows -->
+  <!-- Core to Advanced -->
+  <path d="M215 165 L245 165" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow6)"/>
+  
+  <!-- Advanced to RL -->
+  <path d="M435 165 L465 165" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow6)"/>
+  
+  <!-- Memory to Advanced -->
+  <path d="M690 165 L660 165 L660 100 L580 100 L580 140 L430 140 L430 180" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none"/>
+  
+  <!-- Footer Legend -->
+  <g transform="translate(30, 300)">
+    <rect width="12" height="12" rx="2" fill="#0284c7"/>
+    <text x="20" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Core</text>
+    
+    <rect x="70" width="12" height="12" rx="2" fill="#7c3aed"/>
+    <text x="90" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Advanced</text>
+    
+    <rect x="170" width="12" height="12" rx="2" fill="#059669"/>
+    <text x="190" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">RL Algorithms</text>
+    
+    <rect x="290" width="12" height="12" rx="2" fill="#ea580c"/>
+    <text x="310" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Memory</text>
+    
+    <rect x="380" width="12" height="12" rx="2" fill="#16a34a"/>
+    <text x="400" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">New Integrations</text>
+  </g>
+  
+  <!-- Data flow indicator -->
+  <text x="450" y="325" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="10">Data flows left to right • Memory supports all systems</text>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow6" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+

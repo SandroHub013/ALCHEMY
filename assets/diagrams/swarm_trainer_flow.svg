@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
+  <defs>
+    <linearGradient id="explorerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="exploiterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="coordGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="aggrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow3" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="450" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">🐝 Swarm Trainer: Multi-Agent Exploration</text>
+  
+  <!-- Input: Prompt Batch -->
+  <g transform="translate(30, 80)">
+    <rect width="100" height="50" rx="8" fill="#334155" filter="url(#shadow3)"/>
+    <text x="50" y="25" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">📝 Prompts</text>
+    <text x="50" y="42" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Batch of N</text>
+  </g>
+  
+  <!-- Arrow to coordinator -->
+  <path d="M140 105 L180 105" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Swarm Coordinator -->
+  <g transform="translate(190, 65)">
+    <rect width="140" height="80" rx="10" fill="url(#coordGrad)" filter="url(#shadow3)"/>
+    <text x="70" y="28" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Coordinator</text>
+    <line x1="15" y1="40" x2="125" y2="40" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="70" y="57" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="9">Task Distribution</text>
+    <text x="70" y="72" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="9">Agent Management</text>
+  </g>
+  
+  <!-- Explorers Section -->
+  <g transform="translate(380, 40)">
+    <rect width="200" height="130" rx="10" fill="#1e1b4b" stroke="#7c3aed" stroke-width="2" filter="url(#shadow3)"/>
+    <text x="100" y="25" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">🔍 EXPLORERS (High Temp)</text>
+    
+    <!-- Explorer 1 -->
+    <rect x="15" y="40" width="80" height="40" rx="6" fill="url(#explorerGrad)"/>
+    <text x="55" y="55" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Explorer 1</text>
+    <text x="55" y="70" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="8">T=0.9</text>
+    
+    <!-- Explorer 2 -->
+    <rect x="105" y="40" width="80" height="40" rx="6" fill="url(#explorerGrad)"/>
+    <text x="145" y="55" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Explorer 2</text>
+    <text x="145" y="70" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="8">T=0.9</text>
+    
+    <!-- Description -->
+    <text x="100" y="105" text-anchor="middle" fill="#a78bfa" font-family="Inter, system-ui, sans-serif" font-size="9">Diverse, creative solutions</text>
+    <text x="100" y="120" text-anchor="middle" fill="#a78bfa" font-family="Inter, system-ui, sans-serif" font-size="9">High variance exploration</text>
+  </g>
+  
+  <!-- Exploiters Section -->
+  <g transform="translate(600, 40)">
+    <rect width="200" height="130" rx="10" fill="#0c4a6e" stroke="#0284c7" stroke-width="2" filter="url(#shadow3)"/>
+    <text x="100" y="25" text-anchor="middle" fill="#7dd3fc" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">🎯 EXPLOITERS (Low Temp)</text>
+    
+    <!-- Exploiter 1 -->
+    <rect x="15" y="40" width="80" height="40" rx="6" fill="url(#exploiterGrad)"/>
+    <text x="55" y="55" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Exploiter 1</text>
+    <text x="55" y="70" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="8">T=0.3</text>
+    
+    <!-- Exploiter 2 -->
+    <rect x="105" y="40" width="80" height="40" rx="6" fill="url(#exploiterGrad)"/>
+    <text x="145" y="55" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Exploiter 2</text>
+    <text x="145" y="70" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="8">T=0.3</text>
+    
+    <!-- Description -->
+    <text x="100" y="105" text-anchor="middle" fill="#38bdf8" font-family="Inter, system-ui, sans-serif" font-size="9">Refined, focused solutions</text>
+    <text x="100" y="120" text-anchor="middle" fill="#38bdf8" font-family="Inter, system-ui, sans-serif" font-size="9">Low variance optimization</text>
+  </g>
+  
+  <!-- Arrows from coordinator to agents -->
+  <path d="M340 90 L380 90" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  <path d="M340 120 L380 120" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M340 120 L360 120 L360 90 L600 90" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Trajectories flowing down -->
+  <g transform="translate(380, 200)">
+    <!-- Trajectory box -->
+    <rect width="420" height="80" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow3)"/>
+    <text x="210" y="25" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">📦 Trajectory Pool</text>
+    
+    <!-- Sample trajectories -->
+    <g transform="translate(20, 40)">
+      <rect width="70" height="30" rx="4" fill="#7c3aed"/>
+      <text x="35" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="8">r=0.82</text>
+    </g>
+    <g transform="translate(100, 40)">
+      <rect width="70" height="30" rx="4" fill="#7c3aed"/>
+      <text x="35" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="8">r=0.75</text>
+    </g>
+    <g transform="translate(180, 40)">
+      <rect width="70" height="30" rx="4" fill="#0284c7"/>
+      <text x="35" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="8">r=0.91</text>
+    </g>
+    <g transform="translate(260, 40)">
+      <rect width="70" height="30" rx="4" fill="#0284c7"/>
+      <text x="35" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="8">r=0.68</text>
+    </g>
+    <g transform="translate(340, 40)">
+      <rect width="60" height="30" rx="4" fill="#334155"/>
+      <text x="30" y="18" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="8">...</text>
+    </g>
+  </g>
+  
+  <!-- Arrows to trajectories -->
+  <path d="M480 170 L480 200" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  <path d="M700 170 L700 200 L800 200" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Aggregator -->
+  <g transform="translate(520, 310)">
+    <rect width="160" height="60" rx="10" fill="url(#aggrGrad)" filter="url(#shadow3)"/>
+    <text x="80" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Aggregator</text>
+    <text x="80" y="45" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="9">Top-K Selection</text>
+  </g>
+  
+  <!-- Arrow to aggregator -->
+  <path d="M590 280 L590 310" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Best Trajectories -->
+  <g transform="translate(520, 390)">
+    <rect width="160" height="40" rx="8" fill="#166534" filter="url(#shadow3)"/>
+    <text x="80" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">🏆 Best Trajectories</text>
+    <text x="80" y="32" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="9">K=4, avg reward: 0.87</text>
+  </g>
+  
+  <!-- Arrow to best -->
+  <path d="M600 370 L600 390" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Updated Model -->
+  <g transform="translate(750, 310)">
+    <rect width="120" height="50" rx="8" fill="#334155" stroke="#10b981" stroke-width="2" filter="url(#shadow3)"/>
+    <text x="60" y="22" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">🧠 Model</text>
+    <text x="60" y="38" text-anchor="middle" fill="#10b981" font-family="Inter, system-ui, sans-serif" font-size="9">Policy Update</text>
+  </g>
+  
+  <!-- Arrow to model -->
+  <path d="M680 340 L750 340" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow3)"/>
+  
+  <!-- Stats panel -->
+  <g transform="translate(30, 200)">
+    <rect width="140" height="120" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow3)"/>
+    <text x="70" y="22" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">📊 Swarm Stats</text>
+    <line x1="10" y1="32" x2="130" y2="32" stroke="#334155" stroke-width="1"/>
+    <text x="15" y="50" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Agents: 4</text>
+    <text x="15" y="65" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Explorers: 2</text>
+    <text x="15" y="80" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Exploiters: 2</text>
+    <text x="15" y="95" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Diversity: +0.1</text>
+    <text x="15" y="110" fill="#10b981" font-family="Inter, system-ui, sans-serif" font-size="9">Sync: every 10 steps</text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="450" y="445" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11">Parallel exploration with Explorer/Exploiter balance for optimal solution discovery</text>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+

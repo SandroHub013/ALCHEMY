@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+  <defs>
+    <linearGradient id="unslothGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16a34a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="exportGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow4" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="400" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">🦥 Unsloth: 2x Faster, 70% Less VRAM</text>
+  
+  <!-- Pipeline -->
+  <!-- HuggingFace Model -->
+  <g transform="translate(30, 80)">
+    <rect width="100" height="60" rx="8" fill="#334155" filter="url(#shadow4)"/>
+    <text x="50" y="25" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">🤗 HuggingFace</text>
+    <text x="50" y="42" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="8">Model Hub</text>
+    <text x="50" y="54" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="7">mistral-7b, llama, qwen</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M140 110 L170 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  
+  <!-- FastLanguageModel -->
+  <g transform="translate(180, 70)">
+    <rect width="130" height="80" rx="10" fill="url(#unslothGrad)" filter="url(#shadow4)"/>
+    <text x="65" y="28" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">FastLanguageModel</text>
+    <line x1="15" y1="40" x2="115" y2="40" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="65" y="55" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="8">Optimized Loading</text>
+    <text x="65" y="70" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="8">4x Faster Download</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M320 110 L350 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  
+  <!-- Quantization -->
+  <g transform="translate(360, 70)">
+    <rect width="110" height="80" rx="10" fill="#1e40af" filter="url(#shadow4)"/>
+    <text x="55" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">Quantization</text>
+    <line x1="10" y1="38" x2="100" y2="38" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="55" y="52" text-anchor="middle" fill="#bfdbfe" font-family="Inter, system-ui, sans-serif" font-size="9">4-bit / 8-bit</text>
+    <text x="55" y="66" text-anchor="middle" fill="#bfdbfe" font-family="Inter, system-ui, sans-serif" font-size="9">16-bit / Full</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M480 110 L510 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  
+  <!-- Optimized LoRA -->
+  <g transform="translate(520, 70)">
+    <rect width="120" height="80" rx="10" fill="url(#unslothGrad)" filter="url(#shadow4)"/>
+    <text x="60" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">Optimized LoRA</text>
+    <line x1="10" y1="38" x2="110" y2="38" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="60" y="52" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="8">30% Less VRAM</text>
+    <text x="60" y="66" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="8">"unsloth" checkpointing</text>
+  </g>
+  
+  <!-- Arrow -->
+  <path d="M650 110 L680 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow4)"/>
+  
+  <!-- Training -->
+  <g transform="translate(690, 70)">
+    <rect width="110" height="80" rx="10" fill="#b91c1c" filter="url(#shadow4)"/>
+    <text x="55" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">2x Training</text>
+    <line x1="10" y1="38" x2="100" y2="38" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="55" y="52" text-anchor="middle" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="8">GRPO / DPO / SFT</text>
+    <text x="55" y="66" text-anchor="middle" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="8">Native RL Support</text>
+  </g>
+  
+  <!-- Export Options -->
+  <g transform="translate(690, 170)">
+    <path d="M55 0 L55 30" stroke="#64748b" stroke-width="2" fill="none"/>
+    
+    <!-- Export branches -->
+    <path d="M55 30 L-70 60" stroke="#64748b" stroke-width="1.5" fill="none"/>
+    <path d="M55 30 L55 60" stroke="#64748b" stroke-width="1.5" fill="none"/>
+    <path d="M55 30 L180 60" stroke="#64748b" stroke-width="1.5" fill="none"/>
+    
+    <!-- LoRA -->
+    <g transform="translate(-110, 70)">
+      <rect width="80" height="40" rx="6" fill="url(#exportGrad)" filter="url(#shadow4)"/>
+      <text x="40" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">LoRA</text>
+      <text x="40" y="32" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="7">~50MB</text>
+    </g>
+    
+    <!-- Merged -->
+    <g transform="translate(15, 70)">
+      <rect width="80" height="40" rx="6" fill="url(#exportGrad)" filter="url(#shadow4)"/>
+      <text x="40" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Merged</text>
+      <text x="40" y="32" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="7">16bit / 4bit</text>
+    </g>
+    
+    <!-- GGUF -->
+    <g transform="translate(140, 70)">
+      <rect width="80" height="40" rx="6" fill="#ea580c" filter="url(#shadow4)"/>
+      <text x="40" y="18" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">GGUF</text>
+      <text x="40" y="32" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="7">llama.cpp</text>
+    </g>
+  </g>
+  
+  <!-- Deploy targets -->
+  <g transform="translate(750, 280)">
+    <rect x="-60" y="0" width="50" height="30" rx="4" fill="#334155"/>
+    <text x="-35" y="18" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="8">Ollama</text>
+    
+    <rect x="0" y="0" width="50" height="30" rx="4" fill="#334155"/>
+    <text x="25" y="18" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="8">vLLM</text>
+    
+    <rect x="60" y="0" width="60" height="30" rx="4" fill="#334155"/>
+    <text x="90" y="18" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="8">llama.cpp</text>
+  </g>
+  
+  <!-- Performance Comparison -->
+  <g transform="translate(30, 190)">
+    <rect width="320" height="180" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow4)"/>
+    <text x="160" y="25" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">📊 Performance Comparison</text>
+    
+    <!-- Headers -->
+    <text x="30" y="55" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Metric</text>
+    <text x="140" y="55" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Standard</text>
+    <text x="240" y="55" fill="#22c55e" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Unsloth</text>
+    
+    <line x1="20" y1="65" x2="300" y2="65" stroke="#334155" stroke-width="1"/>
+    
+    <!-- Speed -->
+    <text x="30" y="85" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Speed</text>
+    <text x="140" y="85" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="10">1x</text>
+    <text x="240" y="85" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">2x ⚡</text>
+    
+    <!-- VRAM -->
+    <text x="30" y="110" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">VRAM</text>
+    <text x="140" y="110" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="10">100%</text>
+    <text x="240" y="110" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">30% 📉</text>
+    
+    <!-- Context (16GB) -->
+    <text x="30" y="135" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Context (16GB)</text>
+    <text x="140" y="135" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="10">2,551</text>
+    <text x="240" y="135" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">40,724 📈</text>
+    
+    <!-- Context (24GB) -->
+    <text x="30" y="160" fill="#e2e8f0" font-family="Inter, system-ui, sans-serif" font-size="10">Context (24GB)</text>
+    <text x="140" y="160" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="10">5,789</text>
+    <text x="240" y="160" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">78,475 📈</text>
+  </g>
+  
+  <!-- Supported Algorithms -->
+  <g transform="translate(380, 190)">
+    <rect width="280" height="100" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow4)"/>
+    <text x="140" y="22" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">⚡ Supported RL Algorithms</text>
+    
+    <g transform="translate(20, 40)">
+      <rect width="50" height="22" rx="4" fill="#16a34a"/>
+      <text x="25" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">GRPO</text>
+    </g>
+    <g transform="translate(80, 40)">
+      <rect width="50" height="22" rx="4" fill="#16a34a"/>
+      <text x="25" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">DPO</text>
+    </g>
+    <g transform="translate(140, 40)">
+      <rect width="50" height="22" rx="4" fill="#16a34a"/>
+      <text x="25" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">ORPO</text>
+    </g>
+    <g transform="translate(200, 40)">
+      <rect width="50" height="22" rx="4" fill="#16a34a"/>
+      <text x="25" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">SFT</text>
+    </g>
+    
+    <g transform="translate(20, 70)">
+      <rect width="50" height="22" rx="4" fill="#0d9488"/>
+      <text x="25" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">KTO</text>
+    </g>
+    <g transform="translate(80, 70)">
+      <rect width="55" height="22" rx="4" fill="#0d9488"/>
+      <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">SimPO</text>
+    </g>
+    <g transform="translate(145, 70)">
+      <rect width="55" height="22" rx="4" fill="#0d9488"/>
+      <text x="27" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9">PPO</text>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <text x="450" y="385" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11">github.com/unslothai/unsloth • 48.8k ⭐ • Apache 2.0 License</text>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow4" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+

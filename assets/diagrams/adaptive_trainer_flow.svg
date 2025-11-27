@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420">
+  <defs>
+    <linearGradient id="analyzerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="improveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="plateauGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d97706;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="divergeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dc2626;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="curriculumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="420" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">📈 Adaptive Trainer: Dynamic Optimization</text>
+  
+  <!-- Input: Training Metrics -->
+  <g transform="translate(30, 80)">
+    <rect width="120" height="60" rx="8" fill="#334155" filter="url(#shadow2)"/>
+    <text x="60" y="25" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">📊 Metrics</text>
+    <text x="60" y="42" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">loss, reward</text>
+    <text x="60" y="54" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">gradient_norm</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <path d="M160 110 L200 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+  
+  <!-- Metric Analyzer -->
+  <g transform="translate(210, 70)">
+    <rect width="140" height="80" rx="10" fill="url(#analyzerGrad)" filter="url(#shadow2)"/>
+    <text x="70" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">Metric Analyzer</text>
+    <line x1="15" y1="38" x2="125" y2="38" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="70" y="55" text-anchor="middle" fill="#dbeafe" font-family="Inter, system-ui, sans-serif" font-size="9">Trend Detection</text>
+    <text x="70" y="70" text-anchor="middle" fill="#dbeafe" font-family="Inter, system-ui, sans-serif" font-size="9">Variance Analysis</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <path d="M360 110 L400 110" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+  
+  <!-- Training State (Diamond) -->
+  <g transform="translate(410, 65)">
+    <polygon points="70,0 140,45 70,90 0,45" fill="#1e293b" stroke="#64748b" stroke-width="2" filter="url(#shadow2)"/>
+    <text x="70" y="40" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">Training</text>
+    <text x="70" y="55" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">State?</text>
+  </g>
+  
+  <!-- State outputs -->
+  <!-- Improving -->
+  <g transform="translate(600, 55)">
+    <rect width="130" height="45" rx="8" fill="url(#improveGrad)" filter="url(#shadow2)"/>
+    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">✅ Improving</text>
+    <text x="65" y="35" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="9">↑ Difficulty</text>
+  </g>
+  
+  <!-- Plateauing -->
+  <g transform="translate(600, 110)">
+    <rect width="130" height="45" rx="8" fill="url(#plateauGrad)" filter="url(#shadow2)"/>
+    <text x="65" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">⚠️ Plateauing</text>
+    <text x="65" y="35" text-anchor="middle" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="9">⚡ Adjust LR/Temp</text>
+  </g>
+  
+  <!-- Diverging -->
+  <g transform="translate(760, 80)">
+    <rect width="120" height="45" rx="8" fill="url(#divergeGrad)" filter="url(#shadow2)"/>
+    <text x="60" y="20" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">❌ Diverging</text>
+    <text x="60" y="35" text-anchor="middle" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="9">↓ LR, ↓ Temp</text>
+  </g>
+  
+  <!-- Arrows to states -->
+  <path d="M550 95 L600 77" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+  <path d="M550 110 L600 132" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+  <path d="M550 125 L600 155 L750 155 L750 125 L760 102" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrow2)"/>
+  
+  <!-- Curriculum Learning Section -->
+  <g transform="translate(50, 200)">
+    <rect width="800" height="180" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1" filter="url(#shadow2)"/>
+    <text x="400" y="30" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">🎓 Curriculum Learning: Progressive Difficulty</text>
+    
+    <!-- Easy -->
+    <g transform="translate(50, 60)">
+      <rect width="180" height="70" rx="8" fill="#166534" filter="url(#shadow2)"/>
+      <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="600">Easy Tasks</text>
+      <text x="90" y="45" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="10">difficulty: 0.0 - 0.3</text>
+      <text x="90" y="60" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="9">Short prompts, clear tasks</text>
+    </g>
+    
+    <!-- Arrow -->
+    <path d="M250 95 L290 95" stroke="#64748b" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+    <text x="270" y="85" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="9">mastery</text>
+    
+    <!-- Medium -->
+    <g transform="translate(310, 60)">
+      <rect width="180" height="70" rx="8" fill="url(#plateauGrad)" filter="url(#shadow2)"/>
+      <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="600">Medium Tasks</text>
+      <text x="90" y="45" text-anchor="middle" fill="#fef3c7" font-family="Inter, system-ui, sans-serif" font-size="10">difficulty: 0.3 - 0.7</text>
+      <text x="90" y="60" text-anchor="middle" fill="#fde68a" font-family="Inter, system-ui, sans-serif" font-size="9">Multi-step reasoning</text>
+    </g>
+    
+    <!-- Arrow -->
+    <path d="M510 95 L550 95" stroke="#64748b" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+    <text x="530" y="85" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="9">mastery</text>
+    
+    <!-- Hard -->
+    <g transform="translate(570, 60)">
+      <rect width="180" height="70" rx="8" fill="url(#divergeGrad)" filter="url(#shadow2)"/>
+      <text x="90" y="25" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="600">Hard Tasks</text>
+      <text x="90" y="45" text-anchor="middle" fill="#fecaca" font-family="Inter, system-ui, sans-serif" font-size="10">difficulty: 0.7 - 1.0</text>
+      <text x="90" y="60" text-anchor="middle" fill="#fca5a5" font-family="Inter, system-ui, sans-serif" font-size="9">Complex reasoning, edge cases</text>
+    </g>
+    
+    <!-- Progress bar -->
+    <rect x="100" y="150" width="600" height="10" rx="5" fill="#334155"/>
+    <rect x="100" y="150" width="300" height="10" rx="5" fill="url(#curriculumGrad)"/>
+    <text x="400" y="168" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Current: 50% difficulty</text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="450" y="400" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11">Automatically adjusts training based on real-time performance analysis</text>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+

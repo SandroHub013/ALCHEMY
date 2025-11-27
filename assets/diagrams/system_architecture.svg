@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550">
+  <defs>
+    <linearGradient id="inputGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="modelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="trainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="agentGradSys" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="memoryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#db2777;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="outputGradSys" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow5" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="550" fill="#0f172a" rx="12"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">🏗 ALCHEMY System Architecture</text>
+  
+  <!-- Layer 1: Input -->
+  <g transform="translate(30, 60)">
+    <rect width="840" height="80" rx="10" fill="#1e293b" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#3b82f6" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">📥 INPUT LAYER</text>
+    
+    <g transform="translate(30, 40)">
+      <rect width="100" height="30" rx="5" fill="url(#inputGrad)"/>
+      <text x="50" y="19" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">config.yaml</text>
+    </g>
+    <g transform="translate(150, 40)">
+      <rect width="100" height="30" rx="5" fill="url(#inputGrad)"/>
+      <text x="50" y="19" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Datasets</text>
+    </g>
+    <g transform="translate(270, 40)">
+      <rect width="120" height="30" rx="5" fill="url(#inputGrad)"/>
+      <text x="60" y="19" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Knowledge Base</text>
+    </g>
+    <g transform="translate(410, 40)">
+      <rect width="120" height="30" rx="5" fill="url(#inputGrad)"/>
+      <text x="60" y="19" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Off-Policy Traces</text>
+    </g>
+  </g>
+  
+  <!-- Arrow down -->
+  <path d="M450 145 L450 160" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow5)"/>
+  
+  <!-- Layer 2: Models -->
+  <g transform="translate(30, 165)">
+    <rect width="400" height="90" rx="10" fill="#1e293b" stroke="#7c3aed" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#a855f7" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">🧠 MODEL LAYER</text>
+    
+    <g transform="translate(30, 40)">
+      <rect width="100" height="35" rx="5" fill="url(#modelGrad)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">ModelLoader</text>
+      <text x="50" y="28" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="7">Standard</text>
+    </g>
+    <g transform="translate(150, 40)">
+      <rect width="110" height="35" rx="5" fill="#16a34a"/>
+      <text x="55" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">UnslothLoader</text>
+      <text x="55" y="28" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="7">2x Faster 🆕</text>
+    </g>
+    <g transform="translate(280, 40)">
+      <rect width="90" height="35" rx="5" fill="url(#modelGrad)"/>
+      <text x="45" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">PEFT/LoRA</text>
+      <text x="45" y="28" text-anchor="middle" fill="#e9d5ff" font-family="Inter, system-ui, sans-serif" font-size="7">QLoRA 4-bit</text>
+    </g>
+  </g>
+  
+  <!-- Layer 2b: Memory (right side) -->
+  <g transform="translate(470, 165)">
+    <rect width="400" height="90" rx="10" fill="#1e293b" stroke="#db2777" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#ec4899" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">💾 MEMORY LAYER</text>
+    
+    <g transform="translate(30, 40)">
+      <rect width="90" height="35" rx="5" fill="url(#memoryGrad)"/>
+      <text x="45" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">RAG System</text>
+      <text x="45" y="28" text-anchor="middle" fill="#fbcfe8" font-family="Inter, system-ui, sans-serif" font-size="7">+ Reranker</text>
+    </g>
+    <g transform="translate(135, 40)">
+      <rect width="90" height="35" rx="5" fill="url(#memoryGrad)"/>
+      <text x="45" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">VectorStore</text>
+      <text x="45" y="28" text-anchor="middle" fill="#fbcfe8" font-family="Inter, system-ui, sans-serif" font-size="7">ChromaDB</text>
+    </g>
+    <g transform="translate(240, 40)">
+      <rect width="100" height="35" rx="5" fill="url(#memoryGrad)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">SmartChunker</text>
+      <text x="50" y="28" text-anchor="middle" fill="#fbcfe8" font-family="Inter, system-ui, sans-serif" font-size="7">tree-sitter</text>
+    </g>
+  </g>
+  
+  <!-- Arrow down -->
+  <path d="M230 260 L230 275" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow5)"/>
+  <path d="M670 260 L670 275 L670 330 L450 330 L450 360" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" fill="none"/>
+  
+  <!-- Layer 3: Training -->
+  <g transform="translate(30, 280)">
+    <rect width="400" height="100" rx="10" fill="#1e293b" stroke="#ea580c" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#f97316" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">⚡ TRAINING LAYER</text>
+    
+    <g transform="translate(25, 40)">
+      <rect width="80" height="35" rx="5" fill="url(#trainGrad)"/>
+      <text x="40" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">SFT</text>
+      <text x="40" y="28" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="7">Supervised</text>
+    </g>
+    <g transform="translate(115, 40)">
+      <rect width="80" height="35" rx="5" fill="url(#trainGrad)"/>
+      <text x="40" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">GRPO</text>
+      <text x="40" y="28" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="7">RL Training</text>
+    </g>
+    <g transform="translate(205, 40)">
+      <rect width="85" height="35" rx="5" fill="#16a34a"/>
+      <text x="42" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Adaptive 🆕</text>
+      <text x="42" y="28" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="7">Dynamic</text>
+    </g>
+    <g transform="translate(300, 40)">
+      <rect width="80" height="35" rx="5" fill="#16a34a"/>
+      <text x="40" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Swarm 🆕</text>
+      <text x="40" y="28" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="7">Multi-Agent</text>
+    </g>
+  </g>
+  
+  <!-- Arrow down -->
+  <path d="M230 385 L230 400" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow5)"/>
+  
+  <!-- Layer 4: Agents -->
+  <g transform="translate(30, 405)">
+    <rect width="840" height="90" rx="10" fill="#1e293b" stroke="#059669" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#10b981" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">🤖 AGENT LAYER</text>
+    
+    <g transform="translate(30, 40)">
+      <rect width="100" height="35" rx="5" fill="#16a34a"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Meta-Agent 🆕</text>
+      <text x="50" y="28" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="7">Self-Generate</text>
+    </g>
+    <g transform="translate(145, 40)">
+      <rect width="110" height="35" rx="5" fill="url(#agentGradSys)"/>
+      <text x="55" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Agent Lightning</text>
+      <text x="55" y="28" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="7">Microsoft</text>
+    </g>
+    <g transform="translate(270, 40)">
+      <rect width="100" height="35" rx="5" fill="url(#agentGradSys)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">LUFFY</text>
+      <text x="50" y="28" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="7">Off-Policy</text>
+    </g>
+    <g transform="translate(385, 40)">
+      <rect width="100" height="35" rx="5" fill="url(#agentGradSys)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Search-R1</text>
+      <text x="50" y="28" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="7">RAG Reasoning</text>
+    </g>
+    <g transform="translate(500, 40)">
+      <rect width="100" height="35" rx="5" fill="#16a34a"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Unsloth RL 🆕</text>
+      <text x="50" y="28" text-anchor="middle" fill="#dcfce7" font-family="Inter, system-ui, sans-serif" font-size="7">High-Perf</text>
+    </g>
+    <g transform="translate(615, 40)">
+      <rect width="90" height="35" rx="5" fill="url(#agentGradSys)"/>
+      <text x="45" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">SOP Manager</text>
+      <text x="45" y="28" text-anchor="middle" fill="#d1fae5" font-family="Inter, system-ui, sans-serif" font-size="7">Procedures</text>
+    </g>
+  </g>
+  
+  <!-- Output Layer -->
+  <g transform="translate(470, 280)">
+    <rect width="400" height="100" rx="10" fill="#1e293b" stroke="#475569" stroke-width="2" filter="url(#shadow5)"/>
+    <text x="30" y="25" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">📤 OUTPUT LAYER</text>
+    
+    <g transform="translate(30, 45)">
+      <rect width="100" height="35" rx="5" fill="url(#outputGradSys)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">LoRA Adapter</text>
+      <text x="50" y="28" text-anchor="middle" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="7">~50MB</text>
+    </g>
+    <g transform="translate(145, 45)">
+      <rect width="100" height="35" rx="5" fill="url(#outputGradSys)"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">Merged Model</text>
+      <text x="50" y="28" text-anchor="middle" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="7">16-bit / 4-bit</text>
+    </g>
+    <g transform="translate(260, 45)">
+      <rect width="100" height="35" rx="5" fill="#ea580c"/>
+      <text x="50" y="15" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="600">GGUF Export</text>
+      <text x="50" y="28" text-anchor="middle" fill="#fed7aa" font-family="Inter, system-ui, sans-serif" font-size="7">llama.cpp</text>
+    </g>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(30, 510)">
+    <rect width="12" height="12" rx="2" fill="#16a34a"/>
+    <text x="20" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">New Integration</text>
+    
+    <rect x="130" width="12" height="12" rx="2" fill="#7c3aed"/>
+    <text x="150" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Core Component</text>
+    
+    <rect x="270" width="12" height="12" rx="2" fill="#ea580c"/>
+    <text x="290" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Training</text>
+    
+    <rect x="370" width="12" height="12" rx="2" fill="#db2777"/>
+    <text x="390" y="10" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="9">Memory</text>
+  </g>
+  
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow5" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>
+
