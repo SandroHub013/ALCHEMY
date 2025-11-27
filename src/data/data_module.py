@@ -1,10 +1,10 @@
 """
-Modulo per la gestione dei dataset con PyTorch Lightning DataModule.
+Module for dataset management with PyTorch Lightning DataModule.
 
-Supporta:
-- Single-source training (retrocompatibile)
-- Multi-source training con Data Mixing per modelli generalisti
-- Formattazione unificata ChatML per evitare Catastrophic Forgetting
+Supports:
+- Single-source training (backward compatible)
+- Multi-source training with Data Mixing for generalist models
+- Unified ChatML formatting to avoid Catastrophic Forgetting
 """
 
 from typing import Optional, Dict, Any, List, Callable, Literal
@@ -25,10 +25,10 @@ logger = logging.getLogger(__name__)
 # RAG / CONTEXTUAL TRAINING CONFIGURATION
 # =============================================================================
 
-# Percentuale di esempi con contesto RAG (RAFT strategy)
-RAG_CONTEXT_PERCENTAGE = 0.20  # 20% degli esempi
+# Percentage of examples with RAG context (RAFT strategy)
+RAG_CONTEXT_PERCENTAGE = 0.20  # 20% of examples
 
-# Template per contesto sintetico (usato quando non c'è contesto reale)
+# Templates for synthetic context (used when there's no real context)
 SYNTHETIC_CONTEXT_TEMPLATES = [
     "According to the documentation, {topic} is defined as follows: {snippet}",
     "From the knowledge base: {snippet}. This relates to {topic}.",
@@ -39,32 +39,32 @@ SYNTHETIC_CONTEXT_TEMPLATES = [
 
 def generate_synthetic_context(instruction: str, response: str) -> str:
     """
-    Genera contesto sintetico per training RAG.
+    Generate synthetic context for RAG training.
     
-    Estrae frasi dalla risposta per simulare un contesto recuperato.
-    Questo insegna al modello a cercare informazioni nel contesto.
+    Extracts sentences from the response to simulate retrieved context.
+    This teaches the model to search for information in the context.
     
     Args:
-        instruction: La domanda
-        response: La risposta (da cui estraiamo il contesto)
+        instruction: The question
+        response: The answer (from which we extract the context)
         
     Returns:
-        Contesto sintetico
+        Synthetic context
     """
-    # Estrai parole chiave dall'istruzione
+    # Extract keywords from instruction
     words = instruction.split()
     topic = " ".join(words[:min(5, len(words))])
     
-    # Prendi una parte della risposta come "snippet recuperato"
+    # Take a part of the response as "retrieved snippet"
     response_sentences = response.replace("\n", " ").split(". ")
     
     if len(response_sentences) > 2:
-        # Prendi le prime 2-3 frasi come contesto
+        # Take the first 2-3 sentences as context
         snippet = ". ".join(response_sentences[:min(3, len(response_sentences))])
     else:
         snippet = response[:min(500, len(response))]
     
-    # Scegli un template casuale
+    # Choose a random template
     template = random.choice(SYNTHETIC_CONTEXT_TEMPLATES)
     
     try:
@@ -84,7 +84,7 @@ DatasetType = Literal["function_calling", "coding", "chat", "language", "instruc
 
 @dataclass
 class DatasetSourceConfig:
-    """Configurazione per una singola fonte dati nel multi-source training."""
+    """Configuration for a single data source in multi-source training."""
     
     name: str
     weight: float
@@ -92,16 +92,16 @@ class DatasetSourceConfig:
     type: DatasetType = "instruction"
     columns: Dict[str, str] = field(default_factory=dict)
     max_samples: Optional[int] = None
-    config_name: Optional[str] = None  # Per dataset HuggingFace con subset
+    config_name: Optional[str] = None  # For HuggingFace datasets with subsets
 
 
 # =============================================================================
-# FORMATTERS - Convertono diversi formati in ChatML unificato
+# FORMATTERS - Convert different formats to unified ChatML
 # =============================================================================
 
 class ChatMLFormatter:
     """
-    Formattatore unificato per convertire qualsiasi formato in ChatML.
+    Unified formatter to convert any format to ChatML.
     
     ChatML Format:
     <|im_start|>system
@@ -117,7 +117,7 @@ class ChatMLFormatter:
     
     @classmethod
     def format_message(cls, role: str, content: str) -> str:
-        """Formatta un singolo messaggio in ChatML."""
+        """Format a single message in ChatML."""
         return f"{cls.CHATML_START}{role}\n{content}{cls.CHATML_END}"
     
     @classmethod
@@ -127,14 +127,14 @@ class ChatMLFormatter:
         system_message: Optional[str] = None
     ) -> str:
         """
-        Formatta una conversazione completa in ChatML.
+        Format a complete conversation in ChatML.
         
         Args:
-            messages: Lista di dict con 'role' e 'content'
-            system_message: Messaggio di sistema opzionale
+            messages: List of dicts with 'role' and 'content'
+            system_message: Optional system message
             
         Returns:
-            Stringa formattata in ChatML
+            String formatted in ChatML
         """
         parts = []
         
@@ -145,7 +145,7 @@ class ChatMLFormatter:
             role = msg.get("role", msg.get("from", "user"))
             content = msg.get("content", msg.get("value", ""))
             
-            # Normalizza i ruoli
+            # Normalize roles
             if role in ("human", "user", "Human"):
                 role = "user"
             elif role in ("gpt", "assistant", "Assistant", "bot"):
@@ -164,15 +164,15 @@ class ChatMLFormatter:
         input_context: Optional[str] = None
     ) -> str:
         """
-        Formatta una coppia instruction-response in ChatML.
+        Format an instruction-response pair in ChatML.
         
         Args:
-            instruction: L'istruzione/domanda
-            response: La risposta
-            system_message: Messaggio di sistema opzionale
-            input_context: Contesto aggiuntivo (es. per dataset Alpaca)
+            instruction: The instruction/question
+            response: The response
+            system_message: Optional system message
+            input_context: Additional context (e.g., for Alpaca datasets)
         """
-        # Combina instruction e input se presente
+        # Combine instruction and input if present
         user_content = instruction
         if input_context and input_context.strip():
             user_content = f"{instruction}\n\nContext:\n{input_context}"
@@ -192,20 +192,20 @@ class ChatMLFormatter:
         retrieved_context: str,
     ) -> str:
         """
-        Formatta con contesto RAG recuperato (RAFT Strategy).
+        Format with retrieved RAG context (RAFT Strategy).
         
-        Questo formato insegna al modello a:
-        1. Leggere il contesto fornito
-        2. Usare le informazioni rilevanti
-        3. Ammettere quando l'informazione non è nel contesto
+        This format teaches the model to:
+        1. Read the provided context
+        2. Use relevant information
+        3. Admit when information is not in the context
         
         Args:
-            instruction: La domanda dell'utente
-            response: La risposta (che dovrebbe usare il contesto)
-            retrieved_context: Il contesto recuperato dalla knowledge base
+            instruction: The user's question
+            response: The answer (which should use the context)
+            retrieved_context: The context retrieved from knowledge base
             
         Returns:
-            Stringa formattata in ChatML con RAG context
+            String formatted in ChatML with RAG context
         """
         system_message = (
             "You are an assistant. Use the following context to answer the question. "
@@ -223,26 +223,26 @@ class ChatMLFormatter:
 
 def format_function_calling(example: Dict[str, Any], columns: Dict[str, str]) -> str:
     """
-    Formatta un esempio di function calling in ChatML.
+    Format a function calling example in ChatML.
     
-    I dataset di function calling tipicamente hanno:
-    - Una conversazione con tool definitions
-    - Chiamate a funzioni e risposte
+    Function calling datasets typically have:
+    - A conversation with tool definitions
+    - Function calls and responses
     """
-    # Gestisci diversi formati di function calling
+    # Handle different function calling formats
     instruction_col = columns.get("instruction", "chat")
     response_col = columns.get("response", "answer")
     
     instruction = example.get(instruction_col, "")
     response = example.get(response_col, "")
     
-    # Sistema message per function calling
+    # System message for function calling
     system_msg = (
         "You are a helpful assistant with access to functions. "
         "When a function is needed, call it using the proper format."
     )
     
-    # Se l'istruzione contiene già una conversazione strutturata
+    # If instruction already contains a structured conversation
     if isinstance(instruction, list):
         return ChatMLFormatter.format_conversation(instruction, system_msg)
     
@@ -259,10 +259,10 @@ def format_coding(
     apply_rag: bool = False,
 ) -> str:
     """
-    Formatta un esempio di coding in ChatML.
+    Format a coding example in ChatML.
     
-    Aggiunge system message specifico per coding.
-    Se apply_rag=True, usa formato RAG con contesto sintetico.
+    Adds specific system message for coding.
+    If apply_rag=True, uses RAG format with synthetic context.
     """
     instruction_col = columns.get("instruction", "instruction")
     response_col = columns.get("response", "output")
@@ -273,7 +273,7 @@ def format_coding(
     instruction_str = str(instruction)
     response_str = str(response)
     
-    # Applica RAG context se richiesto
+    # Apply RAG context if requested
     if apply_rag:
         context = generate_synthetic_context(instruction_str, response_str)
         return ChatMLFormatter.format_with_rag_context(
@@ -296,11 +296,11 @@ def format_coding(
 
 def format_chat(example: Dict[str, Any], columns: Dict[str, str]) -> str:
     """
-    Formatta un esempio di chat/conversazione in ChatML.
+    Format a chat/conversation example in ChatML.
     
-    Supporta formato OpenHermes/ShareGPT con lista di messaggi.
+    Supports OpenHermes/ShareGPT format with message lists.
     """
-    # OpenHermes usa "conversations" come lista di messaggi
+    # OpenHermes uses "conversations" as a list of messages
     conversations_col = columns.get("conversations", "conversations")
     
     if conversations_col in example:
@@ -308,7 +308,7 @@ def format_chat(example: Dict[str, Any], columns: Dict[str, str]) -> str:
         if isinstance(conversations, list):
             return ChatMLFormatter.format_conversation(conversations)
     
-    # Fallback a formato instruction-response
+    # Fallback to instruction-response format
     instruction_col = columns.get("instruction", "instruction")
     response_col = columns.get("response", "response")
     
@@ -320,21 +320,21 @@ def format_chat(example: Dict[str, Any], columns: Dict[str, str]) -> str:
 
 def format_language(example: Dict[str, Any], columns: Dict[str, str]) -> str:
     """
-    Formatta testo monolingue in formato ChatML pseudo-conversazionale.
+    Format monolingual text in pseudo-conversational ChatML format.
     
-    Usato per dataset di lingua (es. italiano) per mantenere competenza linguistica.
+    Used for language datasets to maintain linguistic competence.
     """
     text_col = columns.get("text", "text")
     text = example.get(text_col, "")
     
-    # Crea una pseudo-conversazione per continuare la generazione
-    # Questo aiuta il modello a mantenere fluenza nella lingua
+    # Create a pseudo-conversation for continuation generation
+    # This helps the model maintain fluency in the language
     if len(str(text)) > 100:
-        # Splitta il testo e crea una domanda-risposta
+        # Split the text and create a question-answer
         text_str = str(text)
-        split_point = len(text_str) // 3  # Primo terzo come "prompt"
+        split_point = len(text_str) // 3  # First third as "prompt"
         
-        # Trova un punto naturale di split (fine frase)
+        # Find a natural split point (end of sentence)
         for i in range(split_point, min(split_point + 200, len(text_str))):
             if text_str[i] in ".!?":
                 split_point = i + 1
@@ -344,16 +344,16 @@ def format_language(example: Dict[str, Any], columns: Dict[str, str]) -> str:
         continuation = text_str[split_point:].strip()
         
         return ChatMLFormatter.format_instruction_response(
-            instruction=f"Continua questo testo:\n\n{prompt}",
+            instruction=f"Continue this text:\n\n{prompt}",
             response=continuation,
-            system_message="Sei un assistente che scrive in italiano fluente e naturale."
+            system_message="You are an assistant that writes fluently and naturally."
         )
     
-    # Testo troppo corto, usa come risposta semplice
+    # Text too short, use as simple response
     return ChatMLFormatter.format_instruction_response(
-        instruction="Scrivi un breve testo informativo.",
+        instruction="Write a brief informative text.",
         response=str(text),
-        system_message="Sei un assistente che scrive in italiano fluente e naturale."
+        system_message="You are an assistant that writes fluently and naturally."
     )
 
 
@@ -363,8 +363,8 @@ def format_instruction(
     apply_rag: bool = False,
 ) -> str:
     """
-    Formatta un esempio instruction-response generico in ChatML.
-    Se apply_rag=True, usa formato RAG con contesto.
+    Format a generic instruction-response example in ChatML.
+    If apply_rag=True, uses RAG format with context.
     """
     instruction_col = columns.get("instruction", "instruction")
     response_col = columns.get("response", "response")
@@ -374,13 +374,13 @@ def format_instruction(
     instruction_str = str(example.get(instruction_col, ""))
     response_str = str(example.get(response_col, ""))
     
-    # Applica RAG context se richiesto
+    # Apply RAG context if requested
     if apply_rag:
-        # Prima controlla se c'è un campo context nel dataset
+        # First check if there's a context field in the dataset
         if context_col in example and example.get(context_col):
             context = str(example.get(context_col))
         else:
-            # Genera contesto sintetico
+            # Generate synthetic context
             context = generate_synthetic_context(instruction_str, response_str)
         
         return ChatMLFormatter.format_with_rag_context(
@@ -396,7 +396,7 @@ def format_instruction(
     )
 
 
-# Registry dei formatters per tipo di dataset
+# Registry of formatters by dataset type
 FORMATTERS: Dict[DatasetType, Callable[[Dict[str, Any], Dict[str, str]], str]] = {
     "function_calling": format_function_calling,
     "coding": format_coding,
@@ -412,14 +412,14 @@ FORMATTERS: Dict[DatasetType, Callable[[Dict[str, Any], Dict[str, str]], str]] =
 
 class MultiSourceDataModule(pl.LightningDataModule):
     """
-    LightningDataModule per Multi-Source Training (Data Mixing).
+    LightningDataModule for Multi-Source Training (Data Mixing).
     
-    Carica e mescola più dataset con pesi configurabili per creare
-    un modello generalista che sa fare coding, function calling e chat
-    senza soffrire di Catastrophic Forgetting.
+    Loads and mixes multiple datasets with configurable weights to create
+    a generalist model that can do coding, function calling, and chat
+    without suffering from Catastrophic Forgetting.
     
-    Usa `datasets.interleave_datasets` per campionare proporzionalmente
-    dai diversi dataset durante il training.
+    Uses `datasets.interleave_datasets` to sample proportionally
+    from different datasets during training.
     """
     
     def __init__(
@@ -435,18 +435,18 @@ class MultiSourceDataModule(pl.LightningDataModule):
         seed: int = 42,
     ):
         """
-        Inizializza il MultiSourceDataModule.
+        Initialize the MultiSourceDataModule.
         
         Args:
-            tokenizer: Tokenizer per la tokenizzazione
-            sources: Lista di DatasetSourceConfig con le fonti dati
-            output_format: Formato di output ("chatml", "alpaca", etc.)
-            max_seq_length: Lunghezza massima sequenze
-            val_split_percentage: Percentuale per validation set
+            tokenizer: Tokenizer for tokenization
+            sources: List of DatasetSourceConfig with data sources
+            output_format: Output format ("chatml", "alpaca", etc.)
+            max_seq_length: Maximum sequence length
+            val_split_percentage: Percentage for validation set
             per_device_train_batch_size: Batch size per GPU (training)
             per_device_eval_batch_size: Batch size per GPU (eval)
-            num_workers: Worker per DataLoader
-            seed: Seed per riproducibilità
+            num_workers: Workers for DataLoader
+            seed: Seed for reproducibility
         """
         super().__init__()
         self.tokenizer = tokenizer
@@ -462,27 +462,27 @@ class MultiSourceDataModule(pl.LightningDataModule):
         self.train_dataset = None
         self.val_dataset = None
         
-        # Valida i pesi
+        # Validate weights
         total_weight = sum(s.weight for s in sources)
         if abs(total_weight - 1.0) > 0.01:
             logger.warning(
-                f"I pesi dei dataset sommano a {total_weight:.2f}, non 1.0. "
-                "Verranno normalizzati automaticamente."
+                f"Dataset weights sum to {total_weight:.2f}, not 1.0. "
+                "They will be automatically normalized."
             )
     
     def _load_single_source(self, source: DatasetSourceConfig) -> Dataset:
         """
-        Carica un singolo dataset e applica il formatter appropriato.
+        Load a single dataset and apply the appropriate formatter.
         
         Args:
-            source: Configurazione della fonte dati
+            source: Data source configuration
             
         Returns:
-            Dataset formattato
+            Formatted dataset
         """
-        logger.info(f"Caricamento dataset: {source.name} (weight: {source.weight:.2f})")
+        logger.info(f"Loading dataset: {source.name} (weight: {source.weight:.2f})")
         
-        # Carica il dataset
+        # Load the dataset
         try:
             if source.config_name:
                 dataset = load_dataset(
@@ -493,102 +493,102 @@ class MultiSourceDataModule(pl.LightningDataModule):
             else:
                 dataset = load_dataset(source.name, split=source.split)
         except Exception as e:
-            logger.error(f"Errore caricamento {source.name}: {e}")
+            logger.error(f"Error loading {source.name}: {e}")
             raise
         
-        # Limita il numero di esempi se specificato
+        # Limit number of examples if specified
         if source.max_samples and len(dataset) > source.max_samples:
             dataset = dataset.shuffle(seed=self.seed).select(range(source.max_samples))
-            logger.info(f"  Limitato a {source.max_samples} esempi")
+            logger.info(f"  Limited to {source.max_samples} examples")
         
-        # Ottieni il formatter appropriato
+        # Get the appropriate formatter
         formatter = FORMATTERS.get(source.type, format_instruction)
         
-        # Conta quanti esempi avranno RAG context
+        # Count how many examples will have RAG context
         rag_count = 0
         total_count = 0
         
-        # Applica la formattazione con RAFT strategy (20% RAG context)
+        # Apply formatting with RAFT strategy (20% RAG context)
         def format_example(example: Dict[str, Any]) -> Dict[str, str]:
             nonlocal rag_count, total_count
             total_count += 1
             
             try:
-                # Decidi se applicare RAG context (20% probabilità)
+                # Decide whether to apply RAG context (20% probability)
                 apply_rag = random.random() < RAG_CONTEXT_PERCENTAGE
                 
-                # Solo alcuni formatter supportano RAG
+                # Only some formatters support RAG
                 if apply_rag and source.type in ("coding", "instruction"):
                     rag_count += 1
-                    # Usa il formatter con RAG
+                    # Use formatter with RAG
                     if source.type == "coding":
                         formatted_text = format_coding(example, source.columns, apply_rag=True)
                     else:
                         formatted_text = format_instruction(example, source.columns, apply_rag=True)
                 else:
-                    # Formatter normale
+                    # Normal formatter
                     formatted_text = formatter(example, source.columns)
                 
                 return {"text": formatted_text, "_source": source.name}
             except Exception as e:
-                logger.warning(f"Errore formattazione esempio: {e}")
+                logger.warning(f"Error formatting example: {e}")
                 return {"text": "", "_source": source.name}
         
         formatted_dataset = dataset.map(
             format_example,
             remove_columns=dataset.column_names,
-            desc=f"Formattazione {source.name}",
+            desc=f"Formatting {source.name}",
         )
         
         # Log RAG context stats
         if rag_count > 0:
-            logger.info(f"  RAG Context applicato a {rag_count}/{total_count} esempi ({rag_count/total_count*100:.1f}%)")
+            logger.info(f"  RAG Context applied to {rag_count}/{total_count} examples ({rag_count/total_count*100:.1f}%)")
         
-        # Rimuovi esempi vuoti
+        # Remove empty examples
         formatted_dataset = formatted_dataset.filter(
             lambda x: len(x["text"]) > 10,
-            desc=f"Filtraggio {source.name}"
+            desc=f"Filtering {source.name}"
         )
         
-        logger.info(f"  Caricati {len(formatted_dataset)} esempi da {source.name}")
+        logger.info(f"  Loaded {len(formatted_dataset)} examples from {source.name}")
         return formatted_dataset
     
     def setup(self, stage: Optional[str] = None) -> None:
         """
-        Carica tutti i dataset, li mescola e prepara per il training.
+        Load all datasets, mix them, and prepare for training.
         
-        Usa `interleave_datasets` per campionare proporzionalmente
-        dai diversi dataset in base ai pesi configurati.
+        Uses `interleave_datasets` to sample proportionally
+        from different datasets based on configured weights.
         """
         if stage == "fit" or stage is None:
             logger.info("=" * 60)
             logger.info("SETUP MULTI-SOURCE TRAINING")
             logger.info("=" * 60)
             
-            # Carica tutti i dataset
+            # Load all datasets
             datasets_list = []
             for source in self.sources:
                 ds = self._load_single_source(source)
                 datasets_list.append(ds)
             
-            # Calcola le probabilità normalizzate
+            # Calculate normalized probabilities
             weights = [s.weight for s in self.sources]
             total_weight = sum(weights)
             probabilities = [w / total_weight for w in weights]
             
-            logger.info(f"Probabilità di campionamento: {probabilities}")
+            logger.info(f"Sampling probabilities: {probabilities}")
             
-            # Mescola i dataset con interleave_datasets
-            # stopping_strategy="all_exhausted" assicura che tutti i dataset
-            # vengano usati completamente
+            # Mix datasets with interleave_datasets
+            # stopping_strategy="all_exhausted" ensures all datasets
+            # are used completely
             interleaved_dataset = interleave_datasets(
                 datasets_list,
                 probabilities=probabilities,
                 seed=self.seed,
-                stopping_strategy="first_exhausted"  # Si ferma quando finisce il più piccolo
+                stopping_strategy="first_exhausted"  # Stops when smallest finishes
             )
             
-            logger.info(f"Dataset mescolato: {len(interleaved_dataset)} esempi totali")
+            logger.info(f"Mixed dataset: {len(interleaved_dataset)} total examples")
             
             # Split train/val
             split_dataset = interleaved_dataset.train_test_split(
@@ -599,39 +599,39 @@ class MultiSourceDataModule(pl.LightningDataModule):
             train_data = split_dataset["train"]
             val_data = split_dataset["test"]
             
-            # Tokenizza
+            # Tokenize
             self.train_dataset = train_data.map(
                 self._tokenize_function,
                 batched=True,
                 remove_columns=train_data.column_names,
-                desc="Tokenizzazione training",
+                desc="Tokenizing training",
             )
             
             self.val_dataset = val_data.map(
                 self._tokenize_function,
                 batched=True,
                 remove_columns=val_data.column_names,
-                desc="Tokenizzazione validazione",
+                desc="Tokenizing validation",
             )
             
-            # Imposta formato PyTorch per tensori
+            # Set PyTorch format for tensors
             self.train_dataset.set_format("torch")
             self.val_dataset.set_format("torch")
             
             logger.info("=" * 60)
             logger.info(
-                f"Dataset finale - Training: {len(self.train_dataset)} esempi, "
-                f"Validazione: {len(self.val_dataset)} esempi"
+                f"Final dataset - Training: {len(self.train_dataset)} examples, "
+                f"Validation: {len(self.val_dataset)} examples"
             )
             logger.info("=" * 60)
     
     def _tokenize_function(self, examples: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Tokenizza i testi già formattati in ChatML.
+        Tokenize texts already formatted in ChatML.
         """
         texts = examples["text"]
         
-        # Tokenizza
+        # Tokenize
         tokenized = self.tokenizer(
             texts,
             truncation=True,
@@ -640,7 +640,7 @@ class MultiSourceDataModule(pl.LightningDataModule):
             return_tensors=None,
         )
         
-        # Crea labels per causal LM
+        # Create labels for causal LM
         labels = []
         for input_ids in tokenized["input_ids"]:
             label = [
@@ -653,7 +653,7 @@ class MultiSourceDataModule(pl.LightningDataModule):
         return tokenized
     
     def train_dataloader(self) -> DataLoader:
-        """Crea il DataLoader per il training."""
+        """Create the DataLoader for training."""
         return DataLoader(
             self.train_dataset,
             batch_size=self.per_device_train_batch_size,
@@ -664,7 +664,7 @@ class MultiSourceDataModule(pl.LightningDataModule):
         )
     
     def val_dataloader(self) -> Optional[DataLoader]:
-        """Crea il DataLoader per la validazione."""
+        """Create the DataLoader for validation."""
         if self.val_dataset is None:
             return None
         
@@ -678,17 +678,17 @@ class MultiSourceDataModule(pl.LightningDataModule):
 
 
 # =============================================================================
-# LEGACY SINGLE-SOURCE DATA MODULE (Retrocompatibile)
+# LEGACY SINGLE-SOURCE DATA MODULE (Backward Compatible)
 # =============================================================================
 
 class InstructionDataModule(pl.LightningDataModule):
     """
-    LightningDataModule per dataset di instruction tuning (single-source).
+    LightningDataModule for instruction tuning datasets (single-source).
     
-    Supporta dataset da HuggingFace con formato instruction-response
-    (es. databricks/databricks-dolly-15k, alpaca, ecc.).
+    Supports datasets from HuggingFace with instruction-response format
+    (e.g., databricks/databricks-dolly-15k, alpaca, etc.).
     
-    NOTE: Per multi-source training, usa MultiSourceDataModule.
+    NOTE: For multi-source training, use MultiSourceDataModule.
     """
     
     def __init__(
@@ -706,26 +706,26 @@ class InstructionDataModule(pl.LightningDataModule):
         per_device_eval_batch_size: int = 2,
         gradient_accumulation_steps: int = 1,
         num_workers: int = 4,
-        use_chatml: bool = True,  # Nuovo parametro per formato ChatML
+        use_chatml: bool = True,  # New parameter for ChatML format
     ):
         """
-        Inizializza il DataModule.
+        Initialize the DataModule.
         
         Args:
-            tokenizer: Tokenizer per la tokenizzazione dei testi
-            dataset_name: Nome del dataset su HuggingFace o path locale
-            dataset_config: Configurazione specifica del dataset (opzionale)
-            text_column: Nome della colonna con le istruzioni/prompt
-            response_column: Nome della colonna con le risposte
-            max_seq_length: Lunghezza massima delle sequenze tokenizzate
-            train_split: Nome dello split di training
-            val_split: Nome dello split di validazione (None = crea da train)
-            val_split_percentage: Percentuale di train da usare come val (se val_split=None)
-            per_device_train_batch_size: Batch size per GPU per training
-            per_device_eval_batch_size: Batch size per GPU per validazione
-            gradient_accumulation_steps: Passi di accumulazione gradienti
-            num_workers: Numero di worker per DataLoader
-            use_chatml: Se True, usa formato ChatML invece di Alpaca
+            tokenizer: Tokenizer for text tokenization
+            dataset_name: Dataset name on HuggingFace or local path
+            dataset_config: Specific dataset configuration (optional)
+            text_column: Name of column with instructions/prompts
+            response_column: Name of column with responses
+            max_seq_length: Maximum length of tokenized sequences
+            train_split: Name of training split
+            val_split: Name of validation split (None = create from train)
+            val_split_percentage: Percentage of train to use as val (if val_split=None)
+            per_device_train_batch_size: Batch size per GPU for training
+            per_device_eval_batch_size: Batch size per GPU for validation
+            gradient_accumulation_steps: Gradient accumulation steps
+            num_workers: Number of workers for DataLoader
+            use_chatml: If True, use ChatML format instead of Alpaca
         """
         super().__init__()
         self.tokenizer = tokenizer
@@ -748,30 +748,30 @@ class InstructionDataModule(pl.LightningDataModule):
     
     def prepare_data(self) -> None:
         """
-        Scarica e prepara il dataset (chiamato solo su rank 0 in DDP).
-        Non dovrebbe modificare lo stato (self).
+        Download and prepare the dataset (called only on rank 0 in DDP).
+        Should not modify state (self).
         """
-        logger.info(f"Preparazione dataset: {self.dataset_name}")
+        logger.info(f"Preparing dataset: {self.dataset_name}")
         
-        # Carica il dataset (solo download, non tokenizzazione)
+        # Load the dataset (download only, no tokenization)
         if not self._is_local_path(self.dataset_name):
             load_dataset(
                 self.dataset_name,
                 name=self.dataset_config,
                 split=None,
             )
-        logger.info("Dataset scaricato e pronto")
+        logger.info("Dataset downloaded and ready")
     
     def _is_local_path(self, path: str) -> bool:
-        """Verifica se il path è un file locale."""
+        """Check if the path is a local file."""
         return Path(path).exists() or path.endswith(('.json', '.jsonl', '.csv', '.parquet'))
     
     def _load_local_dataset(self, file_path: str) -> DatasetDict:
-        """Carica un dataset locale da file JSON, JSONL, CSV o Parquet."""
+        """Load a local dataset from JSON, JSONL, CSV, or Parquet file."""
         file_path = Path(file_path)
         
         if not file_path.exists():
-            raise FileNotFoundError(f"File dataset non trovato: {file_path}")
+            raise FileNotFoundError(f"Dataset file not found: {file_path}")
         
         suffix = file_path.suffix.lower()
         
@@ -785,8 +785,8 @@ class InstructionDataModule(pl.LightningDataModule):
             dataset = load_dataset('parquet', data_files=str(file_path))
         else:
             raise ValueError(
-                f"Formato file non supportato: {suffix}. "
-                "Formati supportati: .json, .jsonl, .csv, .parquet"
+                f"Unsupported file format: {suffix}. "
+                "Supported formats: .json, .jsonl, .csv, .parquet"
             )
         
         if isinstance(dataset, Dataset):
@@ -798,15 +798,15 @@ class InstructionDataModule(pl.LightningDataModule):
         return dataset
     
     def setup(self, stage: Optional[str] = None) -> None:
-        """Carica e tokenizza il dataset per training/validazione."""
+        """Load and tokenize the dataset for training/validation."""
         if stage == "fit" or stage is None:
-            logger.info("Setup dataset per training")
+            logger.info("Setting up dataset for training")
             
             if self._is_local_path(self.dataset_name):
-                logger.info(f"Caricamento dataset locale: {self.dataset_name}")
+                logger.info(f"Loading local dataset: {self.dataset_name}")
                 dataset_dict = self._load_local_dataset(self.dataset_name)
             else:
-                logger.info(f"Caricamento dataset da HuggingFace: {self.dataset_name}")
+                logger.info(f"Loading dataset from HuggingFace: {self.dataset_name}")
                 if self.dataset_config:
                     dataset_dict = load_dataset(
                         self.dataset_name,
@@ -819,8 +819,8 @@ class InstructionDataModule(pl.LightningDataModule):
                 train_data = dataset_dict[self.train_split]
             else:
                 raise ValueError(
-                    f"Split '{self.train_split}' non trovato nel dataset. "
-                    f"Split disponibili: {list(dataset_dict.keys())}"
+                    f"Split '{self.train_split}' not found in dataset. "
+                    f"Available splits: {list(dataset_dict.keys())}"
                 )
             
             if self.val_split and self.val_split in dataset_dict:
@@ -833,8 +833,8 @@ class InstructionDataModule(pl.LightningDataModule):
                 train_data = split_dict["train"]
                 val_data = split_dict["test"]
                 logger.info(
-                    f"Creato split validazione: {len(val_data)} esempi "
-                    f"({self.val_split_percentage*100:.1f}% del training)"
+                    f"Created validation split: {len(val_data)} examples "
+                    f"({self.val_split_percentage*100:.1f}% of training)"
                 )
             else:
                 val_data = None
@@ -843,7 +843,7 @@ class InstructionDataModule(pl.LightningDataModule):
                 self._tokenize_function,
                 batched=True,
                 remove_columns=train_data.column_names,
-                desc="Tokenizzazione training",
+                desc="Tokenizing training",
             )
             
             if val_data is not None:
@@ -851,31 +851,31 @@ class InstructionDataModule(pl.LightningDataModule):
                     self._tokenize_function,
                     batched=True,
                     remove_columns=val_data.column_names,
-                    desc="Tokenizzazione validazione",
+                    desc="Tokenizing validation",
                 )
             else:
                 self.val_dataset = None
             
             logger.info(
-                f"Dataset preparato - Training: {len(self.train_dataset)} esempi, "
-                f"Validazione: {len(self.val_dataset) if self.val_dataset else 0} esempi"
+                f"Dataset prepared - Training: {len(self.train_dataset)} examples, "
+                f"Validation: {len(self.val_dataset) if self.val_dataset else 0} examples"
             )
     
     def _tokenize_function(self, examples: Dict[str, Any]) -> Dict[str, Any]:
-        """Tokenizza gli esempi del dataset."""
+        """Tokenize dataset examples."""
         instructions = examples[self.text_column]
         responses = examples[self.response_column]
         
         texts = []
         for instruction, response in zip(instructions, responses):
             if self.use_chatml:
-                # Usa formato ChatML
+                # Use ChatML format
                 text = ChatMLFormatter.format_instruction_response(
                     instruction=str(instruction),
                     response=str(response)
                 )
             else:
-                # Formato legacy Alpaca
+                # Legacy Alpaca format
                 text = f"### Instruction:\n{instruction}\n\n### Response:\n{response}"
             texts.append(text)
         
@@ -899,7 +899,7 @@ class InstructionDataModule(pl.LightningDataModule):
         return tokenized
     
     def train_dataloader(self) -> DataLoader:
-        """Crea il DataLoader per il training."""
+        """Create the DataLoader for training."""
         return DataLoader(
             self.train_dataset,
             batch_size=self.per_device_train_batch_size,
@@ -910,7 +910,7 @@ class InstructionDataModule(pl.LightningDataModule):
         )
     
     def val_dataloader(self) -> Optional[DataLoader]:
-        """Crea il DataLoader per la validazione."""
+        """Create the DataLoader for validation."""
         if self.val_dataset is None:
             return None
         
@@ -932,14 +932,14 @@ def create_data_module(
     config: Dict[str, Any],
 ) -> pl.LightningDataModule:
     """
-    Factory function per creare il DataModule appropriato basandosi sulla config.
+    Factory function to create the appropriate DataModule based on config.
     
     Args:
-        tokenizer: Tokenizer per la tokenizzazione
-        config: Configurazione completa (da config.yaml)
+        tokenizer: Tokenizer for tokenization
+        config: Complete configuration (from config.yaml)
         
     Returns:
-        InstructionDataModule o MultiSourceDataModule in base alla config
+        InstructionDataModule or MultiSourceDataModule based on config
     """
     datasets_config = config.get("datasets", {})
     multi_source_enabled = datasets_config.get("multi_source_enabled", False)
@@ -959,12 +959,12 @@ def create_data_module(
             ))
         
         if not sources:
-            raise ValueError("Multi-source abilitato ma nessun dataset specificato in 'sources'")
+            raise ValueError("Multi-source enabled but no datasets specified in 'sources'")
         
         training_config = config.get("training", {})
         data_config = config.get("data", {})
         
-        logger.info(f"Creazione MultiSourceDataModule con {len(sources)} dataset")
+        logger.info(f"Creating MultiSourceDataModule with {len(sources)} datasets")
         
         return MultiSourceDataModule(
             tokenizer=tokenizer,
@@ -982,7 +982,7 @@ def create_data_module(
         data_config = config.get("data", {})
         training_config = config.get("training", {})
         
-        logger.info(f"Creazione InstructionDataModule (single-source)")
+        logger.info("Creating InstructionDataModule (single-source)")
         
         return InstructionDataModule(
             tokenizer=tokenizer,
@@ -998,5 +998,5 @@ def create_data_module(
             per_device_eval_batch_size=training_config.get("per_device_eval_batch_size", 2),
             gradient_accumulation_steps=training_config.get("gradient_accumulation_steps", 1),
             num_workers=training_config.get("dataloader_num_workers", 4),
-            use_chatml=True,  # Usa ChatML di default per consistenza
+            use_chatml=True,  # Use ChatML by default for consistency
         )

@@ -1,18 +1,18 @@
 """
-Integrazione completa con Microsoft Agent Lightning.
+Complete integration with Microsoft Agent Lightning.
 
-Agent Lightning è il framework per allenare agenti AI con:
+Agent Lightning is the framework for training AI agents with:
 - Reinforcement Learning (GRPO, PPO)
 - Automatic Prompt Optimization (APO)
-- Supervised Fine-Tuning (SFT) avanzato
-- Tracciamento span per debugging
+- Advanced Supervised Fine-Tuning (SFT)
+- Span tracing for debugging
 
-Questo modulo fornisce:
-- AgentLightningTrainer: Wrapper completo per training RL
-- RewardFunctions: Funzioni di reward per coding, function calling, etc.
-- SpanTracker: Tracciamento dettagliato delle generazioni
+This module provides:
+- AgentLightningTrainer: Complete wrapper for RL training
+- RewardFunctions: Reward functions for coding, function calling, etc.
+- SpanTracker: Detailed generation tracing
 
-Riferimenti:
+References:
 - GitHub: https://github.com/microsoft/agent-lightning
 - Docs: https://microsoft.github.io/agent-lightning/
 """
@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 class TrainingAlgorithm(str, Enum):
-    """Algoritmi di training supportati da Agent Lightning."""
+    """Training algorithms supported by Agent Lightning."""
     SFT = "sft"           # Supervised Fine-Tuning
     GRPO = "grpo"         # Group Relative Policy Optimization (RL)
     APO = "apo"           # Automatic Prompt Optimization
@@ -56,23 +56,23 @@ class TrainingAlgorithm(str, Enum):
 
 @dataclass
 class AgentLightningConfig:
-    """Configurazione per Agent Lightning."""
+    """Configuration for Agent Lightning."""
     
-    # Algoritmo di training
+    # Training algorithm
     algorithm: TrainingAlgorithm = TrainingAlgorithm.SFT
     
-    # Configurazione GRPO (Reinforcement Learning)
+    # GRPO Configuration (Reinforcement Learning)
     grpo_config: Dict[str, Any] = field(default_factory=lambda: {
-        "num_generations": 4,      # Generazioni per prompt
-        "temperature": 0.7,        # Temperatura per sampling
+        "num_generations": 4,      # Generations per prompt
+        "temperature": 0.7,        # Sampling temperature
         "top_p": 0.9,             # Nucleus sampling
-        "max_new_tokens": 512,    # Max token generati
-        "kl_coef": 0.1,           # Coefficiente KL divergence
+        "max_new_tokens": 512,    # Max generated tokens
+        "kl_coef": 0.1,           # KL divergence coefficient
         "gamma": 0.99,            # Discount factor
         "clip_range": 0.2,        # PPO clip range
     })
     
-    # Configurazione APO
+    # APO Configuration
     apo_config: Dict[str, Any] = field(default_factory=lambda: {
         "num_prompt_candidates": 5,
         "eval_samples": 20,
@@ -83,19 +83,19 @@ class AgentLightningConfig:
     store_path: str = "./lightning_store"
     enable_tracing: bool = True
     
-    # Reward function da usare
+    # Reward function to use
     reward_function: str = "combined"  # "coding", "function_calling", "combined"
 
 
 # =============================================================================
-# REWARD FUNCTIONS - Il cuore del training RL
+# REWARD FUNCTIONS - The heart of RL training
 # =============================================================================
 
 class RewardFunction:
     """
-    Funzioni di reward per valutare le generazioni del modello.
+    Reward functions for evaluating model generations.
     
-    Il reward guida l'algoritmo RL (GRPO) a migliorare il comportamento dell'agente.
+    The reward guides the RL algorithm (GRPO) to improve agent behavior.
     """
     
     @staticmethod
@@ -105,60 +105,60 @@ class RewardFunction:
         reference: Optional[str] = None,
     ) -> float:
         """
-        Calcola il reward per task di coding.
+        Calculate reward for coding tasks.
         
-        Criteri:
-        - Sintassi corretta (prova a parsare)
-        - Presenza di docstring
-        - Lunghezza appropriata
-        - Match con reference (se disponibile)
+        Criteria:
+        - Correct syntax (try to parse)
+        - Presence of docstring
+        - Appropriate length
+        - Match with reference (if available)
         
         Args:
-            prompt: Il prompt originale
-            generation: La risposta generata
-            reference: Risposta di riferimento (opzionale)
+            prompt: The original prompt
+            generation: The generated response
+            reference: Reference response (optional)
             
         Returns:
-            Reward float tra -1.0 e 1.0
+            Reward float between -1.0 and 1.0
         """
         reward = 0.0
         
-        # 1. Estrai codice dalla generazione
+        # 1. Extract code from generation
         code_blocks = re.findall(r'```(?:python)?\n?(.*?)```', generation, re.DOTALL)
         if not code_blocks:
-            # Se non ci sono code blocks ma sembra codice
+            # If no code blocks but looks like code
             if 'def ' in generation or 'class ' in generation:
                 code = generation
             else:
-                return -0.5  # Penalizza assenza di codice
+                return -0.5  # Penalize absence of code
         else:
             code = code_blocks[0]
         
-        # 2. Verifica sintassi Python
+        # 2. Verify Python syntax
         try:
             compile(code, '<string>', 'exec')
-            reward += 0.3  # Sintassi corretta
+            reward += 0.3  # Correct syntax
         except SyntaxError:
-            reward -= 0.3  # Sintassi errata
+            reward -= 0.3  # Syntax error
         
-        # 3. Presenza di docstring
+        # 3. Presence of docstring
         if '"""' in code or "'''" in code:
             reward += 0.1
         
-        # 4. Presenza di type hints
+        # 4. Presence of type hints
         if ': ' in code and '->' in code:
             reward += 0.1
         
-        # 5. Lunghezza appropriata (non troppo corta, non troppo lunga)
+        # 5. Appropriate length (not too short, not too long)
         code_len = len(code.strip())
         if 50 < code_len < 2000:
             reward += 0.1
         elif code_len < 20:
-            reward -= 0.2  # Troppo corto
+            reward -= 0.2  # Too short
         
-        # 6. Confronto con reference (se disponibile)
+        # 6. Compare with reference (if available)
         if reference:
-            # Semplice overlap di parole chiave
+            # Simple keyword overlap
             ref_keywords = set(re.findall(r'\b\w+\b', reference.lower()))
             gen_keywords = set(re.findall(r'\b\w+\b', code.lower()))
             overlap = len(ref_keywords & gen_keywords) / max(len(ref_keywords), 1)
@@ -174,27 +174,27 @@ class RewardFunction:
         reference: Optional[str] = None,
     ) -> float:
         """
-        Calcola il reward per task di function calling.
+        Calculate reward for function calling tasks.
         
-        Criteri:
-        - Formato corretto della chiamata (JSON valido)
-        - Tool esistente (se lista disponibile)
-        - Argomenti validi
-        - Match con reference
+        Criteria:
+        - Correct call format (valid JSON)
+        - Existing tool (if list available)
+        - Valid arguments
+        - Match with reference
         
         Args:
-            prompt: Il prompt con la richiesta
-            generation: La risposta con function call
-            available_tools: Lista di tool disponibili
-            reference: Chiamata di riferimento
+            prompt: The prompt with the request
+            generation: The response with function call
+            available_tools: List of available tools
+            reference: Reference call
             
         Returns:
-            Reward float tra -1.0 e 1.0
+            Reward float between -1.0 and 1.0
         """
         reward = 0.0
         
-        # 1. Cerca pattern di function call
-        # Supporta vari formati: <function_call>, {"name": ...}, tool_call, etc.
+        # 1. Search for function call pattern
+        # Supports various formats: <function_call>, {"name": ...}, tool_call, etc.
         fc_patterns = [
             r'<function_call>\s*(\{.*?\})\s*</function_call>',
             r'"function_call":\s*(\{.*?\})',
@@ -210,43 +210,43 @@ class RewardFunction:
                 break
         
         if not function_call:
-            # Nessuna function call trovata
+            # No function call found
             if "function" in prompt.lower() or "tool" in prompt.lower():
-                return -0.5  # Doveva chiamare una funzione
-            return 0.0  # Non necessaria
+                return -0.5  # Should have called a function
+            return 0.0  # Not necessary
         
-        # 2. Verifica JSON valido
+        # 2. Verify valid JSON
         try:
             fc_data = json.loads(function_call) if isinstance(function_call, str) else function_call
-            reward += 0.3  # JSON valido
+            reward += 0.3  # Valid JSON
         except json.JSONDecodeError:
-            return -0.3  # JSON non valido
+            return -0.3  # Invalid JSON
         
-        # 3. Verifica struttura corretta
+        # 3. Verify correct structure
         if "name" in fc_data:
             reward += 0.1
             
-            # 4. Verifica tool esistente
+            # 4. Verify existing tool
             if available_tools:
                 if fc_data["name"] in available_tools:
                     reward += 0.2
                 else:
-                    reward -= 0.2  # Tool non esistente
+                    reward -= 0.2  # Non-existent tool
         
         if "arguments" in fc_data:
             reward += 0.1
             
-            # Verifica che arguments sia un dict
+            # Verify arguments is a dict
             if isinstance(fc_data["arguments"], dict):
                 reward += 0.1
         
-        # 5. Confronto con reference
+        # 5. Compare with reference
         if reference:
             try:
                 ref_data = json.loads(reference)
                 if fc_data.get("name") == ref_data.get("name"):
                     reward += 0.2
-                    # Controlla argomenti
+                    # Check arguments
                     if fc_data.get("arguments") == ref_data.get("arguments"):
                         reward += 0.2
             except (json.JSONDecodeError, AttributeError):
@@ -261,64 +261,72 @@ class RewardFunction:
         reference: Optional[str] = None,
     ) -> float:
         """
-        Calcola il reward per task di chat/conversazione.
+        Calculate reward for chat/conversation tasks.
         
-        Criteri:
-        - Risposta pertinente (non vuota, non troppo corta)
-        - Non ripetitiva
-        - Coerente con il prompt
-        - Fluenza
+        Criteria:
+        - Relevant response (not empty, not too short)
+        - Not repetitive
+        - Coherent with prompt
+        - Fluency
         
         Args:
-            prompt: La domanda/istruzione
-            generation: La risposta generata
-            reference: Risposta di riferimento
+            prompt: The question/instruction
+            generation: The generated response
+            reference: Reference response
             
         Returns:
-            Reward float tra -1.0 e 1.0
+            Reward float between -1.0 and 1.0
         """
         reward = 0.0
         
-        # 1. Lunghezza appropriata
+        # 1. Appropriate length
         gen_len = len(generation.strip())
         if gen_len < 10:
-            return -0.5  # Troppo corto
+            return -0.5  # Too short
         elif gen_len > 50:
             reward += 0.1
         
-        # 2. Non ripetitivo (penalizza ripetizioni)
+        # 2. Not repetitive (penalize repetitions)
         words = generation.lower().split()
         if len(words) > 5:
             unique_ratio = len(set(words)) / len(words)
             if unique_ratio < 0.3:
-                reward -= 0.3  # Molto ripetitivo
+                reward -= 0.3  # Very repetitive
             elif unique_ratio > 0.7:
                 reward += 0.2
         
-        # 3. Risponde alla domanda (overlap keywords)
+        # 3. Answers the question (keyword overlap)
         prompt_words = set(re.findall(r'\b\w+\b', prompt.lower()))
         gen_words = set(re.findall(r'\b\w+\b', generation.lower()))
         
-        # Rimuovi stopwords comuni
-        stopwords = {'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 
-                    'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 
-                    'would', 'could', 'should', 'may', 'might', 'must', 'shall',
-                    'il', 'la', 'lo', 'i', 'le', 'gli', 'un', 'una', 'di', 'da',
-                    'in', 'su', 'per', 'con', 'che', 'e', 'è', 'sono', 'come'}
+        # Remove common words
+        common_words = {"the", "a", "an", "is", "are", "was", "were", "be", "been", 
+                       "being", "have", "has", "had", "do", "does", "did", "will",
+                       "would", "could", "should", "may", "might", "must", "shall",
+                       "to", "of", "in", "for", "on", "with", "at", "by", "from",
+                       "as", "into", "through", "during", "before", "after", "above",
+                       "below", "between", "under", "again", "further", "then", "once",
+                       "here", "there", "when", "where", "why", "how", "all", "each",
+                       "few", "more", "most", "other", "some", "such", "no", "nor",
+                       "not", "only", "own", "same", "so", "than", "too", "very",
+                       "can", "just", "should", "now", "i", "you", "he", "she", "it",
+                       "we", "they", "what", "which", "who", "this", "that", "these",
+                       "those", "am", "and", "but", "if", "or", "because", "until",
+                       "while", "although", "though", "after", "before", "unless"}
         
-        prompt_words -= stopwords
-        gen_words -= stopwords
+        prompt_words -= common_words
+        gen_words -= common_words
         
         if prompt_words:
-            relevance = len(prompt_words & gen_words) / len(prompt_words)
-            reward += 0.3 * relevance
+            overlap = len(prompt_words & gen_words) / len(prompt_words)
+            reward += 0.3 * overlap
         
-        # 4. Match con reference
+        # 4. Compare with reference
         if reference:
-            ref_words = set(re.findall(r'\b\w+\b', reference.lower())) - stopwords
+            ref_words = set(re.findall(r'\b\w+\b', reference.lower())) - common_words
             if ref_words:
-                similarity = len(gen_words & ref_words) / max(len(ref_words), 1)
-                reward += 0.4 * similarity
+                ref_overlap = len(ref_words & gen_words) / len(ref_words)
+                reward += 0.3 * ref_overlap
         
         return max(-1.0, min(1.0, reward))
     
@@ -326,41 +334,43 @@ class RewardFunction:
     def combined_reward(
         prompt: str,
         generation: str,
-        task_type: str = "auto",
         reference: Optional[str] = None,
         available_tools: Optional[List[str]] = None,
     ) -> float:
         """
-        Reward combinato che seleziona automaticamente la funzione giusta.
+        Combined reward that auto-detects task type.
+        
+        Examines the prompt to determine if it's:
+        - Coding task
+        - Function calling task
+        - General chat
         
         Args:
-            prompt: Il prompt
-            generation: La generazione
-            task_type: "coding", "function_calling", "chat", o "auto"
-            reference: Riferimento opzionale
-            available_tools: Tool disponibili (per function calling)
+            prompt: The prompt
+            generation: Generated response
+            reference: Reference (optional)
+            available_tools: Available tools (optional)
             
         Returns:
-            Reward combinato
+            Appropriate reward for detected task type
         """
-        # Auto-detect task type
-        if task_type == "auto":
-            prompt_lower = prompt.lower()
-            if any(kw in prompt_lower for kw in ['function', 'tool', 'call', 'api']):
-                task_type = "function_calling"
-            elif any(kw in prompt_lower for kw in ['code', 'python', 'function', 'class', 'write a']):
-                task_type = "coding"
-            else:
-                task_type = "chat"
+        prompt_lower = prompt.lower()
         
-        if task_type == "coding":
-            return RewardFunction.coding_reward(prompt, generation, reference)
-        elif task_type == "function_calling":
+        # Detect function calling
+        fc_keywords = ["function", "tool", "call", "api", "execute", "invoke"]
+        if any(kw in prompt_lower for kw in fc_keywords):
             return RewardFunction.function_calling_reward(
                 prompt, generation, available_tools, reference
             )
-        else:
-            return RewardFunction.chat_reward(prompt, generation, reference)
+        
+        # Detect coding
+        coding_keywords = ["code", "python", "function", "class", "implement", 
+                         "write", "program", "script", "def ", "import "]
+        if any(kw in prompt_lower for kw in coding_keywords):
+            return RewardFunction.coding_reward(prompt, generation, reference)
+        
+        # Default: chat
+        return RewardFunction.chat_reward(prompt, generation, reference)
 
 
 # =============================================================================
@@ -369,28 +379,17 @@ class RewardFunction:
 
 class AgentLightningTrainer:
     """
-    Trainer completo con Agent Lightning per training RL di agenti AI.
+    Complete wrapper for training with Agent Lightning.
     
-    Integra:
-    - GRPO per Reinforcement Learning
-    - APO per Automatic Prompt Optimization  
-    - SFT per Supervised Fine-Tuning
-    - Tracciamento span per debugging
-    - LightningStore per gestione risorse
+    Supports:
+    - GRPO (Group Relative Policy Optimization) for RL
+    - APO (Automatic Prompt Optimization)
+    - SFT (Supervised Fine-Tuning)
     
-    Esempio:
+    Example:
         ```python
-        trainer = AgentLightningTrainer(
-            model=model,
-            tokenizer=tokenizer,
-            config=AgentLightningConfig(algorithm=TrainingAlgorithm.GRPO)
-        )
-        
-        # Training con RL
-        trainer.train(train_dataset, eval_dataset)
-        
-        # Genera con tracciamento
-        output = trainer.generate("Write a Python function...")
+        trainer = AgentLightningTrainer(model, tokenizer, config)
+        results = trainer.train(train_dataset, num_epochs=3)
         ```
     """
     
@@ -402,45 +401,45 @@ class AgentLightningTrainer:
         reward_fn: Optional[Callable] = None,
     ):
         """
-        Inizializza il trainer.
+        Initialize the trainer.
         
         Args:
-            model: Modello con LoRA/PEFT applicato
+            model: Model with LoRA/PEFT applied
             tokenizer: Tokenizer
-            config: Configurazione Agent Lightning
-            reward_fn: Funzione di reward custom (opzionale)
+            config: Agent Lightning configuration
+            reward_fn: Custom reward function (optional)
         """
         if not AGENT_LIGHTNING_AVAILABLE:
             raise ImportError(
-                "Agent Lightning non installato. Installa con: pip install agentlightning"
+                "Agent Lightning not installed. Install with: pip install agentlightning"
             )
         
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
         
-        # Imposta reward function
+        # Set reward function
         if reward_fn is not None:
             self.reward_fn = reward_fn
         else:
             self.reward_fn = self._get_default_reward_fn()
         
-        # Inizializza LightningStore
+        # Initialize LightningStore
         self.store = LightningStore(path=config.store_path)
         
-        # Inizializza Tracer se abilitato
+        # Initialize Tracer if enabled
         self.tracer = Tracer() if config.enable_tracing else None
         
-        # Inizializza algoritmo
+        # Initialize algorithm
         self.algorithm = self._create_algorithm()
         
-        # Trainer Agent Lightning
+        # Agent Lightning Trainer
         self.trainer = None
         
-        logger.info(f"AgentLightningTrainer inizializzato con algoritmo: {config.algorithm.value}")
+        logger.info(f"AgentLightningTrainer initialized with algorithm: {config.algorithm.value}")
     
     def _get_default_reward_fn(self) -> Callable:
-        """Ritorna la reward function di default basata sulla config."""
+        """Return the default reward function based on config."""
         reward_type = self.config.reward_function
         
         if reward_type == "coding":
@@ -451,7 +450,7 @@ class AgentLightningTrainer:
             return lambda p, g, r=None: RewardFunction.combined_reward(p, g, reference=r)
     
     def _create_algorithm(self):
-        """Crea l'algoritmo di training appropriato."""
+        """Create the appropriate training algorithm."""
         if self.config.algorithm == TrainingAlgorithm.GRPO:
             return GRPO(
                 model=self.model,
@@ -481,32 +480,32 @@ class AgentLightningTrainer:
         output_dir: str = "./checkpoints",
     ) -> Dict[str, Any]:
         """
-        Avvia il training con Agent Lightning.
+        Start training with Agent Lightning.
         
         Args:
-            train_dataset: Dataset di training
-            eval_dataset: Dataset di valutazione (opzionale)
-            num_epochs: Numero di epoche
+            train_dataset: Training dataset
+            eval_dataset: Evaluation dataset (optional)
+            num_epochs: Number of epochs
             batch_size: Batch size
             learning_rate: Learning rate
-            output_dir: Directory per checkpoint
+            output_dir: Directory for checkpoints
             
         Returns:
-            Dizionario con metriche di training
+            Dictionary with training metrics
         """
-        logger.info(f"Avvio training con {self.config.algorithm.value}")
+        logger.info(f"Starting training with {self.config.algorithm.value}")
         logger.info(f"  - Epochs: {num_epochs}")
         logger.info(f"  - Batch size: {batch_size}")
         logger.info(f"  - Learning rate: {learning_rate}")
         
-        # Crea Trainer Agent Lightning
+        # Create Agent Lightning Trainer
         self.trainer = Trainer(
             algorithm=self.algorithm,
             store=self.store,
             output_dir=output_dir,
         )
         
-        # Avvia training
+        # Start training
         with self._trace_span("training", {"algorithm": self.config.algorithm.value}):
             results = self.trainer.train(
                 train_dataset=train_dataset,
@@ -516,7 +515,7 @@ class AgentLightningTrainer:
                 learning_rate=learning_rate,
             )
         
-        # Salva modello finale
+        # Save final model
         self.save_model(output_dir)
         
         return results
@@ -530,23 +529,23 @@ class AgentLightningTrainer:
         trace: bool = True,
     ) -> str:
         """
-        Genera una risposta con tracciamento opzionale.
+        Generate a response with optional tracing.
         
         Args:
-            prompt: Il prompt di input
-            max_new_tokens: Numero massimo di token da generare
-            temperature: Temperatura per sampling
+            prompt: The input prompt
+            max_new_tokens: Maximum number of tokens to generate
+            temperature: Sampling temperature
             top_p: Nucleus sampling threshold
-            trace: Se tracciare la generazione
+            trace: Whether to trace the generation
             
         Returns:
-            Testo generato
+            Generated text
         """
-        # Tokenizza input
+        # Tokenize input
         inputs = self.tokenizer(prompt, return_tensors="pt")
         inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
         
-        # Genera con tracciamento
+        # Generate with tracing
         with self._trace_span("generation", {"prompt_len": len(prompt)}) as span:
             outputs = self.model.generate(
                 **inputs,
@@ -565,7 +564,7 @@ class AgentLightningTrainer:
             if span:
                 span.set_attribute("output_len", len(generated_text))
         
-        # Emetti evento per tracciamento
+        # Emit event for tracing
         if self.config.enable_tracing:
             agl.emit_generation(
                 prompt=prompt,
@@ -582,28 +581,28 @@ class AgentLightningTrainer:
         reference: Optional[str] = None,
     ) -> float:
         """
-        Valuta il reward per una generazione.
+        Evaluate the reward for a generation.
         
         Args:
-            prompt: Prompt originale
-            generation: Testo generato
-            reference: Riferimento opzionale
+            prompt: Original prompt
+            generation: Generated text
+            reference: Optional reference
             
         Returns:
-            Valore di reward
+            Reward value
         """
         return self.reward_fn(prompt, generation, reference)
     
     def save_model(self, output_dir: str) -> None:
-        """Salva il modello e l'adattatore LoRA."""
+        """Save the model and LoRA adapter."""
         import os
         os.makedirs(output_dir, exist_ok=True)
         
-        # Salva adapter LoRA
+        # Save LoRA adapter
         self.model.save_pretrained(output_dir)
         self.tokenizer.save_pretrained(output_dir)
         
-        # Salva config Agent Lightning
+        # Save Agent Lightning config
         config_path = os.path.join(output_dir, "agent_lightning_config.json")
         with open(config_path, "w") as f:
             json.dump({
@@ -613,20 +612,20 @@ class AgentLightningTrainer:
                 "reward_function": self.config.reward_function,
             }, f, indent=2)
         
-        logger.info(f"Modello salvato in: {output_dir}")
+        logger.info(f"Model saved to: {output_dir}")
     
     def _trace_span(self, name: str, attributes: Optional[Dict] = None):
-        """Context manager per tracciamento span."""
+        """Context manager for span tracing."""
         if self.tracer and self.config.enable_tracing:
             return self.tracer.span(name, attributes=attributes or {})
         
-        # Dummy context manager se tracing disabilitato
+        # Dummy context manager if tracing disabled
         from contextlib import nullcontext
         return nullcontext()
 
 
 # =============================================================================
-# FACTORY E UTILITIES
+# FACTORY AND UTILITIES
 # =============================================================================
 
 def create_agent_lightning_trainer(
@@ -635,15 +634,15 @@ def create_agent_lightning_trainer(
     config: Dict[str, Any],
 ) -> AgentLightningTrainer:
     """
-    Factory function per creare AgentLightningTrainer dalla config YAML.
+    Factory function to create AgentLightningTrainer from YAML config.
     
     Args:
-        model: Modello
+        model: Model
         tokenizer: Tokenizer
-        config: Config completa (da config.yaml)
+        config: Complete config (from config.yaml)
         
     Returns:
-        AgentLightningTrainer configurato
+        Configured AgentLightningTrainer
     """
     agl_config = config.get("agent_lightning", {})
     
@@ -651,7 +650,7 @@ def create_agent_lightning_trainer(
     try:
         algorithm = TrainingAlgorithm(algorithm_str.lower())
     except ValueError:
-        logger.warning(f"Algoritmo '{algorithm_str}' non valido, uso SFT")
+        logger.warning(f"Invalid algorithm '{algorithm_str}', using SFT")
         algorithm = TrainingAlgorithm.SFT
     
     trainer_config = AgentLightningConfig(
@@ -671,6 +670,5 @@ def create_agent_lightning_trainer(
 
 
 def check_agent_lightning_available() -> bool:
-    """Verifica se Agent Lightning è installato."""
+    """Check if Agent Lightning is installed."""
     return AGENT_LIGHTNING_AVAILABLE
-
