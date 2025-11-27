@@ -130,7 +130,7 @@ Inspired by [osgrep](https://github.com/Ryandonofrio3/osgrep), the chunking syst
 
 ### 1️⃣ The Memory Problem
 
-A model like Mistral 7B requires ~28GB of VRAM in float32. My GPU has 16GB. How to solve this?
+A model like Mistral 7B requires ~28GB of VRAM in float32. My GPU (RTX 2070 Super) has only 8GB. How to solve this?
 
 **QLoRA** (Quantized Low-Rank Adaptation) combines two techniques:
 

@@ -328,7 +328,7 @@ What happens instead.
 - Python: [e.g. 3.10.12]
 - PyTorch: [e.g. 2.1.0]
 - CUDA: [e.g. 12.1]
-- GPU: [e.g. RTX 4090]
+- GPU: [e.g. RTX 2070 Super]
 
 ## Log/Traceback
 

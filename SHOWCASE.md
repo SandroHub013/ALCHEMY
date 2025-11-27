@@ -376,7 +376,7 @@ agent_lightning:
 | Llama 2 7B | QLoRA 4-bit | 6.4 GB | 2 |
 | Mistral Nemo 12B | QLoRA 4-bit + GC | 9.8 GB | 1 |
 
-### Training Speed (RTX 4090)
+### Training Speed (RTX 2070 Super 8GB)
 
 | Algorithm | Throughput | Time/1000 steps |
 |-----------|------------|-----------------|

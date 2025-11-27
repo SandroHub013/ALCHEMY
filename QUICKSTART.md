@@ -7,7 +7,7 @@ Get started with LLM Fine-tuning with Agent Lightning in 5 minutes.
 ## 📋 Prerequisites
 
 - **Python 3.10+**
-- **CUDA GPU** (recommended: 16GB+ VRAM for 7B models)
+- **CUDA GPU** (8GB+ VRAM recommended — tested on RTX 2070 Super 8GB)
 - **Git**
 
 ---
