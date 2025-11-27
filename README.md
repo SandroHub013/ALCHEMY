@@ -13,7 +13,7 @@
   <a href="#-main-features">Features</a> •
   <a href="#-luffy---off-policy-reasoning">LUFFY</a> •
   <a href="#-search-r1---reasoning-with-search">Search-R1</a> •
-  <a href="#️-architecture">Architecture</a> •
+  <a href="#-architecture">Architecture</a> •
   <a href="DIAGRAMS.md">📊 Diagrams</a> •
   <a href="#-citations-and-references">Citations</a>
 </p>
@@ -118,7 +118,7 @@ Inspired by [osgrep](https://github.com/Ryandonofrio3/osgrep), the chunking syst
 
 ---
 
-## 🏗️ Architecture
+## 🏗 Architecture
 
 <p align="center">
   <img src="assets/diagrams/architecture.svg" alt="System Architecture" width="100%">
