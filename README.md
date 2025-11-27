@@ -719,11 +719,11 @@ python main_reasoning.py --mode combined --dry-run
 
 ## 👤 Autore
 
-**[Il Tuo Nome]**
+**[Alessandro Boni]**
 
 - 🌐 Portfolio: [tuo-sito.com](https://tuo-sito.com)
 - 💼 LinkedIn: [linkedin.com/in/tuoprofilo](https://linkedin.com/in/tuoprofilo)
-- 🐙 GitHub: [@tuousername](https://github.com/tuousername)
+- 🐙 GitHub: [@SandroHub013](https://github.com/SandroHub013)
 
 ---
 
@@ -748,4 +748,5 @@ copies of the Software...
 <p align="center">
   <sub>Built with ❤️ and lots of ☕ for the AI community</sub>
 </p>
+
 
