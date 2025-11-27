@@ -392,18 +392,8 @@ This project builds on research and open-source tools. Here are the contribution
 
 ## 📊 Benchmarks and Results
 
-### Memory Usage (Mistral 7B)
-
-| Configuration | VRAM | Trainable Params |
-|---------------|------|------------------|
-| Full Fine-tuning (FP32) | ~28GB | 7B (100%) |
-| Full Fine-tuning (FP16) | ~14GB | 7B (100%) |
-| **QLoRA 4-bit + LoRA** | **~6GB** | **13M (0.18%)** |
-
-### Training Speed
-
 <p align="center">
-  <img src="assets/speed.jpg" alt="Training Speed Comparison" width="100%">
+  <img src="assets/linkedin-benchmarks.png" alt="Alchemy Benchmarks and Results" width="100%">
 </p>
 
 ---
