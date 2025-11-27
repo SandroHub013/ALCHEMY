@@ -402,19 +402,9 @@ This project builds on research and open-source tools. Here are the contribution
 
 ### Training Speed
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│              TIME PER 1000 STEPS (Mistral 7B)               │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  Full FP32:     ████████████████████████████ ~4 hours      │
-│  Full FP16:     ██████████████ ~2 hours                    │
-│  QLoRA + LoRA:  ████ ~30 min                               │
-│                                                             │
-│  (RTX 4090, batch_size=2, gradient_accumulation=8)         │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="assets/speed.jpg" alt="Training Speed Comparison" width="100%">
+</p>
 
 ---
 
