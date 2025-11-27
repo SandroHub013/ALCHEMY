@@ -11,9 +11,9 @@
 <p align="center">
   <a href="#-the-story-behind-the-project">The Story</a> •
   <a href="#-main-features">Features</a> •
-  <a href="#-luffy--off-policy-reasoning">LUFFY</a> •
-  <a href="#-search-r1--reasoning-with-search">Search-R1</a> •
-  <a href="#-architecture">Architecture</a> •
+  <a href="#-luffy---off-policy-reasoning">LUFFY</a> •
+  <a href="#-search-r1---reasoning-with-search">Search-R1</a> •
+  <a href="#%EF%B8%8F-architecture">Architecture</a> •
   <a href="DIAGRAMS.md">📊 Diagrams</a> •
   <a href="#-citations-and-references">Citations</a>
 </p>
@@ -45,9 +45,9 @@ I combined the most advanced techniques from recent research — **QLoRA** for q
 - ✅ Supports training AI agents with reasoning capabilities
 - ✅ Includes a complete RAG system for long-term memory
 - ✅ Implements Standard Operating Procedures (SOP) for structured behaviors
-- ✅ Works with models from 1.5B to 7B+ parameters (e.g., DeepSeek Qwen Distill 1.5B, Mistral 7B)
+- ✅ Works with models of any size — from 1.5B (DeepSeek Qwen Distill) to 70B+ with quantization
 
-The result? **A model that can be specialized for coding, function calling, or any other task — on your computer, with your data, in English or any language.**
+The result? **A model that can be specialized for coding, function calling, or any other task — on your computer, with your data.**
 
 ---
 
