@@ -11,8 +11,8 @@
 <p align="center">
   <a href="#-the-story-behind-the-project">The Story</a> •
   <a href="#-main-features">Features</a> •
-  <a href="#-luffy-off-policy-reasoning">LUFFY</a> •
-  <a href="#-search-r1-reasoning-with-search">Search-R1</a> •
+  <a href="#-luffy--off-policy-reasoning">LUFFY</a> •
+  <a href="#-search-r1--reasoning-with-search">Search-R1</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="DIAGRAMS.md">📊 Diagrams</a> •
   <a href="#-citations-and-references">Citations</a>
@@ -31,7 +31,7 @@
 
 ## 🎯 The Story Behind the Project
 
-> *"How can I run a 7-billion parameter model on my gaming GPU?"*
+> *"How can I fine-tune language models on my consumer GPU?"*
 
 This seemingly simple question was the starting point for this project.
 
@@ -41,12 +41,13 @@ In 2024, Large Language Models revolutionized how we interact with machines. But
 
 I combined the most advanced techniques from recent research — **QLoRA** for quantization, **PEFT** for parameter efficiency, and Microsoft's **Agent Lightning** for Reinforcement Learning — into a unified framework that:
 
-- ✅ Runs on a single consumer GPU (16GB VRAM)
+- ✅ Runs on consumer GPUs (8GB+ VRAM) — tested on RTX 2070 Super 8GB
 - ✅ Supports training AI agents with reasoning capabilities
 - ✅ Includes a complete RAG system for long-term memory
 - ✅ Implements Standard Operating Procedures (SOP) for structured behaviors
+- ✅ Works with models from 1.5B to 7B+ parameters (e.g., DeepSeek Qwen Distill 1.5B, Mistral 7B)
 
-The result? **A model that can be specialized for coding, function calling, or any other task — on your computer, with your data.**
+The result? **A model that can be specialized for coding, function calling, or any other task — on your computer, with your data, in English or any language.**
 
 ---
 
