@@ -721,7 +721,7 @@ python main_reasoning.py --mode combined --dry-run
 
 **[Alessandro Boni]**
 
-- 🌐 Portfolio: [tuo-sito.com](https://alessandroboni.netlify.app/)
+- 🌐 Portfolio: [alessandroboni.netlify.app](https://alessandroboni.netlify.app/)
 - 💼 LinkedIn: [linkedin.com/in/tuoprofilo](https://www.linkedin.com/in/alessandro-boni-503129172/)
 - 🐙 GitHub: [@SandroHub013](https://github.com/SandroHub013)
 
@@ -748,6 +748,7 @@ copies of the Software...
 <p align="center">
   <sub>Built with ❤️ and lots of ☕ for the AI community</sub>
 </p>
+
 
 
 
