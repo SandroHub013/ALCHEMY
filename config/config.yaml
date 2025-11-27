@@ -360,3 +360,239 @@ reasoning_benchmarks:
     pass_at_k: [1, 5]      # Pass@k metrics
     temperature: 0.0       # Greedy for eval (deterministic)
     max_new_tokens: 2048
+
+# =============================================================================
+# META-AGENT - Dynamic Agent Generation (Inspired by PocketFlow)
+# =============================================================================
+# Meta-Agent: Agents that generate other agents, SOPs, and reward functions
+# dynamically based on task requirements.
+#
+# Inspiration: https://github.com/The-Pocket/PocketFlow
+# Concept: "Agents building agents" for autonomous scaling
+
+meta_agent:
+  # Enable meta-agent capabilities
+  enabled: true
+  
+  # Use LLM for advanced generation (requires loaded model)
+  use_llm_generation: false
+  
+  # Default agent templates
+  default_templates:
+    - coding
+    - reasoning
+    - function_calling
+    - rag
+    - chat
+  
+  # SOP generation settings
+  sop_generation:
+    default_num_steps: 5
+    auto_trigger_detection: true
+  
+  # Blueprint customization
+  blueprints:
+    default_temperature: 0.7
+    default_max_tokens: 512
+    default_lora_r: 16
+    default_lora_alpha: 32
+
+# =============================================================================
+# ADAPTIVE TRAINER - Dynamic Optimization (Inspired by AgentFlow)
+# =============================================================================
+# Adaptive Trainer: Real-time optimization during training
+# Automatically adjusts hyperparameters based on training dynamics
+#
+# Inspiration: https://github.com/lupantech/AgentFlow
+# Concept: "In-the-flow" optimization for agentic systems
+
+adaptive_trainer:
+  # Enable adaptive training
+  enabled: true
+  
+  # Analysis windows
+  short_window: 10        # Steps for trend detection
+  long_window: 50         # Historical context
+  
+  # Thresholds
+  plateau_threshold: 0.001    # Min improvement to not be plateau
+  divergence_threshold: 0.5   # Max loss increase before divergence
+  improvement_threshold: 0.01 # Min improvement for "improving" state
+  
+  # Adaptation rates
+  lr_reduction_factor: 0.5    # LR reduction multiplier
+  lr_increase_factor: 1.2     # LR increase multiplier
+  temperature_delta: 0.1      # Temperature adjustment step
+  
+  # Bounds
+  min_lr: 1.0e-7
+  max_lr: 1.0e-2
+  min_temperature: 0.1
+  max_temperature: 1.5
+  
+  # Curriculum learning
+  curriculum:
+    enabled: true
+    initial_difficulty: 0.3     # Start with easier examples (0-1)
+    max_difficulty: 1.0         # Maximum difficulty
+    difficulty_increase_rate: 0.1  # How fast to increase
+  
+  # Early stopping
+  patience: 10                  # Steps without improvement before action
+  early_stop_patience: 30       # Steps before early stopping
+  
+  # Logging
+  log_every_n_steps: 10
+  save_adaptation_history: true
+  history_path: "./logs/adaptive_history.json"
+
+# =============================================================================
+# SWARM TRAINER - Multi-Agent Orchestration (Inspired by claude-flow)
+# =============================================================================
+# Swarm Trainer: Parallel multi-agent exploration for training
+# Uses swarm intelligence to explore solution space efficiently
+#
+# Inspiration: https://github.com/ruvnet/claude-flow
+# Concept: "Swarm intelligence" for AI agent coordination
+
+swarm_trainer:
+  # Enable swarm training
+  enabled: true
+  
+  # Swarm composition
+  num_agents: 4                  # Total parallel agents
+  num_explorers: 2               # High-temperature explorers
+  num_exploiters: 2              # Low-temperature exploiters
+  
+  # Temperature settings
+  explorer_temperature: 0.9      # High temp for diverse exploration
+  exploiter_temperature: 0.3     # Low temp for focused exploitation
+  
+  # Aggregation
+  top_k_trajectories: 4          # Best trajectories to keep
+  aggregation_method: "best"     # "best", "weighted", "ensemble"
+  
+  # Coordination
+  sync_every_n_steps: 10         # Sync frequency between agents
+  communication_enabled: true    # Allow inter-agent communication
+  
+  # Diversity
+  diversity_bonus: 0.1           # Bonus for diverse solutions
+  min_diversity_threshold: 0.3   # Minimum diversity required
+  
+  # Resource management
+  max_workers: 4                 # Thread pool size
+  timeout_seconds: 60            # Timeout per agent task
+  
+  # Generation
+  max_new_tokens: 512
+  
+  # Logging
+  log_agent_outputs: true
+  save_all_trajectories: false
+  trajectory_path: "./logs/swarm_trajectories.json"
+
+# =============================================================================
+# UNSLOTH - High-Performance Fine-tuning (2x faster, 70% less VRAM)
+# =============================================================================
+# Unsloth provides significant training optimizations:
+# - 2x faster training speed
+# - 70% less VRAM usage
+# - 10-13x longer context lengths
+# - Native RL support (GRPO, DPO, etc.)
+#
+# Reference: https://github.com/unslothai/unsloth
+# Documentation: https://docs.unsloth.ai/
+#
+# Installation: pip install unsloth
+
+unsloth:
+  # Enable Unsloth optimizations (requires: pip install unsloth)
+  enabled: true
+  
+  # Precision mode: "4bit", "8bit", "16bit", "full"
+  # - 4bit: QLoRA with NF4 quantization (recommended, lowest VRAM)
+  # - 8bit: 8-bit quantization
+  # - 16bit: 16-bit LoRA (new in Unsloth)
+  # - full: Full precision fine-tuning (requires more VRAM)
+  precision: "4bit"
+  
+  # Maximum sequence length (Unsloth supports very long contexts)
+  # With 8GB VRAM: up to ~3000 tokens
+  # With 16GB VRAM: up to ~40000 tokens
+  # With 24GB VRAM: up to ~80000 tokens
+  max_seq_length: 2048
+  
+  # LoRA configuration (Unsloth's LoRA uses 30% less VRAM)
+  lora:
+    r: 16                # LoRA rank (8-64 typical)
+    lora_alpha: 16       # Scaling factor
+    lora_dropout: 0.0    # 0 is optimized in Unsloth
+    target_modules:      # Modules to apply LoRA
+      - "q_proj"
+      - "k_proj"
+      - "v_proj"
+      - "o_proj"
+      - "gate_proj"
+      - "up_proj"
+      - "down_proj"
+    bias: "none"         # "none" is optimized
+    use_rslora: false    # Rank-stabilized LoRA
+  
+  # Gradient checkpointing
+  # Options: true, false, "unsloth"
+  # "unsloth" saves 30% more VRAM than standard checkpointing
+  use_gradient_checkpointing: "unsloth"
+  
+  # Pre-quantized model aliases (4x faster download)
+  # Use these aliases instead of full model names:
+  #   "mistral-7b" -> unsloth/mistral-7b-v0.3-bnb-4bit
+  #   "llama-3.1-8b" -> unsloth/Meta-Llama-3.1-8B-bnb-4bit
+  #   "qwen-2.5-7b" -> unsloth/Qwen2.5-7B-bnb-4bit
+  #   "deepseek-r1-8b" -> unsloth/DeepSeek-R1-Distill-Qwen-7B-bnb-4bit
+  use_prequantized: true
+  
+  # RL training with Unsloth
+  rl:
+    # Algorithm: "sft", "grpo", "dpo", "orpo", "kto", "simpo"
+    algorithm: "grpo"
+    
+    # GRPO-specific settings
+    grpo:
+      num_generations: 4       # Generations per prompt
+      temperature: 0.7         # Sampling temperature
+      top_p: 0.95             # Nucleus sampling
+      max_new_tokens: 512     # Max generated tokens
+      kl_coef: 0.1            # KL divergence coefficient
+    
+    # DPO-specific settings
+    dpo:
+      beta: 0.1               # DPO beta parameter
+    
+    # Reward function: "coding", "reasoning", "correctness", "combined"
+    reward_function: "combined"
+  
+  # Training settings (optimized for Unsloth)
+  training:
+    num_epochs: 3
+    per_device_train_batch_size: 2
+    gradient_accumulation_steps: 4
+    learning_rate: 2.0e-4
+    warmup_steps: 10
+    optim: "adamw_8bit"       # 8-bit AdamW (memory efficient)
+    weight_decay: 0.01
+    logging_steps: 1
+    save_steps: 100
+    fp16: false
+    bf16: true                # Recommended if GPU supports it
+    seed: 3407
+  
+  # Model saving options
+  save:
+    # Method: "lora", "merged_16bit", "merged_4bit", "gguf"
+    method: "lora"
+    # GGUF quantization (if method = "gguf")
+    gguf_quantization: "q4_k_m"  # Options: q4_k_m, q5_k_m, q8_0, etc.
+    # Push to HuggingFace Hub
+    push_to_hub: false
+    hub_model_id: null
