@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 Alessandro Boni
+Copyright (c) 2024 [Il Tuo Nome]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,96 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Acknowledgements
+
+This project builds upon and integrates the following open-source projects:
+
+### Microsoft Agent Lightning
+- Repository: https://github.com/microsoft/agent-lightning
+- License: MIT
+- Copyright (c) Microsoft Corporation
+
+### HuggingFace Transformers
+- Repository: https://github.com/huggingface/transformers
+- License: Apache 2.0
+- Copyright 2018- The Hugging Face team
+
+### PyTorch Lightning
+- Repository: https://github.com/Lightning-AI/lightning
+- License: Apache 2.0
+- Copyright (c) William Falcon and PyTorch Lightning Team
+
+### PEFT (Parameter-Efficient Fine-Tuning)
+- Repository: https://github.com/huggingface/peft
+- License: Apache 2.0
+- Copyright 2023 The HuggingFace Team
+
+### bitsandbytes
+- Repository: https://github.com/TimDettmers/bitsandbytes
+- License: MIT
+- Copyright (c) Tim Dettmers
+
+### ChromaDB
+- Repository: https://github.com/chroma-core/chroma
+- License: Apache 2.0
+- Copyright 2022 Chroma Core, Inc.
+
+### Sentence Transformers
+- Repository: https://github.com/UKPLab/sentence-transformers
+- License: Apache 2.0
+- Copyright 2019 Ubiquitous Knowledge Processing Lab
+
+### tree-sitter
+- Repository: https://github.com/tree-sitter/tree-sitter
+- License: MIT
+- Copyright (c) 2018-2021 Max Brunsfeld
+
+---
+
+## Research Citations
+
+If you use this project in academic work, please cite the following papers:
+
+### QLoRA
+```bibtex
+@article{dettmers2023qlora,
+  title={QLoRA: Efficient Finetuning of Quantized LLMs},
+  author={Dettmers, Tim and Pagnoni, Artidoro and Holtzman, Ari and Zettlemoyer, Luke},
+  journal={arXiv preprint arXiv:2305.14314},
+  year={2023}
+}
+```
+
+### LoRA
+```bibtex
+@article{hu2021lora,
+  title={LoRA: Low-Rank Adaptation of Large Language Models},
+  author={Hu, Edward J and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
+  journal={arXiv preprint arXiv:2106.09685},
+  year={2021}
+}
+```
+
+### GRPO (Group Relative Policy Optimization)
+```bibtex
+@article{shao2024deepseekmath,
+  title={DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models},
+  author={Shao, Zhihong and Wang, Peiyi and Zhu, Qihao and Xu, Runxin and Song, Junxiao and Zhang, Mingchuan and Li, Y. K. and Wu, Y. and Guo, Daya},
+  journal={arXiv preprint arXiv:2402.03300},
+  year={2024}
+}
+```
+
+### Sentence-BERT
+```bibtex
+@inproceedings{reimers-2019-sentence-bert,
+  title={Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks},
+  author={Reimers, Nils and Gurevych, Iryna},
+  booktitle={Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing},
+  year={2019}
+}
+```
+

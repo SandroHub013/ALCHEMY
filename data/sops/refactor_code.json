@@ -1,0 +1,44 @@
+{
+  "name": "refactor_code",
+  "description": "Procedura per refactoring sicuro del codice",
+  "trigger": "refactor, migliora, ottimizza, pulisci codice, refactoring",
+  "category": "coding",
+  "priority": 7,
+  "enabled": true,
+  "steps": [
+    {
+      "action": "Comprendi lo scopo attuale del codice",
+      "expected_output": "Descrizione funzionalità"
+    },
+    {
+      "action": "Identifica i problemi (code smells, duplicazione, complessità)",
+      "expected_output": "Lista problemi"
+    },
+    {
+      "action": "Verifica che esistano test o crea test prima del refactor",
+      "expected_output": "Copertura test",
+      "condition": "codice critico o complesso"
+    },
+    {
+      "action": "Pianifica il refactoring in step piccoli e sicuri",
+      "expected_output": "Piano refactoring"
+    },
+    {
+      "action": "Applica un cambiamento alla volta",
+      "expected_output": "Codice modificato"
+    },
+    {
+      "action": "Verifica che il comportamento sia invariato",
+      "expected_output": "Validazione"
+    },
+    {
+      "action": "Documenta i cambiamenti fatti",
+      "expected_output": "Changelog"
+    }
+  ],
+  "metadata": {
+    "author": "system",
+    "version": "1.0"
+  }
+}
+

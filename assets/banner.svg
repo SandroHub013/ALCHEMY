@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300">
+  <defs>
+    <!-- Gradient per lo sfondo -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#302b63"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    
+    <!-- Gradient per il testo principale -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="50%" style="stop-color:#764ba2"/>
+      <stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    
+    <!-- Gradient per l'accento -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffecd2"/>
+      <stop offset="100%" style="stop-color:#fcb69f"/>
+    </linearGradient>
+    
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Pattern per lo sfondo tech -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="300" fill="url(#bgGradient)"/>
+  <rect width="1200" height="300" fill="url(#grid)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="150" r="200" fill="none" stroke="rgba(102,126,234,0.1)" stroke-width="1"/>
+  <circle cx="100" cy="150" r="180" fill="none" stroke="rgba(102,126,234,0.08)" stroke-width="1"/>
+  <circle cx="1100" cy="150" r="150" fill="none" stroke="rgba(240,147,251,0.1)" stroke-width="1"/>
+  
+  <!-- Neural network visualization -->
+  <g opacity="0.3">
+    <!-- Nodes -->
+    <circle cx="80" cy="100" r="8" fill="#667eea"/>
+    <circle cx="80" cy="150" r="8" fill="#667eea"/>
+    <circle cx="80" cy="200" r="8" fill="#667eea"/>
+    
+    <circle cx="160" cy="120" r="8" fill="#764ba2"/>
+    <circle cx="160" cy="180" r="8" fill="#764ba2"/>
+    
+    <circle cx="240" cy="150" r="10" fill="#f093fb"/>
+    
+    <!-- Connections -->
+    <line x1="88" y1="100" x2="152" y2="120" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    <line x1="88" y1="100" x2="152" y2="180" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    <line x1="88" y1="150" x2="152" y2="120" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    <line x1="88" y1="150" x2="152" y2="180" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    <line x1="88" y1="200" x2="152" y2="120" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    <line x1="88" y1="200" x2="152" y2="180" stroke="#667eea" stroke-width="1" opacity="0.5"/>
+    
+    <line x1="168" y1="120" x2="230" y2="150" stroke="#764ba2" stroke-width="1" opacity="0.5"/>
+    <line x1="168" y1="180" x2="230" y2="150" stroke="#764ba2" stroke-width="1" opacity="0.5"/>
+  </g>
+  
+  <!-- Lightning bolt icon -->
+  <g transform="translate(300, 90)">
+    <path d="M 60 0 L 20 55 L 45 55 L 30 120 L 80 50 L 55 50 Z" 
+          fill="url(#accentGradient)" 
+          filter="url(#glow)"
+          opacity="0.9"/>
+  </g>
+  
+  <!-- Main text -->
+  <text x="400" y="140" font-family="'Segoe UI', system-ui, sans-serif" font-size="52" font-weight="700" fill="url(#textGradient)">
+    LLM Fine-tuning
+  </text>
+  
+  <text x="400" y="200" font-family="'Segoe UI', system-ui, sans-serif" font-size="36" font-weight="500" fill="url(#accentGradient)">
+    Agent Lightning ⚡
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="245" font-family="'Segoe UI', system-ui, sans-serif" font-size="16" fill="#a0a0a0">
+    QLoRA • PEFT • Reinforcement Learning • RAG • Procedural Memory
+  </text>
+  
+  <!-- Tech badges area -->
+  <g transform="translate(880, 110)">
+    <rect x="0" y="0" width="90" height="28" rx="14" fill="rgba(255,255,255,0.1)"/>
+    <text x="45" y="19" font-family="monospace" font-size="12" fill="#fff" text-anchor="middle">Python 3.10+</text>
+    
+    <rect x="100" y="0" width="80" height="28" rx="14" fill="rgba(255,255,255,0.1)"/>
+    <text x="140" y="19" font-family="monospace" font-size="12" fill="#fff" text-anchor="middle">PyTorch</text>
+    
+    <rect x="0" y="40" width="80" height="28" rx="14" fill="rgba(255,255,255,0.1)"/>
+    <text x="40" y="59" font-family="monospace" font-size="12" fill="#fff" text-anchor="middle">Lightning</text>
+    
+    <rect x="90" y="40" width="90" height="28" rx="14" fill="rgba(255,255,255,0.1)"/>
+    <text x="135" y="59" font-family="monospace" font-size="12" fill="#fff" text-anchor="middle">ChromaDB</text>
+  </g>
+  
+  <!-- Decorative dots -->
+  <circle cx="1150" cy="50" r="3" fill="#667eea" opacity="0.5"/>
+  <circle cx="1170" cy="70" r="2" fill="#764ba2" opacity="0.5"/>
+  <circle cx="1140" cy="80" r="2" fill="#f093fb" opacity="0.5"/>
+  
+  <!-- Bottom decorative line -->
+  <rect x="400" y="265" width="600" height="2" rx="1" fill="url(#textGradient)" opacity="0.3"/>
+</svg>
+

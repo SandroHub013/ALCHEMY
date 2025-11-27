@@ -1,0 +1,153 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-finetuning-agent-lightning"
+version = "1.0.0"
+description = "A framework for local LLM fine-tuning with Microsoft Agent Lightning, QLoRA, and RAG"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+keywords = [
+    "llm",
+    "fine-tuning",
+    "agent-lightning",
+    "qlora",
+    "peft",
+    "rag",
+    "reinforcement-learning",
+    "machine-learning",
+    "pytorch",
+    "transformers",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    # Core ML frameworks
+    "torch>=2.0.0",
+    "transformers>=4.35.0",
+    "accelerate>=0.24.0",
+    
+    # Microsoft Agent Lightning framework (RL for AI agents)
+    # https://github.com/microsoft/agent-lightning
+    "agentlightning>=0.2.0",
+    
+    # PyTorch Lightning for training orchestration
+    "lightning>=2.0.0",
+    
+    # PEFT and quantization
+    "peft>=0.6.0",
+    "bitsandbytes>=0.41.0",
+    
+    # Dataset handling
+    "datasets>=2.14.0",
+    
+    # RAG (Retrieval Augmented Generation)
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    
+    # Smart Chunking (inspired by osgrep)
+    # tree-sitter for AST-aware code parsing
+    "tree-sitter>=0.21.0",
+    "tree-sitter-python>=0.21.0",
+    
+    # LangChain for document processing
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.10",
+    "langchain-text-splitters>=0.0.1",
+    
+    # Document loaders
+    "pypdf>=3.17.0",
+    "unstructured>=0.10.0",
+    
+    # Utilities
+    "scipy>=1.11.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65.0",
+    
+    # Logging
+    "tensorboard>=2.14.0",
+]
+
+[project.optional-dependencies]
+wandb = ["wandb>=0.15.0"]
+dev = [
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "pre-commit>=3.5.0",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.4.0",
+    "mkdocstrings[python]>=0.24.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/llm-finetuning-agent-lightning"
+Documentation = "https://github.com/yourusername/llm-finetuning-agent-lightning#readme"
+Repository = "https://github.com/yourusername/llm-finetuning-agent-lightning.git"
+Issues = "https://github.com/yourusername/llm-finetuning-agent-lightning/issues"
+
+[project.scripts]
+llm-train = "main:main"
+llm-train-rl = "main_agent_lightning:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501", "B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+

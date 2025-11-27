@@ -1,0 +1,108 @@
+# LLM Fine-tuning with Agent Lightning + LUFFY + Search-R1
+# ==========================================================
+# Core dependencies for the portfolio project
+# Includes advanced reasoning capabilities with off-policy learning
+#
+# INSTALLAZIONE:
+#   pip install -r requirements.txt
+#
+# NOTA WINDOWS: bitsandbytes potrebbe richiedere:
+#   pip install bitsandbytes-windows
+
+# ============================================
+# Core ML Frameworks
+# ============================================
+torch>=2.0.0
+transformers>=4.35.0
+accelerate>=0.24.0
+
+# Microsoft Agent Lightning (RL for AI Agents) - CORE DEPENDENCY
+# https://github.com/microsoft/agent-lightning
+agentlightning>=0.2.0
+
+# PyTorch Lightning for training orchestration
+lightning>=2.0.0
+
+# PEFT and Quantization
+peft>=0.6.0
+bitsandbytes>=0.41.0
+
+# ============================================
+# LUFFY - Off-Policy Reasoning Learning
+# Paper: "Learning to Reason under Off-Policy Guidance"
+# https://github.com/ElliottYan/LUFFY
+# ============================================
+# veRL - Volcano Engine Reinforcement Learning for LLMs
+# Used by both LUFFY and Search-R1
+verl>=0.2.0
+
+# vLLM for efficient inference during RL training
+vllm>=0.4.0
+
+# DeepScaler for scalable training
+# (dependency for LUFFY)
+
+# Math-Verify for reasoning evaluation
+# (used for benchmark evaluation)
+
+# ============================================
+# Search-R1 - Reasoning with Search Integration
+# https://github.com/PeterGriffinJin/Search-R1
+# ============================================
+# Search/Retrieval dependencies for R1-style reasoning
+faiss-cpu>=1.7.4  # Vector similarity search (use faiss-gpu for GPU)
+rank-bm25>=0.2.2  # BM25 ranking for search
+httpx>=0.24.0     # Async HTTP for search APIs
+aiohttp>=3.9.0    # Async requests for web search
+
+# ============================================
+# Dataset Handling
+# ============================================
+datasets>=2.14.0
+
+# NuminaMath and OpenR1-Math datasets support
+# (loaded via HuggingFace datasets)
+
+# ============================================
+# RAG (Retrieval Augmented Generation)
+# ============================================
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Smart Chunking (inspired by osgrep)
+# tree-sitter for AST-aware code parsing
+tree-sitter>=0.21.0
+tree-sitter-python>=0.21.0
+
+# LangChain for document processing
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-text-splitters>=0.0.1
+
+# Document Loaders
+pypdf>=3.17.0
+unstructured>=0.10.0
+
+# ============================================
+# Utilities
+# ============================================
+scipy>=1.11.0
+numpy>=1.24.0
+pyyaml>=6.0
+tqdm>=4.65.0
+rich>=13.0.0      # Rich console output
+typer>=0.9.0      # CLI interface
+
+# ============================================
+# Logging & Monitoring
+# ============================================
+tensorboard>=2.14.0
+wandb>=0.16.0     # Weights & Biases for experiment tracking
+
+# ============================================
+# Evaluation & Benchmarking
+# ============================================
+# For LUFFY/Search-R1 benchmarks (AIME, AMC, MATH, Olympiad)
+sympy>=1.12       # Symbolic math for verification
+antlr4-python3-runtime>=4.13.0  # For math parsing
+

@@ -1,0 +1,362 @@
+# Configurazione principale per fine-tuning LLM con Agent Lightning
+# Supporta Multi-Source Training (Data Mixing) per modelli generalisti
+
+# Modello base da caricare
+model:
+  name_or_path: "mistralai/Mistral-7B-v0.3"  # v0.3 migliore per coding e contesto più ampio
+  # Alternative consigliate:
+  #   - "mistralai/Mistral-Nemo-12B" (richiede 24GB VRAM o quantizzazione)
+  #   - "meta-llama/Llama-2-7b-hf"
+  #   - "EleutherAI/gpt-neox-20b"
+  trust_remote_code: false
+  use_flash_attention_2: false  # Richiede flash-attn installato separatamente
+  
+# Configurazione QLoRA e PEFT
+peft:
+  # Tipo di quantizzazione (4-bit NF4)
+  quantization:
+    load_in_4bit: true
+    bnb_4bit_compute_dtype: "float16"  # float16 o bfloat16
+    bnb_4bit_quant_type: "nf4"
+    bnb_4bit_use_double_quant: true
+  
+  # Configurazione LoRA
+  lora:
+    r: 16  # Rank del LoRA (8-64 tipicamente)
+    lora_alpha: 32  # Scaling factor (tipicamente 2x r)
+    target_modules:  # Moduli target per LoRA (specifici per modello)
+      # Per Mistral: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      # Per Llama: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+      # Per GPT-NeoX: ["query_key_value", "dense", "dense_h_to_4h", "dense_4h_to_h"]
+      - "q_proj"
+      - "k_proj"
+      - "v_proj"
+      - "o_proj"
+      - "gate_proj"
+      - "up_proj"
+      - "down_proj"
+    lora_dropout: 0.1
+    bias: "none"
+    task_type: "CAUSAL_LM"
+
+# =============================================================================
+# MULTI-SOURCE TRAINING (Data Mixing) - Per modelli Generalisti
+# =============================================================================
+# Questa configurazione permette di mescolare più dataset con pesi diversi
+# per evitare il Catastrophic Forgetting e creare un modello tuttofare.
+#
+# Ricetta consigliata per modello Agentic + Coding:
+#   - 30% Function Calling (Agentic)
+#   - 30% Coding
+#   - 30% Reasoning/Chat
+#   - 10% Identità/Italiano
+
+datasets:
+  # Abilita multi-source training
+  multi_source_enabled: true
+  
+  # Formato di output unificato per tutti i dataset
+  # Opzioni: "chatml", "alpaca", "llama2", "mistral"
+  output_format: "chatml"
+  
+  # Lista dei dataset con pesi e configurazioni
+  sources:
+    # --- AGENTIC / FUNCTION CALLING (30%) ---
+    - name: "glaiveai/glaive-function-calling-v2"
+      weight: 0.30
+      split: "train"
+      type: "function_calling"  # Tipo per applicare il formatter corretto
+      # Mappatura colonne (opzionale, usa default se non specificato)
+      columns:
+        instruction: "chat"  # Colonna con l'istruzione/conversazione
+        response: "answer"   # Colonna con la risposta
+      max_samples: 50000  # Limita il numero di esempi (null = tutti)
+    
+    # --- CODING (30%) ---
+    - name: "nickrosh/Evol-Instruct-Code-80k-v1"
+      weight: 0.30
+      split: "train"
+      type: "coding"
+      columns:
+        instruction: "instruction"
+        response: "output"
+      max_samples: 50000
+    
+    # --- REASONING / CHAT (30%) ---
+    - name: "teknium/OpenHermes-2.5"
+      weight: 0.30
+      split: "train"
+      type: "chat"
+      columns:
+        # OpenHermes usa formato "conversations" con messaggi
+        conversations: "conversations"
+      max_samples: 50000
+    
+    # --- ITALIANO / IDENTITÀ (10%) ---
+    - name: "gsarti/clean_mc4_it"
+      weight: 0.10
+      split: "train"
+      type: "language"
+      columns:
+        text: "text"  # Dataset monolingue, solo testo
+      max_samples: 10000
+
+# =============================================================================
+# CONFIGURAZIONE LEGACY (Single Source) - Retrocompatibile
+# =============================================================================
+# Se multi_source_enabled è false, usa questa configurazione classica
+data:
+  dataset_name: "databricks/databricks-dolly-15k"
+  dataset_config: null
+  text_column: "instruction"
+  response_column: "response"
+  max_seq_length: 2048
+  train_split: "train"
+  val_split: null
+  val_split_percentage: 0.1
+  
+# Training
+training:
+  output_dir: "./checkpoints"
+  num_epochs: 3
+  per_device_train_batch_size: 2  # Batch size per GPU
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8  # Effective batch = per_device * gradient_accumulation * num_gpus
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_steps: 100
+  weight_decay: 0.01
+  max_grad_norm: 0.3
+  save_strategy: "epoch"  # "epoch" o "steps"
+  save_steps: 500
+  eval_strategy: "epoch"  # "epoch" o "steps"
+  eval_steps: 500
+  logging_steps: 10
+  gradient_checkpointing: true  # Abilita gradient checkpointing per risparmiare memoria
+  fp16: true  # Mixed precision training
+  bf16: false  # Alternativa a fp16 (richiede GPU Ampere+)
+  dataloader_num_workers: 4
+  seed: 42
+
+# Logging
+logging:
+  use_wandb: false
+  wandb_project: "llm-finetuning"
+  wandb_entity: null
+  log_dir: "./logs"
+  use_tensorboard: true
+
+# Hardware
+hardware:
+  num_gpus: 1  # Numero di GPU da usare (0 = CPU, -1 = tutte disponibili)
+  mixed_precision: "16"  # "16", "bf16", o "32"
+
+# =============================================================================
+# AGENT LIGHTNING - Training RL per Agenti AI
+# =============================================================================
+# Microsoft Agent Lightning permette di allenare agenti con:
+# - GRPO: Reinforcement Learning (Group Relative Policy Optimization)
+# - APO: Automatic Prompt Optimization
+# - SFT: Supervised Fine-Tuning avanzato
+#
+# GitHub: https://github.com/microsoft/agent-lightning
+# Docs: https://microsoft.github.io/agent-lightning/
+
+agent_lightning:
+  # Abilita Agent Lightning (richiede: pip install agentlightning)
+  enabled: true
+  
+  # Algoritmo di training
+  # Opzioni: "sft", "grpo", "apo"
+  # - sft: Supervised Fine-Tuning (classico, più veloce)
+  # - grpo: RL con Group Relative Policy Optimization (migliore per agenti)
+  # - apo: Automatic Prompt Optimization (ottimizza i prompt)
+  algorithm: "grpo"
+  
+  # Configurazione GRPO (Reinforcement Learning)
+  # Usato quando algorithm = "grpo"
+  grpo:
+    num_generations: 4        # Generazioni per prompt (più = reward più accurato)
+    temperature: 0.7          # Temperatura per sampling (0.7-1.0 per diversità)
+    top_p: 0.9               # Nucleus sampling
+    max_new_tokens: 512      # Token massimi generati
+    kl_coef: 0.1             # Coefficiente KL divergence (regolarizzazione)
+    gamma: 0.99              # Discount factor per reward
+    clip_range: 0.2          # PPO clip range (stabilità training)
+    
+  # Configurazione APO (Automatic Prompt Optimization)
+  # Usato quando algorithm = "apo"
+  apo:
+    num_prompt_candidates: 5   # Candidati prompt da valutare
+    eval_samples: 20           # Samples per valutare ogni prompt
+    optimize_system_prompt: true  # Ottimizza anche il system prompt
+  
+  # Funzione di reward
+  # Opzioni: "coding", "function_calling", "chat", "combined"
+  # - combined: Auto-detect del task type (consigliato)
+  reward_function: "combined"
+  
+  # LightningStore per tracciamento
+  store_path: "./lightning_store"
+  enable_tracing: true
+
+# =============================================================================
+# LUFFY - Off-Policy Reasoning Learning
+# =============================================================================
+# LUFFY: "Learning to Reason under Off-Policy Guidance"
+# Framework per migliorare le capacità di ragionamento usando tracce off-policy
+# 
+# Paper: https://arxiv.org/abs/2504.14945
+# GitHub: https://github.com/ElliottYan/LUFFY
+#
+# Modalità supportate:
+# - luffy: Usa tracce da modelli esterni (es. DeepSeek-R1)
+# - exgrpo: Impara dall'esperienza del modello stesso
+# - hybrid: Combinazione di entrambi
+
+luffy:
+  # Abilita LUFFY (richiede: verl, vllm)
+  enabled: true
+  
+  # Modalità off-policy
+  # Opzioni: "luffy", "exgrpo", "hybrid"
+  # - luffy: Usa tracce di ragionamento da DeepSeek-R1 o altri modelli
+  # - exgrpo: Impara dall'esperienza propria (prioritized replay)
+  # - hybrid: Combina guidance esterna + propria esperienza
+  mode: "luffy"
+  
+  # Sorgente delle tracce off-policy
+  # Modelli supportati: "deepseek-r1", "qwen2.5-math", "openr1-math"
+  off_policy_source: "deepseek-r1"
+  
+  # Path alle tracce off-policy (JSON)
+  # Formato: [{"prompt": "...", "response": "...", "reward": 0.9}, ...]
+  off_policy_traces_path: "./data/reasoning_traces/deepseek_r1_traces.json"
+  
+  # Pesi per mixing on-policy/off-policy
+  off_policy_weight: 0.5  # Peso tracce esterne
+  on_policy_weight: 0.5   # Peso generazioni proprie
+  
+  # Soglia minima reward per usare tracce off-policy
+  min_off_policy_reward: 0.5
+  
+  # Parametri di generazione
+  temperature: 0.7
+  top_p: 0.95
+  num_generations: 4
+  max_new_tokens: 2048  # Lungo per ragionamento step-by-step
+  
+  # Parametri RL
+  kl_coef: 0.05         # KL penalty (più basso = meno conservativo)
+  clip_range: 0.2       # PPO clipping
+  gamma: 0.99           # Discount factor
+  gae_lambda: 0.95      # GAE lambda
+  
+  # ExGRPO specific (quando mode = "exgrpo" o "hybrid")
+  exgrpo:
+    experience_buffer_size: 10000   # Dimensione buffer esperienze
+    experience_sample_ratio: 0.3    # Percentuale da riutilizzare
+    priority_alpha: 0.6             # Prioritized replay alpha
+    min_reward_threshold: 0.6       # Soglia minima per salvare esperienza
+
+# =============================================================================
+# SEARCH-R1 - Reasoning with Search Integration
+# =============================================================================
+# Search-R1: Training RL per ragionamento con ricerca integrata
+# Permette al modello di cercare informazioni durante il reasoning
+#
+# GitHub: https://github.com/PeterGriffinJin/Search-R1
+# Ispirato a DeepSeek-R1: https://arxiv.org/abs/2501.12948
+#
+# Il modello impara a:
+# - Decidere QUANDO cercare informazioni
+# - Formulare QUERY efficaci
+# - INTEGRARE risultati nel ragionamento
+
+search_r1:
+  # Abilita Search-R1 (richiede: faiss, rank-bm25)
+  enabled: true
+  
+  # Tipo di search engine
+  # Opzioni: "vector", "bm25", "hybrid", "web"
+  # - vector: Semantic search con embeddings (raccomandato per knowledge base)
+  # - bm25: Keyword-based search (veloce, buono per testo esatto)
+  # - hybrid: Combinazione vector + BM25 (migliore qualità)
+  # - web: Integrazione con API web (richiede configurazione aggiuntiva)
+  search_engine_type: "hybrid"
+  
+  # Massimo numero di ricerche per generazione
+  max_search_calls: 3
+  
+  # Numero di risultati da includere nel contesto
+  context_window: 3
+  
+  # Token speciali per search (usati nel prompting)
+  search_token: "<search>"
+  end_search_token: "</search>"
+  context_token: "<context>"
+  end_context_token: "</context>"
+  
+  # Parametri di generazione
+  temperature: 0.7
+  top_p: 0.95
+  max_new_tokens: 2048
+  
+  # Strategie di ragionamento
+  use_cot: true        # Chain-of-Thought prompting
+  use_reflection: true  # Self-reflection dopo ricerca
+  
+  # Parametri RL per training
+  kl_coef: 0.05
+  reward_search_bonus: 0.1       # Bonus per uso efficace della ricerca
+  reward_correctness_weight: 0.7 # Peso per correttezza risposta
+  reward_reasoning_weight: 0.3   # Peso per qualità ragionamento
+  
+  # Configurazione search engine
+  vector_search:
+    embedding_model: "all-MiniLM-L6-v2"
+    use_reranker: true
+    reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  
+  bm25:
+    k1: 1.5  # BM25 parameter
+    b: 0.75  # BM25 parameter
+  
+  hybrid:
+    vector_weight: 0.5
+    bm25_weight: 0.5
+    fusion_method: "rrf"  # Reciprocal Rank Fusion
+  
+  # Web search (se search_engine_type = "web")
+  web_search:
+    provider: "serper"  # "serper", "serpapi", "bing"
+    api_key_env: "SEARCH_API_KEY"
+    max_results: 5
+
+# =============================================================================
+# REASONING BENCHMARKS - Valutazione capacità di ragionamento
+# =============================================================================
+# Benchmark per valutare le capacità di ragionamento matematico/logico
+# Usati per valutare LUFFY e Search-R1
+
+reasoning_benchmarks:
+  enabled: true
+  
+  # Dataset di valutazione
+  datasets:
+    - name: "MATH-500"
+      path: "hendrycks/competition_math"
+      split: "test[:500]"
+    - name: "GSM8K"
+      path: "gsm8k"
+      split: "test"
+    - name: "AIME"
+      path: "AI-MO/aimo-validation-aime"
+      split: "validation"
+  
+  # Metodo di valutazione
+  evaluation:
+    use_math_verify: true  # Usa Math-Verify per verifica
+    pass_at_k: [1, 5]      # Pass@k metrics
+    temperature: 0.0       # Greedy per eval (deterministic)
+    max_new_tokens: 2048
