@@ -1,38 +1,38 @@
 {
   "name": "refactor_code",
-  "description": "Procedura per refactoring sicuro del codice",
-  "trigger": "refactor, migliora, ottimizza, pulisci codice, refactoring",
+  "description": "Procedure for safe code refactoring",
+  "trigger": "refactor, improve, optimize, clean code, refactoring",
   "category": "coding",
   "priority": 7,
   "enabled": true,
   "steps": [
     {
-      "action": "Comprendi lo scopo attuale del codice",
-      "expected_output": "Descrizione funzionalità"
+      "action": "Understand the current purpose of the code",
+      "expected_output": "Functionality description"
     },
     {
-      "action": "Identifica i problemi (code smells, duplicazione, complessità)",
-      "expected_output": "Lista problemi"
+      "action": "Identify problems (code smells, duplication, complexity)",
+      "expected_output": "Problem list"
     },
     {
-      "action": "Verifica che esistano test o crea test prima del refactor",
-      "expected_output": "Copertura test",
-      "condition": "codice critico o complesso"
+      "action": "Verify that tests exist or create tests before refactoring",
+      "expected_output": "Test coverage",
+      "condition": "critical or complex code"
     },
     {
-      "action": "Pianifica il refactoring in step piccoli e sicuri",
-      "expected_output": "Piano refactoring"
+      "action": "Plan the refactoring in small, safe steps",
+      "expected_output": "Refactoring plan"
     },
     {
-      "action": "Applica un cambiamento alla volta",
-      "expected_output": "Codice modificato"
+      "action": "Apply one change at a time",
+      "expected_output": "Modified code"
     },
     {
-      "action": "Verifica che il comportamento sia invariato",
-      "expected_output": "Validazione"
+      "action": "Verify that the behavior remains unchanged",
+      "expected_output": "Validation"
     },
     {
-      "action": "Documenta i cambiamenti fatti",
+      "action": "Document the changes made",
       "expected_output": "Changelog"
     }
   ],
@@ -41,4 +41,3 @@
     "version": "1.0"
   }
 }
-

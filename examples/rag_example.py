@@ -1,12 +1,12 @@
 """
-Esempio di uso del sistema RAG (Retrieval Augmented Generation).
+Example of RAG (Retrieval Augmented Generation) system usage.
 
-Questo esempio mostra come:
-1. Creare un VectorStore con documenti
-2. Fare query semantiche
-3. Usare il contesto per generazione
+This example shows how to:
+1. Create a VectorStore with documents
+2. Perform semantic queries
+3. Use context for generation
 
-Prerequisiti:
+Prerequisites:
     pip install chromadb sentence-transformers
 """
 
@@ -16,38 +16,38 @@ from src.agent import SEARCH_KNOWLEDGE_BASE, get_tools_prompt, SYSTEM_PROMPT_RAG
 
 def main():
     print("=" * 60)
-    print("ESEMPIO RAG - Retrieval Augmented Generation")
+    print("RAG EXAMPLE - Retrieval Augmented Generation")
     print("=" * 60)
     
-    # 1. Crea VectorStore
-    print("\n[1] Creazione VectorStore...")
+    # 1. Create VectorStore
+    print("\n[1] Creating VectorStore...")
     store = VectorStore(
         collection_name="demo_kb",
-        embedding_model="all-MiniLM-L6-v2",  # Modello veloce
-        persist_directory=None,  # In-memory per demo
+        embedding_model="all-MiniLM-L6-v2",  # Fast model
+        persist_directory=None,  # In-memory for demo
     )
     
-    # 2. Aggiungi documenti
-    print("\n[2] Aggiunta documenti...")
+    # 2. Add documents
+    print("\n[2] Adding documents...")
     documents = [
-        "Python è un linguaggio di programmazione ad alto livello, interpretato e orientato agli oggetti.",
-        "PyTorch è una libreria open source per machine learning sviluppata da Meta AI.",
-        "Transformers di Hugging Face fornisce modelli pre-addestrati per NLP.",
-        "QLoRA è una tecnica per fine-tuning efficiente di LLM con quantizzazione 4-bit.",
-        "Agent Lightning di Microsoft è un framework per training di agenti AI con RL.",
-        "ChromaDB è un database vettoriale open source per applicazioni AI.",
-        "RAG (Retrieval Augmented Generation) combina recupero di informazioni con generazione.",
+        "Python is a high-level, interpreted, object-oriented programming language.",
+        "PyTorch is an open source machine learning library developed by Meta AI.",
+        "HuggingFace Transformers provides pre-trained models for NLP.",
+        "QLoRA is a technique for efficient LLM fine-tuning with 4-bit quantization.",
+        "Microsoft Agent Lightning is a framework for training AI agents with RL.",
+        "ChromaDB is an open source vector database for AI applications.",
+        "RAG (Retrieval Augmented Generation) combines information retrieval with generation.",
     ]
     
     store.add_documents(documents)
-    print(f"   Aggiunti {store.count()} documenti")
+    print(f"   Added {store.count()} documents")
     
-    # 3. Query semantiche
-    print("\n[3] Query semantiche...")
+    # 3. Semantic queries
+    print("\n[3] Semantic queries...")
     queries = [
-        "Cos'è Python?",
-        "Come funziona il fine-tuning efficiente?",
-        "Che framework uso per agenti AI?",
+        "What is Python?",
+        "How does efficient fine-tuning work?",
+        "What framework do I use for AI agents?",
     ]
     
     for query in queries:
@@ -56,24 +56,23 @@ def main():
         for doc, score, _ in results:
             print(f"   → Score {score:.3f}: {doc[:80]}...")
     
-    # 4. Contesto per RAG
-    print("\n[4] Generazione contesto RAG...")
-    context = store.query_with_context("Come faccio training di LLM?", n_results=3)
-    print(f"\n   Contesto recuperato:\n{context}")
+    # 4. Context for RAG
+    print("\n[4] Generating RAG context...")
+    context = store.query_with_context("How do I train LLMs?", n_results=3)
+    print(f"\n   Retrieved context:\n{context}")
     
     # 5. Tool definition
-    print("\n[5] Tool search_knowledge_base:")
+    print("\n[5] search_knowledge_base tool:")
     print(f"   {SEARCH_KNOWLEDGE_BASE.to_prompt_format()}")
     
-    # 6. System prompt per RAG
-    print("\n[6] System Prompt RAG:")
+    # 6. System prompt for RAG
+    print("\n[6] RAG System Prompt:")
     print(SYSTEM_PROMPT_RAG[:300] + "...")
     
     print("\n" + "=" * 60)
-    print("✅ Demo RAG completata!")
+    print("✅ RAG Demo completed!")
     print("=" * 60)
 
 
 if __name__ == "__main__":
     main()
-

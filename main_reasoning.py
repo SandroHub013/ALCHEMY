@@ -1,22 +1,22 @@
 """
-Entry point per training avanzato con LUFFY e Search-R1.
+Entry point for advanced training with LUFFY and Search-R1.
 
-Questo script permette di:
-1. Addestrare modelli con LUFFY (off-policy learning da DeepSeek-R1)
-2. Addestrare modelli con Search-R1 (reasoning con ricerca integrata)
-3. Combinare entrambi per capacità di ragionamento avanzate
+This script allows you to:
+1. Train models with LUFFY (off-policy learning from DeepSeek-R1)
+2. Train models with Search-R1 (reasoning with integrated search)
+3. Combine both for advanced reasoning capabilities
 
-Uso:
-    # Training con LUFFY
+Usage:
+    # Training with LUFFY
     python main_reasoning.py --mode luffy --config config/config.yaml
 
-    # Training con Search-R1
+    # Training with Search-R1
     python main_reasoning.py --mode search-r1 --config config/config.yaml
     
-    # Training combinato
+    # Combined training
     python main_reasoning.py --mode combined --config config/config.yaml
 
-Riferimenti:
+References:
 - LUFFY: https://arxiv.org/abs/2504.14945
 - Search-R1: https://github.com/PeterGriffinJin/Search-R1
 - DeepSeek-R1: https://arxiv.org/abs/2501.12948
@@ -44,7 +44,7 @@ from src.reasoning import (
     create_search_engine,
 )
 
-# Configurazione logging
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 def load_config(config_path: str) -> Dict[str, Any]:
-    """Carica configurazione da file YAML."""
+    """Load configuration from YAML file."""
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     return config
@@ -61,36 +61,36 @@ def load_config(config_path: str) -> Dict[str, Any]:
 
 def load_reasoning_traces(traces_path: str) -> List[Dict[str, Any]]:
     """
-    Carica tracce di ragionamento off-policy.
+    Load off-policy reasoning traces.
     
     Args:
-        traces_path: Path al file JSON con le tracce
+        traces_path: Path to the JSON file with traces
         
     Returns:
-        Lista di tracce
+        List of traces
     """
     import json
     
     if not os.path.exists(traces_path):
-        logger.warning(f"File tracce non trovato: {traces_path}")
+        logger.warning(f"Traces file not found: {traces_path}")
         return []
     
     with open(traces_path, "r", encoding="utf-8") as f:
         traces = json.load(f)
     
-    logger.info(f"Caricate {len(traces)} tracce da {traces_path}")
+    logger.info(f"Loaded {len(traces)} traces from {traces_path}")
     return traces
 
 
 def load_knowledge_base(kb_path: str) -> List[str]:
     """
-    Carica knowledge base per Search-R1.
+    Load knowledge base for Search-R1.
     
     Args:
-        kb_path: Path alla directory o file con i documenti
+        kb_path: Path to the directory or file with documents
         
     Returns:
-        Lista di documenti
+        List of documents
     """
     documents = []
     kb_path = Path(kb_path)
@@ -105,7 +105,7 @@ def load_knowledge_base(kb_path: str) -> List[str]:
             else:
                 documents = [f.read()]
     elif kb_path.is_dir():
-        # Directory di file
+        # Directory of files
         for file_path in kb_path.glob("**/*.txt"):
             with open(file_path, "r", encoding="utf-8") as f:
                 documents.append(f.read())
@@ -113,7 +113,7 @@ def load_knowledge_base(kb_path: str) -> List[str]:
             with open(file_path, "r", encoding="utf-8") as f:
                 documents.append(f.read())
     
-    logger.info(f"Caricati {len(documents)} documenti dalla knowledge base")
+    logger.info(f"Loaded {len(documents)} documents from knowledge base")
     return documents
 
 
@@ -124,35 +124,35 @@ def train_luffy(
     train_dataset,
 ) -> Dict[str, Any]:
     """
-    Training con LUFFY.
+    Training with LUFFY.
     
     Args:
-        model: Modello con LoRA
+        model: Model with LoRA
         tokenizer: Tokenizer
-        config: Configurazione completa
-        train_dataset: Dataset di training
+        config: Complete configuration
+        train_dataset: Training dataset
         
     Returns:
-        Metriche di training
+        Training metrics
     """
     logger.info("=" * 60)
-    logger.info("TRAINING CON LUFFY - Off-Policy Reasoning Learning")
+    logger.info("TRAINING WITH LUFFY - Off-Policy Reasoning Learning")
     logger.info("=" * 60)
     
     luffy_config = config.get("luffy", {})
     
-    # Crea trainer
+    # Create trainer
     trainer = create_luffy_trainer(model, tokenizer, config)
     
-    # Carica tracce off-policy se disponibili
+    # Load off-policy traces if available
     traces_path = luffy_config.get("off_policy_traces_path")
     if traces_path and os.path.exists(traces_path):
         num_traces = trainer.load_off_policy_traces(traces_path)
-        logger.info(f"Caricate {num_traces} tracce off-policy")
+        logger.info(f"Loaded {num_traces} off-policy traces")
     else:
         logger.warning(
-            "Nessuna traccia off-policy trovata. "
-            "LUFFY funzionerà in modalità ExGRPO (learning from own experience)"
+            "No off-policy traces found. "
+            "LUFFY will work in ExGRPO mode (learning from own experience)"
         )
     
     # Training
@@ -165,7 +165,7 @@ def train_luffy(
         output_dir=train_config.get("output_dir", "./checkpoints/luffy"),
     )
     
-    logger.info("Training LUFFY completato!")
+    logger.info("LUFFY training completed!")
     return results
 
 
@@ -177,25 +177,25 @@ def train_search_r1(
     knowledge_base: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """
-    Training con Search-R1.
+    Training with Search-R1.
     
     Args:
-        model: Modello con LoRA
+        model: Model with LoRA
         tokenizer: Tokenizer
-        config: Configurazione completa
-        train_data: Dati di training [{"question": ..., "answer": ...}]
-        knowledge_base: Documenti per search engine
+        config: Complete configuration
+        train_data: Training data [{"question": ..., "answer": ...}]
+        knowledge_base: Documents for search engine
         
     Returns:
-        Metriche di training
+        Training metrics
     """
     logger.info("=" * 60)
-    logger.info("TRAINING CON SEARCH-R1 - Reasoning with Search")
+    logger.info("TRAINING WITH SEARCH-R1 - Reasoning with Search")
     logger.info("=" * 60)
     
     search_config = config.get("search_r1", {})
     
-    # Crea search engine
+    # Create search engine
     engine_type = search_config.get("search_engine_type", "hybrid")
     search_engine = create_search_engine(
         engine_type,
@@ -204,9 +204,9 @@ def train_search_r1(
     
     logger.info(f"Search engine: {engine_type}")
     if knowledge_base:
-        logger.info(f"Knowledge base: {len(knowledge_base)} documenti")
+        logger.info(f"Knowledge base: {len(knowledge_base)} documents")
     
-    # Crea trainer
+    # Create trainer
     trainer = create_search_r1_trainer(
         model, tokenizer, config, 
         documents=knowledge_base
@@ -222,7 +222,7 @@ def train_search_r1(
         output_dir=train_config.get("output_dir", "./checkpoints/search_r1"),
     )
     
-    logger.info("Training Search-R1 completato!")
+    logger.info("Search-R1 training completed!")
     return results
 
 
@@ -234,36 +234,36 @@ def train_combined(
     knowledge_base: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """
-    Training combinato LUFFY + Search-R1.
+    Combined training LUFFY + Search-R1.
     
-    Prima addestra con LUFFY per migliorare reasoning,
-    poi fine-tuna con Search-R1 per integrare ricerca.
+    First trains with LUFFY to improve reasoning,
+    then fine-tunes with Search-R1 to integrate search.
     
     Args:
-        model: Modello con LoRA
+        model: Model with LoRA
         tokenizer: Tokenizer
-        config: Configurazione completa
-        train_dataset: Dataset di training
-        knowledge_base: Documenti per search
+        config: Complete configuration
+        train_dataset: Training dataset
+        knowledge_base: Documents for search
         
     Returns:
-        Metriche combinate
+        Combined metrics
     """
     logger.info("=" * 60)
-    logger.info("TRAINING COMBINATO - LUFFY + Search-R1")
+    logger.info("COMBINED TRAINING - LUFFY + Search-R1")
     logger.info("=" * 60)
     
     results = {"luffy": None, "search_r1": None}
     
-    # Fase 1: LUFFY
-    logger.info("\n[Fase 1/2] Training LUFFY...")
+    # Phase 1: LUFFY
+    logger.info("\n[Phase 1/2] LUFFY Training...")
     luffy_results = train_luffy(model, tokenizer, config, train_dataset)
     results["luffy"] = luffy_results
     
-    # Fase 2: Search-R1
-    logger.info("\n[Fase 2/2] Training Search-R1...")
+    # Phase 2: Search-R1
+    logger.info("\n[Phase 2/2] Search-R1 Training...")
     
-    # Prepara dati per Search-R1
+    # Prepare data for Search-R1
     train_data = []
     for item in train_dataset:
         if isinstance(item, dict):
@@ -277,17 +277,17 @@ def train_combined(
     )
     results["search_r1"] = search_results
     
-    logger.info("\nTraining combinato completato!")
+    logger.info("\nCombined training completed!")
     return results
 
 
 def main():
-    """Funzione principale."""
+    """Main function."""
     parser = argparse.ArgumentParser(
-        description="Training avanzato con LUFFY e Search-R1",
+        description="Advanced training with LUFFY and Search-R1",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Esempi:
+Examples:
   python main_reasoning.py --mode luffy --config config/config.yaml
   python main_reasoning.py --mode search-r1 --config config/config.yaml --kb ./data/knowledge_base
   python main_reasoning.py --mode combined --config config/config.yaml
@@ -298,63 +298,63 @@ Esempi:
         type=str,
         choices=["luffy", "search-r1", "combined"],
         default="luffy",
-        help="Modalità di training (default: luffy)",
+        help="Training mode (default: luffy)",
     )
     parser.add_argument(
         "--config",
         type=str,
         default="config/config.yaml",
-        help="Path al file di configurazione",
+        help="Path to the configuration file",
     )
     parser.add_argument(
         "--traces",
         type=str,
         default=None,
-        help="Path alle tracce off-policy (override config)",
+        help="Path to off-policy traces (override config)",
     )
     parser.add_argument(
         "--kb",
         type=str,
         default=None,
-        help="Path alla knowledge base per Search-R1",
+        help="Path to knowledge base for Search-R1",
     )
     parser.add_argument(
         "--output-dir",
         type=str,
         default=None,
-        help="Directory per checkpoint (override config)",
+        help="Directory for checkpoints (override config)",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Verifica configurazione senza training",
+        help="Verify configuration without training",
     )
     args = parser.parse_args()
     
-    # Carica configurazione
-    logger.info(f"Caricamento configurazione da {args.config}")
+    # Load configuration
+    logger.info(f"Loading configuration from {args.config}")
     config = load_config(args.config)
     
-    # Override da CLI
+    # Override from CLI
     if args.traces:
         config.setdefault("luffy", {})["off_policy_traces_path"] = args.traces
     if args.output_dir:
         config.setdefault("training", {})["output_dir"] = args.output_dir
     
-    # Crea directory output
+    # Create output directory
     output_dir = config.get("training", {}).get("output_dir", "./checkpoints")
     os.makedirs(output_dir, exist_ok=True)
     
-    # Configurazione hardware
+    # Hardware configuration
     hardware_config = config.get("hardware", {})
     num_gpus = hardware_config.get("num_gpus", 1)
     if num_gpus == -1:
         num_gpus = torch.cuda.device_count()
     
-    logger.info(f"GPU disponibili: {torch.cuda.device_count()}, GPU da usare: {num_gpus}")
+    logger.info(f"GPUs available: {torch.cuda.device_count()}, GPUs to use: {num_gpus}")
     
-    # Carica modello
-    logger.info("Caricamento modello e tokenizer...")
+    # Load model
+    logger.info("Loading model and tokenizer...")
     model_config = config["model"]
     peft_config = config["peft"]
     
@@ -380,10 +380,10 @@ Esempi:
     # Dry run
     if args.dry_run:
         logger.info("\n" + "=" * 60)
-        logger.info("DRY RUN - Configurazione verificata")
+        logger.info("DRY RUN - Configuration verified")
         logger.info("=" * 60)
-        logger.info(f"Modalità: {args.mode}")
-        logger.info(f"Modello: {model_config['name_or_path']}")
+        logger.info(f"Mode: {args.mode}")
+        logger.info(f"Model: {model_config['name_or_path']}")
         logger.info(f"Output: {output_dir}")
         
         if args.mode in ["luffy", "combined"]:
@@ -400,16 +400,16 @@ Esempi:
             logger.info(f"  Max searches: {search_cfg.get('max_search_calls', 3)}")
             logger.info(f"  Knowledge base: {args.kb or 'N/A'}")
         
-        logger.info("\nConfigurazione OK! Rimuovi --dry-run per avviare il training.")
+        logger.info("\nConfiguration OK! Remove --dry-run to start training.")
         return
     
-    # Prepara dataset
-    logger.info("Preparazione dataset...")
+    # Prepare dataset
+    logger.info("Preparing dataset...")
     data_module = create_data_module(tokenizer=tokenizer, config=config)
     data_module.setup()
     train_dataset = data_module.train_dataset
     
-    # Carica knowledge base se specificata
+    # Load knowledge base if specified
     knowledge_base = None
     if args.kb:
         knowledge_base = load_knowledge_base(args.kb)
@@ -418,7 +418,7 @@ Esempi:
     if args.mode == "luffy":
         results = train_luffy(model, tokenizer, config, train_dataset)
     elif args.mode == "search-r1":
-        # Converti dataset per Search-R1
+        # Convert dataset for Search-R1
         train_data = []
         for item in train_dataset:
             if isinstance(item, dict):
@@ -430,11 +430,11 @@ Esempi:
     else:  # combined
         results = train_combined(model, tokenizer, config, train_dataset, knowledge_base)
     
-    # Report finale
+    # Final report
     logger.info("\n" + "=" * 60)
-    logger.info("TRAINING COMPLETATO")
+    logger.info("TRAINING COMPLETED")
     logger.info("=" * 60)
-    logger.info(f"Checkpoint salvati in: {output_dir}")
+    logger.info(f"Checkpoints saved to: {output_dir}")
     
     if isinstance(results, dict):
         if "total_steps" in results:
@@ -447,4 +447,3 @@ Esempi:
 
 if __name__ == "__main__":
     main()
-

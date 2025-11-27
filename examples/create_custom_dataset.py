@@ -1,8 +1,8 @@
 """
-Script per creare dataset personalizzati per instruction tuning.
+Script to create custom datasets for instruction tuning.
 
-Questo script mostra come creare dataset in vari formati (JSON, JSONL, CSV)
-per il fine-tuning di LLM.
+This script shows how to create datasets in various formats (JSON, JSONL, CSV)
+for LLM fine-tuning.
 """
 
 import json
@@ -16,17 +16,17 @@ def create_jsonl_dataset(
     output_path: str = "data/custom_dataset.jsonl",
 ) -> None:
     """
-    Crea un dataset in formato JSONL (una riga = un esempio JSON).
+    Create a dataset in JSONL format (one line = one JSON example).
     
-    Formato richiesto:
+    Required format:
     {
         "instruction": "...",
         "response": "..."
     }
     
     Args:
-        examples: Lista di dizionari con 'instruction' e 'response'
-        output_path: Path dove salvare il file
+        examples: List of dictionaries with 'instruction' and 'response'
+        output_path: Path where to save the file
     """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -35,7 +35,7 @@ def create_jsonl_dataset(
         for example in examples:
             f.write(json.dumps(example, ensure_ascii=False) + "\n")
     
-    print(f"Dataset JSONL creato: {output_path} ({len(examples)} esempi)")
+    print(f"JSONL dataset created: {output_path} ({len(examples)} examples)")
 
 
 def create_json_dataset(
@@ -43,11 +43,11 @@ def create_json_dataset(
     output_path: str = "data/custom_dataset.json",
 ) -> None:
     """
-    Crea un dataset in formato JSON (array di oggetti).
+    Create a dataset in JSON format (array of objects).
     
     Args:
-        examples: Lista di dizionari con 'instruction' e 'response'
-        output_path: Path dove salvare il file
+        examples: List of dictionaries with 'instruction' and 'response'
+        output_path: Path where to save the file
     """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -55,7 +55,7 @@ def create_json_dataset(
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(examples, f, ensure_ascii=False, indent=2)
     
-    print(f"Dataset JSON creato: {output_path} ({len(examples)} esempi)")
+    print(f"JSON dataset created: {output_path} ({len(examples)} examples)")
 
 
 def create_csv_dataset(
@@ -63,11 +63,11 @@ def create_csv_dataset(
     output_path: str = "data/custom_dataset.csv",
 ) -> None:
     """
-    Crea un dataset in formato CSV.
+    Create a dataset in CSV format.
     
     Args:
-        examples: Lista di dizionari con 'instruction' e 'response'
-        output_path: Path dove salvare il file
+        examples: List of dictionaries with 'instruction' and 'response'
+        output_path: Path where to save the file
     """
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -77,109 +77,108 @@ def create_csv_dataset(
         writer.writeheader()
         writer.writerows(examples)
     
-    print(f"Dataset CSV creato: {output_path} ({len(examples)} esempi)")
+    print(f"CSV dataset created: {output_path} ({len(examples)} examples)")
 
 
-def example_italian_dataset() -> List[Dict[str, str]]:
+def example_ai_dataset() -> List[Dict[str, str]]:
     """
-    Esempio di dataset in italiano.
+    Example AI/ML dataset.
     
     Returns:
-        Lista di esempi instruction-response
+        List of instruction-response examples
     """
     return [
         {
-            "instruction": "Spiega cos'è l'intelligenza artificiale in modo semplice.",
-            "response": "L'intelligenza artificiale (IA) è la capacità di un computer o di un sistema di eseguire compiti che normalmente richiederebbero l'intelligenza umana, come il riconoscimento di immagini, la comprensione del linguaggio naturale e il processo decisionale."
+            "instruction": "Explain what artificial intelligence is in simple terms.",
+            "response": "Artificial Intelligence (AI) is the ability of a computer or system to perform tasks that would normally require human intelligence, such as image recognition, natural language understanding, and decision-making."
         },
         {
-            "instruction": "Quali sono i vantaggi dell'apprendimento automatico?",
-            "response": "I vantaggi dell'apprendimento automatico includono: automazione di compiti ripetitivi, capacità di analizzare grandi quantità di dati, miglioramento continuo delle prestazioni con più dati, personalizzazione dei servizi e capacità di identificare pattern complessi che gli umani potrebbero non notare."
+            "instruction": "What are the advantages of machine learning?",
+            "response": "The advantages of machine learning include: automation of repetitive tasks, ability to analyze large amounts of data, continuous performance improvement with more data, service personalization, and ability to identify complex patterns that humans might not notice."
         },
         {
-            "instruction": "Come funziona una rete neurale?",
-            "response": "Una rete neurale è composta da strati di nodi (neuroni artificiali) collegati tra loro. Ogni connessione ha un peso che viene regolato durante l'addestramento. I dati passano attraverso la rete, e ogni strato elabora le informazioni prima di passarle al successivo. Durante l'addestramento, la rete modifica i pesi per minimizzare l'errore tra le previsioni e i risultati attesi."
+            "instruction": "How does a neural network work?",
+            "response": "A neural network is composed of layers of nodes (artificial neurons) connected to each other. Each connection has a weight that is adjusted during training. Data passes through the network, and each layer processes the information before passing it to the next. During training, the network modifies the weights to minimize the error between predictions and expected results."
         },
         {
-            "instruction": "Qual è la differenza tra deep learning e machine learning tradizionale?",
-            "response": "Il machine learning tradizionale richiede spesso l'estrazione manuale di feature dai dati, mentre il deep learning utilizza reti neurali profonde che apprendono automaticamente le feature dai dati grezzi. Il deep learning è particolarmente efficace per dati non strutturati come immagini, testo e audio, e può gestire problemi più complessi grazie alla sua capacità di apprendere rappresentazioni gerarchiche."
+            "instruction": "What is the difference between deep learning and traditional machine learning?",
+            "response": "Traditional machine learning often requires manual feature extraction from data, while deep learning uses deep neural networks that automatically learn features from raw data. Deep learning is particularly effective for unstructured data like images, text, and audio, and can handle more complex problems due to its ability to learn hierarchical representations."
         },
         {
-            "instruction": "Spiega il concetto di overfitting nel machine learning.",
-            "response": "L'overfitting si verifica quando un modello apprende troppo bene i dati di addestramento, memorizzando i dettagli specifici invece di apprendere pattern generali. Questo porta a prestazioni eccellenti sui dati di addestramento ma scarse prestazioni su dati nuovi. Per prevenirlo, si possono usare tecniche come la regolarizzazione, il dropout, la validazione incrociata e l'arresto anticipato."
+            "instruction": "Explain the concept of overfitting in machine learning.",
+            "response": "Overfitting occurs when a model learns the training data too well, memorizing specific details instead of learning general patterns. This leads to excellent performance on training data but poor performance on new data. To prevent it, techniques like regularization, dropout, cross-validation, and early stopping can be used."
         },
     ]
 
 
 def example_qa_dataset() -> List[Dict[str, str]]:
     """
-    Esempio di dataset domanda-risposta.
+    Example question-answer dataset.
     
     Returns:
-        Lista di esempi Q&A
+        List of Q&A examples
     """
     return [
         {
-            "instruction": "Qual è la capitale della Francia?",
-            "response": "La capitale della Francia è Parigi."
+            "instruction": "What is the capital of France?",
+            "response": "The capital of France is Paris."
         },
         {
-            "instruction": "Chi ha scritto 'Il Principe'?",
-            "response": "'Il Principe' è stato scritto da Niccolò Machiavelli nel 1513."
+            "instruction": "Who wrote 'The Prince'?",
+            "response": "'The Prince' was written by Niccolò Machiavelli in 1513."
         },
         {
-            "instruction": "Quanto dura un anno su Marte?",
-            "response": "Un anno su Marte dura circa 687 giorni terrestri, equivalente a circa 1,88 anni terrestri."
+            "instruction": "How long is a year on Mars?",
+            "response": "A year on Mars lasts about 687 Earth days, equivalent to approximately 1.88 Earth years."
         },
     ]
 
 
 def example_code_dataset() -> List[Dict[str, str]]:
     """
-    Esempio di dataset per code generation/explanation.
+    Example dataset for code generation/explanation.
     
     Returns:
-        Lista di esempi code-related
+        List of code-related examples
     """
     return [
         {
-            "instruction": "Scrivi una funzione Python che calcola il fattoriale di un numero.",
-            "response": "```python\ndef fattoriale(n):\n    if n == 0 or n == 1:\n        return 1\n    return n * fattoriale(n - 1)\n\n# Esempio d'uso:\nprint(fattoriale(5))  # Output: 120\n```"
+            "instruction": "Write a Python function that calculates the factorial of a number.",
+            "response": "```python\ndef factorial(n):\n    if n == 0 or n == 1:\n        return 1\n    return n * factorial(n - 1)\n\n# Usage example:\nprint(factorial(5))  # Output: 120\n```"
         },
         {
-            "instruction": "Spiega cosa fa questo codice Python: `[x**2 for x in range(10)]`",
-            "response": "Questo codice crea una list comprehension che genera una lista dei quadrati dei numeri da 0 a 9. Specificamente:\n- `range(10)` genera i numeri da 0 a 9\n- `x**2` calcola il quadrato di ogni numero\n- Il risultato è `[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]`"
+            "instruction": "Explain what this Python code does: `[x**2 for x in range(10)]`",
+            "response": "This code creates a list comprehension that generates a list of squares of numbers from 0 to 9. Specifically:\n- `range(10)` generates numbers from 0 to 9\n- `x**2` calculates the square of each number\n- The result is `[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]`"
         },
     ]
 
 
 def main():
-    """Crea esempi di dataset personalizzati."""
-    # Crea directory per i dataset
+    """Create custom dataset examples."""
+    # Create directory for datasets
     Path("data").mkdir(exist_ok=True)
     
-    # Dataset italiano
-    italian_data = example_italian_dataset()
-    create_jsonl_dataset(italian_data, "data/italian_ai_dataset.jsonl")
-    create_json_dataset(italian_data, "data/italian_ai_dataset.json")
-    create_csv_dataset(italian_data, "data/italian_ai_dataset.csv")
+    # AI dataset
+    ai_data = example_ai_dataset()
+    create_jsonl_dataset(ai_data, "data/ai_dataset.jsonl")
+    create_json_dataset(ai_data, "data/ai_dataset.json")
+    create_csv_dataset(ai_data, "data/ai_dataset.csv")
     
-    # Dataset Q&A
+    # Q&A dataset
     qa_data = example_qa_dataset()
     create_jsonl_dataset(qa_data, "data/qa_dataset.jsonl")
     
-    # Dataset code
+    # Code dataset
     code_data = example_code_dataset()
     create_jsonl_dataset(code_data, "data/code_dataset.jsonl")
     
-    print("\n✅ Dataset creati con successo!")
-    print("\nPer usare questi dataset, modifica config/config.yaml:")
+    print("\n✅ Datasets created successfully!")
+    print("\nTo use these datasets, modify config/config.yaml:")
     print("  data:")
-    print("    dataset_name: 'data/italian_ai_dataset.jsonl'")
+    print("    dataset_name: 'data/ai_dataset.jsonl'")
     print("    text_column: 'instruction'")
     print("    response_column: 'response'")
 
 
 if __name__ == "__main__":
     main()
-

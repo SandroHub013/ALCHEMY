@@ -1,13 +1,13 @@
 """
-Esempio di uso della Memoria Procedurale (SOP).
+Example of Procedural Memory (SOP) usage.
 
-Questo esempio mostra come:
-1. Creare e gestire SOP
-2. Trovare SOP rilevanti per una query
-3. Generare contesto per il modello
-4. Caricare SOP da file
+This example shows how to:
+1. Create and manage SOPs
+2. Find relevant SOPs for a query
+3. Generate context for the model
+4. Load SOPs from files
 
-Uso:
+Usage:
     python examples/sop_example.py
 """
 
@@ -16,28 +16,28 @@ from src.memory import SOPManager, SOP, SOPStep, get_system_prompt_with_sop
 
 def main():
     print("=" * 60)
-    print("ESEMPIO MEMORIA PROCEDURALE (SOP)")
+    print("PROCEDURAL MEMORY (SOP) EXAMPLE")
     print("=" * 60)
     
-    # 1. Crea manager con SOP di default
-    print("\n[1] Creazione SOPManager...")
+    # 1. Create manager with default SOPs
+    print("\n[1] Creating SOPManager...")
     manager = SOPManager(sop_directory="./data/sops")
     
-    print(f"   SOP caricate: {len(manager.sops)}")
+    print(f"   SOPs loaded: {len(manager.sops)}")
     
-    # 2. Lista SOP disponibili
-    print("\n[2] SOP disponibili:")
+    # 2. List available SOPs
+    print("\n[2] Available SOPs:")
     for sop in manager.list_sops():
-        print(f"   - {sop.name} ({sop.category}) - Priorità: {sop.priority}")
+        print(f"   - {sop.name} ({sop.category}) - Priority: {sop.priority}")
         print(f"     Trigger: {sop.trigger[:50]}...")
     
-    # 3. Trova SOP per query
-    print("\n[3] Test ricerca SOP:")
+    # 3. Find SOP for query
+    print("\n[3] SOP search test:")
     test_queries = [
-        "Ho un bug nel codice, come lo risolvo?",
-        "Scrivi una funzione per calcolare fibonacci",
-        "Cerca nella documentazione come usare RAG",
-        "Cos'è il machine learning?",
+        "I have a bug in the code, how do I fix it?",
+        "Write a function to calculate fibonacci",
+        "Search the documentation on how to use RAG",
+        "What is machine learning?",
     ]
     
     for query in test_queries:
@@ -48,62 +48,61 @@ def main():
             print(f"   → SOP: {sop.name}")
         else:
             print(f"\n   Query: '{query[:40]}...'")
-            print(f"   → Nessuna SOP trovata")
+            print(f"   → No SOP found")
     
-    # 4. Mostra procedura completa
-    print("\n[4] Esempio procedura completa:")
+    # 4. Show complete procedure
+    print("\n[4] Complete procedure example:")
     debug_sop = manager.get_sop("debug_python_code")
     if debug_sop:
         print(debug_sop.to_prompt())
     
-    # 5. Genera system prompt
-    print("\n[5] System prompt con SOP:")
-    query = "Come faccio a debuggare questo codice Python?"
+    # 5. Generate system prompt
+    print("\n[5] System prompt with SOP:")
+    query = "How do I debug this Python code?"
     prompt = get_system_prompt_with_sop(query, manager)
     print(prompt[:500] + "...")
     
-    # 6. Crea SOP personalizzata
-    print("\n[6] Creazione SOP personalizzata:")
+    # 6. Create custom SOP
+    print("\n[6] Creating custom SOP:")
     custom_sop = SOP(
         name="deploy_app",
-        description="Procedura per deploy di applicazione",
-        trigger="deploy, pubblica, metti in produzione",
+        description="Procedure for application deployment",
+        trigger="deploy, publish, put in production",
         category="devops",
         priority=8,
         steps=[
-            SOPStep(action="Verifica che tutti i test passino"),
-            SOPStep(action="Crea build di produzione"),
-            SOPStep(action="Backup del sistema attuale", condition="ambiente produzione"),
-            SOPStep(action="Esegui il deploy"),
-            SOPStep(action="Verifica che l'app funzioni correttamente"),
-            SOPStep(action="Monitora per errori nei primi 30 minuti"),
+            SOPStep(action="Verify that all tests pass"),
+            SOPStep(action="Create production build"),
+            SOPStep(action="Backup current system", condition="production environment"),
+            SOPStep(action="Execute deployment"),
+            SOPStep(action="Verify that the app works correctly"),
+            SOPStep(action="Monitor for errors in the first 30 minutes"),
         ]
     )
     manager.add_sop(custom_sop)
-    print(f"   Aggiunta: {custom_sop.name}")
+    print(f"   Added: {custom_sop.name}")
     
-    # 7. Esporta SOP
-    print("\n[7] Esportazione SOP...")
+    # 7. Export SOPs
+    print("\n[7] Exporting SOPs...")
     manager.export_all("./data/sops")
-    print(f"   SOP esportate in: ./data/sops")
+    print(f"   SOPs exported to: ./data/sops")
     
-    # 8. Statistiche
-    print("\n[8] Statistiche:")
+    # 8. Statistics
+    print("\n[8] Statistics:")
     categories = {}
     for sop in manager.sops.values():
         cat = sop.category
         categories[cat] = categories.get(cat, 0) + 1
     
-    print(f"   Totale SOP: {len(manager.sops)}")
-    print("   Per categoria:")
+    print(f"   Total SOPs: {len(manager.sops)}")
+    print("   By category:")
     for cat, count in sorted(categories.items()):
         print(f"     - {cat}: {count}")
     
     print("\n" + "=" * 60)
-    print("✅ Demo SOP completata!")
+    print("✅ SOP Demo completed!")
     print("=" * 60)
 
 
 if __name__ == "__main__":
     main()
-

@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 """
-Pipeline di Ingestione Dati per RAG.
+Data Ingestion Pipeline for RAG.
 
-Questo script carica documenti da una cartella, li processa con splitting
-intelligente in base al tipo di file, e li salva in ChromaDB.
+This script loads documents from a folder, processes them with intelligent
+splitting based on file type, and saves them to ChromaDB.
 
-Uso:
+Usage:
     python scripts/ingest_knowledge.py --source_dir ./docs
     python scripts/ingest_knowledge.py --source_dir ./codebase --collection code_kb
     python scripts/ingest_knowledge.py --source_dir ./sops --collection sop_memory
 
-Tipi di file supportati:
-    - .py: PythonCodeTextSplitter (preserva funzioni/classi)
+Supported file types:
+    - .py: PythonCodeTextSplitter (preserves functions/classes)
     - .md, .txt: RecursiveCharacterTextSplitter
     - .pdf: PyPDFLoader + RecursiveCharacterTextSplitter
 
 Features:
-    - Splitting intelligente per tipo di file
-    - Metadata per citazione (file, riga, tipo)
-    - Progress bar con tqdm
-    - ChromaDB persistente su disco
+    - Intelligent splitting by file type
+    - Metadata for citation (file, line, type)
+    - Progress bar with tqdm
+    - Persistent ChromaDB on disk
 """
 
 import argparse
@@ -48,21 +48,21 @@ try:
     )
     from langchain.schema import Document
 except ImportError as e:
-    print(f"Errore import LangChain: {e}")
-    print("Installa con: pip install langchain langchain-community langchain-text-splitters")
+    print(f"LangChain import error: {e}")
+    print("Install with: pip install langchain langchain-community langchain-text-splitters")
     sys.exit(1)
 
-# ChromaDB e Embeddings
+# ChromaDB and Embeddings
 try:
     import chromadb
     from chromadb.config import Settings
     from sentence_transformers import SentenceTransformer
 except ImportError as e:
-    print(f"Errore import: {e}")
-    print("Installa con: pip install chromadb sentence-transformers")
+    print(f"Import error: {e}")
+    print("Install with: pip install chromadb sentence-transformers")
     sys.exit(1)
 
-# Configurazione logging
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -71,7 +71,7 @@ logger = logging.getLogger(__name__)
 
 
 # =============================================================================
-# CONFIGURAZIONE
+# CONFIGURATION
 # =============================================================================
 
 DEFAULT_CHUNK_SIZE = 1000
@@ -80,7 +80,7 @@ DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 DEFAULT_CHROMA_PATH = "./chroma_db"
 DEFAULT_COLLECTION = "knowledge_base"
 
-# Estensioni supportate per tipo
+# Supported extensions by type
 FILE_TYPES = {
     "python": [".py"],
     "markdown": [".md"],
@@ -90,18 +90,18 @@ FILE_TYPES = {
 
 
 # =============================================================================
-# SPLITTERS PER TIPO DI FILE
+# SPLITTERS BY FILE TYPE
 # =============================================================================
 
 def get_python_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveCharacterTextSplitter:
     """
-    Crea uno splitter ottimizzato per codice Python.
+    Create a splitter optimized for Python code.
     
-    Usa separatori specifici per preservare:
-    - Definizioni di classi
-    - Definizioni di funzioni
-    - Docstring
-    - Import
+    Uses specific separators to preserve:
+    - Class definitions
+    - Function definitions
+    - Docstrings
+    - Imports
     """
     return RecursiveCharacterTextSplitter.from_language(
         language=Language.PYTHON,
@@ -112,9 +112,9 @@ def get_python_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveCharact
 
 def get_markdown_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveCharacterTextSplitter:
     """
-    Crea uno splitter ottimizzato per Markdown.
+    Create a splitter optimized for Markdown.
     
-    Rispetta la struttura dei titoli e delle sezioni.
+    Respects header and section structure.
     """
     return RecursiveCharacterTextSplitter.from_language(
         language=Language.MARKDOWN,
@@ -125,9 +125,9 @@ def get_markdown_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveChara
 
 def get_text_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveCharacterTextSplitter:
     """
-    Crea uno splitter generico per testo.
+    Create a generic text splitter.
     
-    Usa separatori comuni: paragrafi, frasi, parole.
+    Uses common separators: paragraphs, sentences, words.
     """
     return RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -141,13 +141,13 @@ def get_text_splitter(chunk_size: int, chunk_overlap: int) -> RecursiveCharacter
 # =============================================================================
 
 def load_python_file(file_path: Path) -> List[Document]:
-    """Carica un file Python con metadata dettagliati."""
+    """Load a Python file with detailed metadata."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
             lines = content.split("\n")
         
-        # Crea documento con metadata
+        # Create document with metadata
         doc = Document(
             page_content=content,
             metadata={
@@ -160,12 +160,12 @@ def load_python_file(file_path: Path) -> List[Document]:
         )
         return [doc]
     except Exception as e:
-        logger.warning(f"Errore caricamento {file_path}: {e}")
+        logger.warning(f"Error loading {file_path}: {e}")
         return []
 
 
 def load_text_file(file_path: Path, file_type: str = "text") -> List[Document]:
-    """Carica un file di testo generico."""
+    """Load a generic text file."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
@@ -181,17 +181,17 @@ def load_text_file(file_path: Path, file_type: str = "text") -> List[Document]:
         )
         return [doc]
     except Exception as e:
-        logger.warning(f"Errore caricamento {file_path}: {e}")
+        logger.warning(f"Error loading {file_path}: {e}")
         return []
 
 
 def load_pdf_file(file_path: Path) -> List[Document]:
-    """Carica un file PDF."""
+    """Load a PDF file."""
     try:
         loader = PyPDFLoader(str(file_path))
         docs = loader.load()
         
-        # Aggiungi metadata
+        # Add metadata
         for i, doc in enumerate(docs):
             doc.metadata.update({
                 "source": str(file_path),
@@ -203,17 +203,17 @@ def load_pdf_file(file_path: Path) -> List[Document]:
         
         return docs
     except Exception as e:
-        logger.warning(f"Errore caricamento PDF {file_path}: {e}")
+        logger.warning(f"Error loading PDF {file_path}: {e}")
         return []
 
 
 def load_markdown_file(file_path: Path) -> List[Document]:
-    """Carica un file Markdown."""
+    """Load a Markdown file."""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        # Estrai titolo se presente
+        # Extract title if present
         title = None
         lines = content.split("\n")
         for line in lines:
@@ -233,20 +233,20 @@ def load_markdown_file(file_path: Path) -> List[Document]:
         )
         return [doc]
     except Exception as e:
-        logger.warning(f"Errore caricamento {file_path}: {e}")
+        logger.warning(f"Error loading {file_path}: {e}")
         return []
 
 
 # =============================================================================
-# PIPELINE DI INGESTIONE
+# INGESTION PIPELINE
 # =============================================================================
 
 class KnowledgeIngester:
     """
-    Pipeline di ingestione documenti per RAG.
+    Document ingestion pipeline for RAG.
     
-    Carica documenti, li splitta intelligentemente in base al tipo,
-    genera embedding e li salva in ChromaDB.
+    Loads documents, splits them intelligently based on type,
+    generates embeddings and saves them to ChromaDB.
     """
     
     def __init__(
@@ -258,47 +258,47 @@ class KnowledgeIngester:
         chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
     ):
         """
-        Inizializza l'ingester.
+        Initialize the ingester.
         
         Args:
-            chroma_path: Path per ChromaDB persistente
-            collection_name: Nome della collezione
-            embedding_model: Modello sentence-transformers
-            chunk_size: Dimensione chunk
-            chunk_overlap: Overlap tra chunk
+            chroma_path: Path for persistent ChromaDB
+            collection_name: Collection name
+            embedding_model: sentence-transformers model
+            chunk_size: Chunk size
+            chunk_overlap: Overlap between chunks
         """
         self.chroma_path = chroma_path
         self.collection_name = collection_name
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         
-        # Inizializza embedding model
-        logger.info(f"Caricamento modello embedding: {embedding_model}")
+        # Initialize embedding model
+        logger.info(f"Loading embedding model: {embedding_model}")
         self.embedding_model = SentenceTransformer(embedding_model)
         
-        # Inizializza ChromaDB
+        # Initialize ChromaDB
         os.makedirs(chroma_path, exist_ok=True)
         self.chroma_client = chromadb.PersistentClient(
             path=chroma_path,
             settings=Settings(anonymized_telemetry=False),
         )
         
-        # Ottieni o crea collezione
+        # Get or create collection
         self.collection = self.chroma_client.get_or_create_collection(
             name=collection_name,
             metadata={"hnsw:space": "cosine"},
         )
         
-        logger.info(f"ChromaDB inizializzato: {chroma_path}/{collection_name}")
-        logger.info(f"Documenti esistenti: {self.collection.count()}")
+        logger.info(f"ChromaDB initialized: {chroma_path}/{collection_name}")
+        logger.info(f"Existing documents: {self.collection.count()}")
         
-        # Inizializza splitters
+        # Initialize splitters
         self.python_splitter = get_python_splitter(chunk_size, chunk_overlap)
         self.markdown_splitter = get_markdown_splitter(chunk_size, chunk_overlap)
         self.text_splitter = get_text_splitter(chunk_size, chunk_overlap)
     
     def _get_file_type(self, file_path: Path) -> Optional[str]:
-        """Determina il tipo di file dall'estensione."""
+        """Determine file type from extension."""
         suffix = file_path.suffix.lower()
         
         for file_type, extensions in FILE_TYPES.items():
@@ -308,7 +308,7 @@ class KnowledgeIngester:
         return None
     
     def _load_file(self, file_path: Path) -> List[Document]:
-        """Carica un file in base al tipo."""
+        """Load a file based on type."""
         file_type = self._get_file_type(file_path)
         
         if file_type == "python":
@@ -323,7 +323,7 @@ class KnowledgeIngester:
             return []
     
     def _split_document(self, doc: Document) -> List[Document]:
-        """Splitta un documento in base al tipo."""
+        """Split a document based on type."""
         file_type = doc.metadata.get("file_type", "text")
         
         if file_type == "python":
@@ -333,12 +333,12 @@ class KnowledgeIngester:
         else:
             chunks = self.text_splitter.split_documents([doc])
         
-        # Aggiungi metadata ai chunk
+        # Add metadata to chunks
         for i, chunk in enumerate(chunks):
             chunk.metadata["chunk_index"] = i
             chunk.metadata["total_chunks"] = len(chunks)
             
-            # Calcola riga di partenza approssimativa
+            # Calculate approximate starting line
             if "page_content" in doc.__dict__:
                 original_content = doc.page_content
                 chunk_start = original_content.find(chunk.page_content[:50])
@@ -349,7 +349,7 @@ class KnowledgeIngester:
         return chunks
     
     def _generate_chunk_id(self, chunk: Document) -> str:
-        """Genera un ID univoco per un chunk."""
+        """Generate a unique ID for a chunk."""
         content_hash = hashlib.md5(chunk.page_content.encode()).hexdigest()[:8]
         source = chunk.metadata.get("source", "unknown")
         chunk_idx = chunk.metadata.get("chunk_index", 0)
@@ -362,41 +362,41 @@ class KnowledgeIngester:
         file_extensions: Optional[List[str]] = None,
     ) -> Dict[str, int]:
         """
-        Ingesta tutti i file da una directory.
+        Ingest all files from a directory.
         
         Args:
-            source_dir: Directory sorgente
-            recursive: Se cercare ricorsivamente
-            file_extensions: Estensioni da cercare (None = tutte supportate)
+            source_dir: Source directory
+            recursive: Whether to search recursively
+            file_extensions: Extensions to search for (None = all supported)
             
         Returns:
-            Statistiche di ingestione
+            Ingestion statistics
         """
         source_path = Path(source_dir)
         
         if not source_path.exists():
-            raise FileNotFoundError(f"Directory non trovata: {source_dir}")
+            raise FileNotFoundError(f"Directory not found: {source_dir}")
         
-        # Determina estensioni da cercare
+        # Determine extensions to search for
         if file_extensions is None:
             file_extensions = []
             for exts in FILE_TYPES.values():
                 file_extensions.extend(exts)
         
-        # Trova tutti i file
+        # Find all files
         files = []
         for ext in file_extensions:
             pattern = f"**/*{ext}" if recursive else f"*{ext}"
             files.extend(source_path.glob(pattern))
         
-        files = sorted(set(files))  # Rimuovi duplicati
+        files = sorted(set(files))  # Remove duplicates
         
-        logger.info(f"Trovati {len(files)} file da processare")
+        logger.info(f"Found {len(files)} files to process")
         
         if not files:
             return {"files_processed": 0, "chunks_added": 0}
         
-        # Processa file
+        # Process files
         stats = {
             "files_processed": 0,
             "files_skipped": 0,
@@ -406,16 +406,16 @@ class KnowledgeIngester:
         
         all_chunks = []
         
-        for file_path in tqdm(files, desc="Caricamento file"):
+        for file_path in tqdm(files, desc="Loading files"):
             try:
-                # Carica file
+                # Load file
                 docs = self._load_file(file_path)
                 
                 if not docs:
                     stats["files_skipped"] += 1
                     continue
                 
-                # Splitta documenti
+                # Split documents
                 for doc in docs:
                     chunks = self._split_document(doc)
                     all_chunks.extend(chunks)
@@ -423,16 +423,16 @@ class KnowledgeIngester:
                 stats["files_processed"] += 1
                 
             except Exception as e:
-                logger.warning(f"Errore processando {file_path}: {e}")
+                logger.warning(f"Error processing {file_path}: {e}")
                 stats["errors"] += 1
         
-        logger.info(f"Generati {len(all_chunks)} chunk totali")
+        logger.info(f"Generated {len(all_chunks)} total chunks")
         
         if not all_chunks:
             return stats
         
-        # Genera embedding e salva
-        logger.info("Generazione embedding...")
+        # Generate embeddings and save
+        logger.info("Generating embeddings...")
         
         ids = []
         documents = []
@@ -445,26 +445,26 @@ class KnowledgeIngester:
             documents.append(chunk.page_content)
             metadatas.append(chunk.metadata)
         
-        # Genera embedding in batch
-        logger.info("Calcolo embedding in batch...")
+        # Generate embeddings in batch
+        logger.info("Computing embeddings in batch...")
         embeddings = self.embedding_model.encode(
             documents,
             show_progress_bar=True,
             convert_to_numpy=True,
         ).tolist()
         
-        # Salva in ChromaDB
-        logger.info(f"Salvataggio {len(documents)} chunk in ChromaDB...")
+        # Save to ChromaDB
+        logger.info(f"Saving {len(documents)} chunks to ChromaDB...")
         
-        # ChromaDB ha un limite di batch, processiamo in chunk
+        # ChromaDB has a batch limit, process in chunks
         batch_size = 500
-        for i in tqdm(range(0, len(documents), batch_size), desc="Salvataggio"):
+        for i in tqdm(range(0, len(documents), batch_size), desc="Saving"):
             batch_ids = ids[i:i + batch_size]
             batch_docs = documents[i:i + batch_size]
             batch_meta = metadatas[i:i + batch_size]
             batch_emb = embeddings[i:i + batch_size]
             
-            # Usa upsert per evitare duplicati
+            # Use upsert to avoid duplicates
             self.collection.upsert(
                 ids=batch_ids,
                 documents=batch_docs,
@@ -474,26 +474,26 @@ class KnowledgeIngester:
         
         stats["chunks_added"] = len(documents)
         
-        logger.info(f"Ingestione completata! Totale documenti: {self.collection.count()}")
+        logger.info(f"Ingestion completed! Total documents: {self.collection.count()}")
         
         return stats
     
     def ingest_file(self, file_path: str) -> int:
         """
-        Ingesta un singolo file.
+        Ingest a single file.
         
         Args:
-            file_path: Path al file
+            file_path: Path to the file
             
         Returns:
-            Numero di chunk aggiunti
+            Number of chunks added
         """
         path = Path(file_path)
         
         if not path.exists():
-            raise FileNotFoundError(f"File non trovato: {file_path}")
+            raise FileNotFoundError(f"File not found: {file_path}")
         
-        # Carica e splitta
+        # Load and split
         docs = self._load_file(path)
         
         if not docs:
@@ -507,7 +507,7 @@ class KnowledgeIngester:
         if not all_chunks:
             return 0
         
-        # Genera embedding e salva
+        # Generate embeddings and save
         ids = [self._generate_chunk_id(c) for c in all_chunks]
         documents = [c.page_content for c in all_chunks]
         metadatas = [c.metadata for c in all_chunks]
@@ -529,20 +529,20 @@ class KnowledgeIngester:
         file_type: Optional[str] = None,
     ) -> List[Tuple[str, float, Dict[str, Any]]]:
         """
-        Query sulla knowledge base.
+        Query the knowledge base.
         
         Args:
-            query: Query testuale
-            n_results: Numero di risultati
-            file_type: Filtro opzionale per tipo file
+            query: Text query
+            n_results: Number of results
+            file_type: Optional filter by file type
             
         Returns:
-            Lista di (documento, score, metadata)
+            List of (document, score, metadata)
         """
-        # Genera embedding query
+        # Generate query embedding
         query_embedding = self.embedding_model.encode([query]).tolist()
         
-        # Prepara filtro
+        # Prepare filter
         where = {"file_type": file_type} if file_type else None
         
         # Query
@@ -553,7 +553,7 @@ class KnowledgeIngester:
             include=["documents", "distances", "metadatas"],
         )
         
-        # Formatta risultati
+        # Format results
         output = []
         if results["documents"] and results["documents"][0]:
             for i, doc in enumerate(results["documents"][0]):
@@ -565,13 +565,13 @@ class KnowledgeIngester:
         return output
     
     def get_stats(self) -> Dict[str, Any]:
-        """Restituisce statistiche sulla knowledge base."""
+        """Return knowledge base statistics."""
         count = self.collection.count()
         
-        # Conta per tipo
+        # Count by type
         type_counts = {}
         if count > 0:
-            # Campiona per ottenere distribuzione
+            # Sample to get distribution
             sample = self.collection.get(limit=min(count, 1000), include=["metadatas"])
             for meta in sample.get("metadatas", []):
                 file_type = meta.get("file_type", "unknown")
@@ -591,78 +591,78 @@ class KnowledgeIngester:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Ingestione documenti per RAG Knowledge Base",
+        description="Document ingestion for RAG Knowledge Base",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Esempi:
-    # Ingesta una cartella di documentazione
+Examples:
+    # Ingest a documentation folder
     python ingest_knowledge.py --source_dir ./docs
     
-    # Ingesta codice sorgente
+    # Ingest source code
     python ingest_knowledge.py --source_dir ./src --collection code_kb
     
-    # Ingesta solo file Python
+    # Ingest only Python files
     python ingest_knowledge.py --source_dir ./src --extensions .py
     
-    # Query sulla knowledge base
-    python ingest_knowledge.py --query "Come funziona il training?"
+    # Query the knowledge base
+    python ingest_knowledge.py --query "How does training work?"
         """,
     )
     
     parser.add_argument(
         "--source_dir",
         type=str,
-        help="Directory sorgente da ingestare",
+        help="Source directory to ingest",
     )
     parser.add_argument(
         "--collection",
         type=str,
         default=DEFAULT_COLLECTION,
-        help=f"Nome collezione ChromaDB (default: {DEFAULT_COLLECTION})",
+        help=f"ChromaDB collection name (default: {DEFAULT_COLLECTION})",
     )
     parser.add_argument(
         "--chroma_path",
         type=str,
         default=DEFAULT_CHROMA_PATH,
-        help=f"Path ChromaDB (default: {DEFAULT_CHROMA_PATH})",
+        help=f"ChromaDB path (default: {DEFAULT_CHROMA_PATH})",
     )
     parser.add_argument(
         "--chunk_size",
         type=int,
         default=DEFAULT_CHUNK_SIZE,
-        help=f"Dimensione chunk (default: {DEFAULT_CHUNK_SIZE})",
+        help=f"Chunk size (default: {DEFAULT_CHUNK_SIZE})",
     )
     parser.add_argument(
         "--chunk_overlap",
         type=int,
         default=DEFAULT_CHUNK_OVERLAP,
-        help=f"Overlap chunk (default: {DEFAULT_CHUNK_OVERLAP})",
+        help=f"Chunk overlap (default: {DEFAULT_CHUNK_OVERLAP})",
     )
     parser.add_argument(
         "--extensions",
         type=str,
         nargs="+",
-        help="Estensioni file da processare (es. .py .md)",
+        help="File extensions to process (e.g. .py .md)",
     )
     parser.add_argument(
         "--no-recursive",
         action="store_true",
-        help="Non cercare ricorsivamente",
+        help="Do not search recursively",
     )
     parser.add_argument(
         "--query",
         type=str,
-        help="Esegui una query invece di ingestare",
+        help="Execute a query instead of ingesting",
     )
     parser.add_argument(
         "--stats",
         action="store_true",
-        help="Mostra statistiche della knowledge base",
+        help="Show knowledge base statistics",
     )
     
     args = parser.parse_args()
     
-    # Inizializza ingester
+    # Initialize ingester
     ingester = KnowledgeIngester(
         chroma_path=args.chroma_path,
         collection_name=args.collection,
@@ -670,26 +670,26 @@ Esempi:
         chunk_overlap=args.chunk_overlap,
     )
     
-    # Modalità stats
+    # Stats mode
     if args.stats:
         stats = ingester.get_stats()
-        print("\n📊 Statistiche Knowledge Base:")
-        print(f"   Collezione: {stats['collection_name']}")
+        print("\n📊 Knowledge Base Statistics:")
+        print(f"   Collection: {stats['collection_name']}")
         print(f"   Path: {stats['chroma_path']}")
-        print(f"   Totale chunk: {stats['total_chunks']}")
+        print(f"   Total chunks: {stats['total_chunks']}")
         if stats['type_distribution']:
-            print("   Distribuzione per tipo:")
+            print("   Distribution by type:")
             for t, c in stats['type_distribution'].items():
                 print(f"     - {t}: {c}")
         return
     
-    # Modalità query
+    # Query mode
     if args.query:
         print(f"\n🔍 Query: '{args.query}'")
         results = ingester.query(args.query, n_results=5)
         
         if not results:
-            print("   Nessun risultato trovato.")
+            print("   No results found.")
         else:
             for i, (doc, score, meta) in enumerate(results, 1):
                 source = meta.get("file_name", "unknown")
@@ -698,9 +698,9 @@ Esempi:
                 print(f"       {doc[:200]}...")
         return
     
-    # Modalità ingestione
+    # Ingestion mode
     if args.source_dir:
-        print(f"\n📥 Ingestione da: {args.source_dir}")
+        print(f"\n📥 Ingesting from: {args.source_dir}")
         
         stats = ingester.ingest_directory(
             source_dir=args.source_dir,
@@ -708,16 +708,15 @@ Esempi:
             file_extensions=args.extensions,
         )
         
-        print("\n✅ Ingestione completata!")
-        print(f"   File processati: {stats['files_processed']}")
-        print(f"   File saltati: {stats['files_skipped']}")
-        print(f"   Chunk aggiunti: {stats['chunks_added']}")
-        print(f"   Errori: {stats['errors']}")
-        print(f"   Totale in DB: {ingester.collection.count()}")
+        print("\n✅ Ingestion completed!")
+        print(f"   Files processed: {stats['files_processed']}")
+        print(f"   Files skipped: {stats['files_skipped']}")
+        print(f"   Chunks added: {stats['chunks_added']}")
+        print(f"   Errors: {stats['errors']}")
+        print(f"   Total in DB: {ingester.collection.count()}")
     else:
         parser.print_help()
 
 
 if __name__ == "__main__":
     main()
-

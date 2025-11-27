@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Esempio di utilizzo Smart Chunking + Reranking.
+Smart Chunking + Reranking usage example.
 
-Dimostra come usare le nuove funzionalità ispirate a osgrep:
-1. Smart Chunking con tree-sitter per codice Python
-2. Reranking con CrossEncoder per risultati più accurati
-3. Integrazione con VectorStore esistente
+Demonstrates how to use the new features inspired by osgrep:
+1. Smart Chunking with tree-sitter for Python code
+2. Reranking with CrossEncoder for more accurate results
+3. Integration with existing VectorStore
 
-Prerequisiti:
+Prerequisites:
     pip install tree-sitter tree-sitter-python
 
-Uso:
+Usage:
     python examples/smart_chunking_example.py
 """
 
@@ -26,48 +26,48 @@ logger = logging.getLogger(__name__)
 
 
 def demo_smart_chunking():
-    """Dimostra il chunking intelligente del codice Python."""
+    """Demonstrate intelligent Python code chunking."""
     from src.memory import SmartChunker, ChunkType
     
     print("\n" + "=" * 60)
-    print("🔧 DEMO: Smart Chunking con Tree-sitter")
+    print("🔧 DEMO: Smart Chunking with Tree-sitter")
     print("=" * 60)
     
-    # Esempio di codice Python da chunkare
+    # Sample Python code to chunk
     sample_code = '''
-"""Modulo di esempio per dimostrazione chunking."""
+"""Example module for chunking demonstration."""
 
 import os
 import sys
 from typing import List, Optional
 
-# Costanti
+# Constants
 MAX_ITEMS = 100
 DEFAULT_TIMEOUT = 30
 
 
 class DataProcessor:
     """
-    Classe per processare dati.
+    Class for processing data.
     
-    Gestisce la trasformazione e validazione dei dati
-    prima del salvataggio.
+    Handles data transformation and validation
+    before saving.
     """
     
     def __init__(self, config: dict):
-        """Inizializza il processor con configurazione."""
+        """Initialize the processor with configuration."""
         self.config = config
         self.cache = {}
     
     def process(self, data: List[dict]) -> List[dict]:
         """
-        Processa una lista di record.
+        Process a list of records.
         
         Args:
-            data: Lista di dizionari da processare
+            data: List of dictionaries to process
             
         Returns:
-            Lista di record processati
+            List of processed records
         """
         results = []
         for item in data:
@@ -77,23 +77,23 @@ class DataProcessor:
         return results
     
     def _transform(self, item: dict) -> dict:
-        """Trasforma un singolo record."""
+        """Transform a single record."""
         return {k.lower(): v for k, v in item.items()}
     
     def _validate(self, item: dict) -> bool:
-        """Valida un record."""
+        """Validate a record."""
         return bool(item)
 
 
 def load_data(path: str) -> List[dict]:
     """
-    Carica dati da file.
+    Load data from file.
     
     Args:
-        path: Percorso al file JSON
+        path: Path to the JSON file
         
     Returns:
-        Lista di record caricati
+        List of loaded records
     """
     import json
     with open(path) as f:
@@ -101,28 +101,28 @@ def load_data(path: str) -> List[dict]:
 
 
 def main():
-    """Entry point principale."""
+    """Main entry point."""
     processor = DataProcessor({"verbose": True})
     data = [{"Name": "Alice"}, {"Name": "Bob"}]
     result = processor.process(data)
-    print(f"Processati {len(result)} record")
+    print(f"Processed {len(result)} records")
 
 
 if __name__ == "__main__":
     main()
 '''
     
-    # Crea chunker
+    # Create chunker
     chunker = SmartChunker(
-        max_chunk_size=1500,  # Chunk più grandi per demo
+        max_chunk_size=1500,  # Larger chunks for demo
         min_chunk_size=50,
         include_imports=True,
     )
     
-    # Chunka il codice
+    # Chunk the code
     chunks = chunker.chunk_python_code(sample_code, file_path="example.py")
     
-    print(f"\n📦 Estratti {len(chunks)} chunks:\n")
+    print(f"\n📦 Extracted {len(chunks)} chunks:\n")
     
     for i, chunk in enumerate(chunks, 1):
         print(f"  [{i}] {chunk.chunk_type.value.upper()}: {chunk.qualified_name}")
@@ -136,37 +136,37 @@ if __name__ == "__main__":
 
 
 def demo_reranking():
-    """Dimostra il reranking con CrossEncoder."""
+    """Demonstrate reranking with CrossEncoder."""
     from src.memory import VectorStore, create_vector_store
     
     print("\n" + "=" * 60)
-    print("🎯 DEMO: Reranking con CrossEncoder")
+    print("🎯 DEMO: Reranking with CrossEncoder")
     print("=" * 60)
     
-    # Documenti di esempio
+    # Sample documents
     documents = [
-        "Python è un linguaggio di programmazione interpretato ad alto livello.",
-        "Java è un linguaggio compilato orientato agli oggetti.",
-        "Python supporta sia la programmazione orientata agli oggetti che quella funzionale.",
-        "JavaScript è usato principalmente per lo sviluppo web frontend.",
-        "Il machine learning in Python usa librerie come scikit-learn e TensorFlow.",
-        "Python ha una sintassi semplice e leggibile.",
-        "Rust è un linguaggio di programmazione systems-level con gestione memoria sicura.",
+        "Python is a high-level interpreted programming language.",
+        "Java is a compiled object-oriented language.",
+        "Python supports both object-oriented and functional programming.",
+        "JavaScript is mainly used for frontend web development.",
+        "Machine learning in Python uses libraries like scikit-learn and TensorFlow.",
+        "Python has simple and readable syntax.",
+        "Rust is a systems-level programming language with safe memory management.",
     ]
     
-    # Crea VectorStore SENZA reranking
-    print("\n📊 Risultati SENZA reranking:")
+    # Create VectorStore WITHOUT reranking
+    print("\n📊 Results WITHOUT reranking:")
     store_no_rerank = VectorStore(use_reranker=False)
     store_no_rerank.add_documents(documents)
     
-    query = "Quali sono le caratteristiche di Python?"
+    query = "What are Python's features?"
     results = store_no_rerank.query(query, n_results=3)
     
     for doc, score, _ in results:
         print(f"  [{score:.3f}] {doc[:70]}...")
     
-    # Crea VectorStore CON reranking
-    print("\n🎯 Risultati CON reranking:")
+    # Create VectorStore WITH reranking
+    print("\n🎯 Results WITH reranking:")
     store_with_rerank = VectorStore(use_reranker=True, reranker_model="fast")
     store_with_rerank.add_documents(documents)
     
@@ -175,29 +175,29 @@ def demo_reranking():
     for doc, score, _ in results_reranked:
         print(f"  [{score:.3f}] {doc[:70]}...")
     
-    print("\n💡 Nota: Gli score del reranker sono su scala diversa (possono essere negativi)")
+    print("\n💡 Note: Reranker scores are on a different scale (can be negative)")
 
 
 def demo_integration():
-    """Dimostra l'integrazione completa: Chunking + VectorStore + Reranking."""
+    """Demonstrate complete integration: Chunking + VectorStore + Reranking."""
     from src.memory import SmartChunker, VectorStore
     
     print("\n" + "=" * 60)
-    print("🔗 DEMO: Integrazione Completa")
+    print("🔗 DEMO: Complete Integration")
     print("=" * 60)
     
-    # Trova file Python nel progetto
+    # Find Python files in the project
     src_dir = Path(__file__).parent.parent / "src"
     
     if not src_dir.exists():
-        print(f"Directory {src_dir} non trovata, uso file corrente")
+        print(f"Directory {src_dir} not found, using current file")
         src_dir = Path(__file__).parent
     
-    # Chunka i file
+    # Chunk the files
     chunker = SmartChunker(max_chunk_size=1000)
     all_chunks = []
     
-    for py_file in list(src_dir.rglob("*.py"))[:5]:  # Limita a 5 file per demo
+    for py_file in list(src_dir.rglob("*.py"))[:5]:  # Limit to 5 files for demo
         try:
             chunks = chunker.chunk_file(str(py_file))
             all_chunks.extend(chunks)
@@ -206,28 +206,28 @@ def demo_integration():
             print(f"  ⚠️  {py_file.name}: {e}")
     
     if not all_chunks:
-        print("Nessun chunk estratto, skip demo integrazione")
+        print("No chunks extracted, skipping integration demo")
         return
     
-    print(f"\n📦 Totale: {len(all_chunks)} chunks")
+    print(f"\n📦 Total: {len(all_chunks)} chunks")
     
-    # Crea VectorStore con reranking
+    # Create VectorStore with reranking
     store = VectorStore(
         collection_name="code_search_demo",
         use_reranker=True,
     )
     
-    # Aggiungi chunks
+    # Add chunks
     store.add_code_chunks(all_chunks)
     
-    # Query di esempio
+    # Sample queries
     queries = [
-        "Come si inizializza il vector store?",
-        "Dove vengono gestiti gli errori?",
-        "Come funziona il training loop?",
+        "How is the vector store initialized?",
+        "Where are errors handled?",
+        "How does the training loop work?",
     ]
     
-    print("\n🔍 Query di esempio:")
+    print("\n🔍 Sample queries:")
     for query in queries:
         print(f"\n  Q: {query}")
         results = store.query(query, n_results=2)
@@ -239,10 +239,10 @@ def demo_integration():
 
 
 def main():
-    """Esegue tutte le demo."""
+    """Run all demos."""
     print("\n" + "🚀 " * 20)
     print("    SMART CHUNKING + RERANKING DEMO")
-    print("    Ispirato a osgrep (github.com/Ryandonofrio3/osgrep)")
+    print("    Inspired by osgrep (github.com/Ryandonofrio3/osgrep)")
     print("🚀 " * 20)
     
     try:
@@ -252,22 +252,21 @@ def main():
         # Demo 2: Reranking
         demo_reranking()
         
-        # Demo 3: Integrazione completa
+        # Demo 3: Complete integration
         demo_integration()
         
         print("\n" + "=" * 60)
-        print("✅ Demo completata con successo!")
+        print("✅ Demo completed successfully!")
         print("=" * 60)
         
     except ImportError as e:
-        print(f"\n❌ Dipendenza mancante: {e}")
-        print("\nInstalla le dipendenze necessarie:")
+        print(f"\n❌ Missing dependency: {e}")
+        print("\nInstall the required dependencies:")
         print("  pip install tree-sitter tree-sitter-python chromadb sentence-transformers")
     except Exception as e:
-        logger.exception("Errore durante la demo")
-        print(f"\n❌ Errore: {e}")
+        logger.exception("Error during demo")
+        print(f"\n❌ Error: {e}")
 
 
 if __name__ == "__main__":
     main()
-

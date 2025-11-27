@@ -1,14 +1,14 @@
 """
-Training Agent per fine-tuning LLM con PyTorch Lightning.
+Training Agent for LLM fine-tuning with PyTorch Lightning.
 
-Questo modulo implementa un LightningModule che gestisce il training loop
-per modelli causali (CausalLM) con supporto per:
-- QLoRA e PEFT
+This module implements a LightningModule that manages the training loop
+for causal models (CausalLM) with support for:
+- QLoRA and PEFT
 - Mixed precision training
 - Gradient accumulation
-- Logging strutturato
+- Structured logging
 
-Può essere integrato con Agent Lightning per orchestrazione avanzata.
+Can be integrated with Agent Lightning for advanced orchestration.
 """
 
 from typing import Optional, Dict, Any
@@ -25,10 +25,10 @@ logger = logging.getLogger(__name__)
 
 class LLMTrainingAgent(pl.LightningModule):
     """
-    LightningModule per il training di LLM con QLoRA.
+    LightningModule for LLM training with QLoRA.
     
-    Gestisce il forward pass, calcolo loss, ottimizzazione e logging.
-    Compatibile con Agent Lightning per orchestrazione avanzata.
+    Manages the forward pass, loss calculation, optimization and logging.
+    Compatible with Agent Lightning for advanced orchestration.
     """
     
     def __init__(
@@ -45,19 +45,19 @@ class LLMTrainingAgent(pl.LightningModule):
         bf16: bool = False,
     ):
         """
-        Inizializza il Training Agent.
+        Initialize the Training Agent.
         
         Args:
-            model: Modello con PEFT/LoRA applicato
-            tokenizer: Tokenizer per il modello
-            learning_rate: Learning rate iniziale
-            weight_decay: Weight decay per ottimizzatore
-            warmup_steps: Numero di step per warmup
-            max_steps: Numero massimo di step (per scheduler)
-            lr_scheduler_type: Tipo di scheduler ("cosine", "linear", "constant")
-            max_grad_norm: Clipping dei gradienti
-            fp16: Usa mixed precision FP16
-            bf16: Usa mixed precision BF16 (richiede GPU Ampere+)
+            model: Model with PEFT/LoRA applied
+            tokenizer: Tokenizer for the model
+            learning_rate: Initial learning rate
+            weight_decay: Weight decay for optimizer
+            warmup_steps: Number of warmup steps
+            max_steps: Maximum number of steps (for scheduler)
+            lr_scheduler_type: Scheduler type ("cosine", "linear", "constant")
+            max_grad_norm: Gradient clipping
+            fp16: Use FP16 mixed precision
+            bf16: Use BF16 mixed precision (requires Ampere+ GPU)
         """
         super().__init__()
         self.model = model
@@ -71,23 +71,23 @@ class LLMTrainingAgent(pl.LightningModule):
         self.fp16 = fp16
         self.bf16 = bf16
         
-        # Salva hyperparameters per logging
+        # Save hyperparameters for logging
         self.save_hyperparameters(ignore=["model", "tokenizer"])
         
-        # Metriche per logging
+        # Metrics for logging
         self.training_step_outputs = []
         self.validation_step_outputs = []
     
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         """
-        Forward pass del modello.
+        Model forward pass.
         
         Args:
             input_ids: Token IDs [batch_size, seq_len]
             attention_mask: Attention mask [batch_size, seq_len]
             
         Returns:
-            Logits del modello [batch_size, seq_len, vocab_size]
+            Model logits [batch_size, seq_len, vocab_size]
         """
         outputs = self.model(
             input_ids=input_ids,
@@ -97,33 +97,33 @@ class LLMTrainingAgent(pl.LightningModule):
     
     def training_step(self, batch: Dict[str, torch.Tensor], batch_idx: int) -> torch.Tensor:
         """
-        Step di training.
+        Training step.
         
-        Per CausalLM, il modello calcola automaticamente la loss se vengono
-        passati i labels. I labels sono gli stessi input_ids shiftati di 1 posizione.
-        I token con label -100 vengono ignorati nel calcolo della loss.
+        For CausalLM, the model automatically calculates the loss when
+        labels are passed. Labels are the same input_ids shifted by 1 position.
+        Tokens with label -100 are ignored in loss calculation.
         
         Args:
-            batch: Batch di dati con 'input_ids', 'attention_mask', 'labels'
-            batch_idx: Indice del batch
+            batch: Data batch with 'input_ids', 'attention_mask', 'labels'
+            batch_idx: Batch index
             
         Returns:
-            Loss scalare
+            Scalar loss
         """
         input_ids = batch["input_ids"]
         attention_mask = batch["attention_mask"]
         labels = batch["labels"]
         
-        # Forward pass con labels (il modello calcola la loss internamente)
+        # Forward pass with labels (model calculates loss internally)
         outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            labels=labels,  # Passa labels per calcolo loss automatico
+            labels=labels,  # Pass labels for automatic loss calculation
         )
         
         loss = outputs.loss
         
-        # Log della loss
+        # Log loss
         self.log(
             "train/loss",
             loss,
@@ -131,10 +131,10 @@ class LLMTrainingAgent(pl.LightningModule):
             on_epoch=True,
             prog_bar=True,
             logger=True,
-            sync_dist=True,  # Per DDP
+            sync_dist=True,  # For DDP
         )
         
-        # Calcola perplexity (exp(loss))
+        # Calculate perplexity (exp(loss))
         perplexity = torch.exp(loss)
         self.log(
             "train/perplexity",
@@ -146,27 +146,27 @@ class LLMTrainingAgent(pl.LightningModule):
             sync_dist=True,
         )
         
-        # Salva output per aggregazione epoch-level
+        # Save output for epoch-level aggregation
         self.training_step_outputs.append(loss.detach())
         
         return loss
     
     def validation_step(self, batch: Dict[str, torch.Tensor], batch_idx: int) -> torch.Tensor:
         """
-        Step di validazione.
+        Validation step.
         
         Args:
-            batch: Batch di dati con 'input_ids', 'attention_mask', 'labels'
-            batch_idx: Indice del batch
+            batch: Data batch with 'input_ids', 'attention_mask', 'labels'
+            batch_idx: Batch index
             
         Returns:
-            Loss scalare
+            Scalar loss
         """
         input_ids = batch["input_ids"]
         attention_mask = batch["attention_mask"]
         labels = batch["labels"]
         
-        # Forward pass in modalità eval
+        # Forward pass in eval mode
         with torch.no_grad():
             outputs = self.model(
                 input_ids=input_ids,
@@ -176,7 +176,7 @@ class LLMTrainingAgent(pl.LightningModule):
         
         loss = outputs.loss
         
-        # Log della loss di validazione
+        # Log validation loss
         self.log(
             "val/loss",
             loss,
@@ -187,7 +187,7 @@ class LLMTrainingAgent(pl.LightningModule):
             sync_dist=True,
         )
         
-        # Calcola perplexity
+        # Calculate perplexity
         perplexity = torch.exp(loss)
         self.log(
             "val/perplexity",
@@ -199,20 +199,20 @@ class LLMTrainingAgent(pl.LightningModule):
             sync_dist=True,
         )
         
-        # Salva output per aggregazione
+        # Save output for aggregation
         self.validation_step_outputs.append(loss.detach())
         
         return loss
     
     def on_train_epoch_end(self) -> None:
-        """Chiamato alla fine di ogni epoch di training."""
+        """Called at the end of each training epoch."""
         if self.training_step_outputs:
             avg_loss = torch.stack(self.training_step_outputs).mean()
             logger.info(f"Epoch {self.current_epoch} - Average Training Loss: {avg_loss:.4f}")
             self.training_step_outputs.clear()
     
     def on_validation_epoch_end(self) -> None:
-        """Chiamato alla fine di ogni epoch di validazione."""
+        """Called at the end of each validation epoch."""
         if self.validation_step_outputs:
             avg_loss = torch.stack(self.validation_step_outputs).mean()
             logger.info(f"Epoch {self.current_epoch} - Average Validation Loss: {avg_loss:.4f}")
@@ -220,15 +220,15 @@ class LLMTrainingAgent(pl.LightningModule):
     
     def configure_optimizers(self) -> Dict[str, Any]:
         """
-        Configura ottimizzatore e learning rate scheduler.
+        Configure optimizer and learning rate scheduler.
         
         Returns:
-            Dizionario con ottimizzatore e scheduler per Lightning
+            Dictionary with optimizer and scheduler for Lightning
         """
-        # Filtra i parametri trainable (solo quelli con LoRA)
+        # Filter trainable parameters (only those with LoRA)
         trainable_params = [p for p in self.model.parameters() if p.requires_grad]
         
-        # Ottimizzatore AdamW
+        # AdamW optimizer
         optimizer = AdamW(
             trainable_params,
             lr=self.learning_rate,
@@ -236,16 +236,16 @@ class LLMTrainingAgent(pl.LightningModule):
             betas=(0.9, 0.999),
         )
         
-        # Calcola max_steps se non specificato
+        # Calculate max_steps if not specified
         if self.max_steps is None:
-            # Stima basata su trainer (sarà aggiornato da Lightning)
+            # Estimate based on trainer (will be updated by Lightning)
             max_steps = self.trainer.estimated_stepping_batches
         else:
             max_steps = self.max_steps
         
-        # Configurazione scheduler
+        # Scheduler configuration
         if self.lr_scheduler_type == "cosine":
-            # Cosine annealing con warmup
+            # Cosine annealing with warmup
             if self.warmup_steps > 0:
                 warmup_scheduler = LinearLR(
                     optimizer,
@@ -270,7 +270,7 @@ class LLMTrainingAgent(pl.LightningModule):
                     eta_min=self.learning_rate * 0.1,
                 )
         elif self.lr_scheduler_type == "linear":
-            # Linear decay con warmup
+            # Linear decay with warmup
             if self.warmup_steps > 0:
                 warmup_scheduler = LinearLR(
                     optimizer,
@@ -297,7 +297,7 @@ class LLMTrainingAgent(pl.LightningModule):
                     total_iters=max_steps,
                 )
         else:
-            # Constant (nessun scheduler)
+            # Constant (no scheduler)
             scheduler = None
         
         if scheduler is not None:
@@ -305,7 +305,7 @@ class LLMTrainingAgent(pl.LightningModule):
                 "optimizer": optimizer,
                 "lr_scheduler": {
                     "scheduler": scheduler,
-                    "interval": "step",  # Aggiorna ogni step, non ogni epoch
+                    "interval": "step",  # Update every step, not every epoch
                     "frequency": 1,
                 },
             }
@@ -314,8 +314,8 @@ class LLMTrainingAgent(pl.LightningModule):
     
     def on_before_optimizer_step(self, optimizer: torch.optim.Optimizer) -> None:
         """
-        Hook chiamato prima di ogni step dell'ottimizzatore.
-        Applica gradient clipping.
+        Hook called before each optimizer step.
+        Applies gradient clipping.
         """
         # Gradient clipping
         if self.max_grad_norm > 0:
@@ -323,4 +323,3 @@ class LLMTrainingAgent(pl.LightningModule):
                 self.model.parameters(),
                 self.max_grad_norm,
             )
-

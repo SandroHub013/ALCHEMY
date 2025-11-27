@@ -1,19 +1,19 @@
 """
-Training con Microsoft Agent Lightning - Reinforcement Learning per Agenti AI.
+Training with Microsoft Agent Lightning - Reinforcement Learning for AI Agents.
 
-Questo script usa Agent Lightning per allenare modelli con:
-- GRPO (Group Relative Policy Optimization) - RL per agenti
-- APO (Automatic Prompt Optimization) - Ottimizzazione prompt
-- SFT avanzato con tracciamento
+This script uses Agent Lightning to train models with:
+- GRPO (Group Relative Policy Optimization) - RL for agents
+- APO (Automatic Prompt Optimization) - Prompt optimization
+- Advanced SFT with tracing
 
-A differenza di main.py (PyTorch Lightning classico), questo script
-sfrutta gli algoritmi RL di Agent Lightning per migliorare il comportamento
-dell'agente attraverso reward functions personalizzate.
+Unlike main.py (classic PyTorch Lightning), this script
+leverages Agent Lightning's RL algorithms to improve agent behavior
+through custom reward functions.
 
-Uso:
+Usage:
     python main_agent_lightning.py --config config/config.yaml
 
-Prerequisiti:
+Prerequisites:
     pip install agentlightning
 
 GitHub: https://github.com/microsoft/agent-lightning
@@ -38,7 +38,7 @@ from src.agent import (
     create_agent_lightning_trainer,
 )
 
-# Configurazione logging
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -47,18 +47,18 @@ logger = logging.getLogger(__name__)
 
 
 def load_config(config_path: str) -> Dict[str, Any]:
-    """Carica la configurazione da file YAML."""
+    """Load configuration from YAML file."""
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     return config
 
 
 def print_banner():
-    """Stampa il banner Agent Lightning."""
+    """Print the Agent Lightning banner."""
     banner = """
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
-║     ⚡ AGENT LIGHTNING - Training RL per Agenti AI ⚡        ║
+║     ⚡ AGENT LIGHTNING - RL Training for AI Agents ⚡        ║
 ║                                                               ║
 ║     Microsoft Open Source                                     ║
 ║     https://github.com/microsoft/agent-lightning              ║
@@ -69,104 +69,104 @@ def print_banner():
 
 
 def main():
-    """Funzione principale per training con Agent Lightning."""
+    """Main function for training with Agent Lightning."""
     print_banner()
     
     parser = argparse.ArgumentParser(
-        description="Training LLM con Agent Lightning (RL per agenti)"
+        description="LLM Training with Agent Lightning (RL for agents)"
     )
     parser.add_argument(
         "--config",
         type=str,
         default="config/config.yaml",
-        help="Path al file di configurazione",
+        help="Path to the configuration file",
     )
     parser.add_argument(
         "--algorithm",
         type=str,
         choices=["sft", "grpo", "apo"],
         default=None,
-        help="Override algoritmo (default: da config)",
+        help="Override algorithm (default: from config)",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Solo verifica configurazione senza training",
+        help="Only verify configuration without training",
     )
     args = parser.parse_args()
     
-    # Verifica Agent Lightning
+    # Verify Agent Lightning
     if not check_agent_lightning_available():
         logger.error(
-            "❌ Agent Lightning non installato!\n"
-            "   Installa con: pip install agentlightning\n"
-            "   Oppure usa main.py per training classico."
+            "❌ Agent Lightning not installed!\n"
+            "   Install with: pip install agentlightning\n"
+            "   Or use main.py for classic training."
         )
         return 1
     
-    logger.info("✅ Agent Lightning disponibile")
+    logger.info("✅ Agent Lightning available")
     
-    # Carica configurazione
-    logger.info(f"Caricamento configurazione da {args.config}")
+    # Load configuration
+    logger.info(f"Loading configuration from {args.config}")
     config = load_config(args.config)
     
-    # Override algoritmo se specificato
+    # Override algorithm if specified
     if args.algorithm:
         config.setdefault("agent_lightning", {})["algorithm"] = args.algorithm
     
-    # Verifica configurazione Agent Lightning
+    # Verify Agent Lightning configuration
     agl_config = config.get("agent_lightning", {})
     if not agl_config.get("enabled", True):
         logger.warning(
-            "Agent Lightning disabilitato nella config. "
-            "Imposta agent_lightning.enabled = true per usarlo."
+            "Agent Lightning disabled in config. "
+            "Set agent_lightning.enabled = true to use it."
         )
         return 1
     
     algorithm = agl_config.get("algorithm", "sft").upper()
-    logger.info(f"Algoritmo selezionato: {algorithm}")
+    logger.info(f"Selected algorithm: {algorithm}")
     
-    # Log configurazione
+    # Log configuration
     logger.info("=" * 60)
-    logger.info("CONFIGURAZIONE AGENT LIGHTNING")
+    logger.info("AGENT LIGHTNING CONFIGURATION")
     logger.info("=" * 60)
-    logger.info(f"  Algoritmo: {algorithm}")
+    logger.info(f"  Algorithm: {algorithm}")
     logger.info(f"  Reward Function: {agl_config.get('reward_function', 'combined')}")
-    logger.info(f"  Tracciamento: {agl_config.get('enable_tracing', True)}")
+    logger.info(f"  Tracing: {agl_config.get('enable_tracing', True)}")
     
     if algorithm == "GRPO":
         grpo_config = agl_config.get("grpo", {})
         logger.info(f"  GRPO Config:")
-        logger.info(f"    - Generazioni per prompt: {grpo_config.get('num_generations', 4)}")
+        logger.info(f"    - Generations per prompt: {grpo_config.get('num_generations', 4)}")
         logger.info(f"    - Temperature: {grpo_config.get('temperature', 0.7)}")
         logger.info(f"    - KL Coef: {grpo_config.get('kl_coef', 0.1)}")
     logger.info("=" * 60)
     
     if args.dry_run:
-        logger.info("🔍 Dry-run completato. Configurazione valida.")
+        logger.info("🔍 Dry-run completed. Configuration is valid.")
         return 0
     
-    # Crea directory di output
+    # Create output directory
     output_dir = config["training"].get("output_dir", "./checkpoints")
     os.makedirs(output_dir, exist_ok=True)
     
-    # Configurazione hardware
+    # Hardware configuration
     hardware_config = config.get("hardware", {})
     num_gpus = hardware_config.get("num_gpus", 1)
     if num_gpus == -1:
         num_gpus = torch.cuda.device_count()
     
-    logger.info(f"GPU disponibili: {torch.cuda.device_count()}, GPU da usare: {num_gpus}")
+    logger.info(f"GPUs available: {torch.cuda.device_count()}, GPUs to use: {num_gpus}")
     
     if num_gpus == 0:
-        logger.warning("⚠️ Nessuna GPU rilevata. Training su CPU sarà molto lento!")
+        logger.warning("⚠️ No GPU detected. Training on CPU will be very slow!")
     
-    # Carica modello e tokenizer
-    logger.info("🔄 Caricamento modello e tokenizer...")
+    # Load model and tokenizer
+    logger.info("🔄 Loading model and tokenizer...")
     model_config = config["model"]
     peft_config = config["peft"]
     
-    # Prepara configurazione quantizzazione
+    # Prepare quantization configuration
     quantization_config = peft_config.get("quantization", {})
     if isinstance(quantization_config.get("bnb_4bit_compute_dtype"), str):
         dtype_str = quantization_config["bnb_4bit_compute_dtype"]
@@ -186,14 +186,14 @@ def main():
         enable_gradient_checkpointing=config["training"].get("gradient_checkpointing", True)
     )
     
-    logger.info(f"✅ Modello caricato: {model_config['name_or_path']}")
+    logger.info(f"✅ Model loaded: {model_config['name_or_path']}")
     
-    # Prepara dataset
-    logger.info("🔄 Preparazione dataset...")
+    # Prepare dataset
+    logger.info("🔄 Preparing dataset...")
     
     datasets_config = config.get("datasets", {})
     if datasets_config.get("multi_source_enabled", False):
-        logger.info("📊 Multi-Source Training abilitato:")
+        logger.info("📊 Multi-Source Training enabled:")
         for src in datasets_config.get("sources", []):
             logger.info(f"   - {src['name']}: {src.get('weight', 1.0)*100:.0f}%")
     
@@ -203,10 +203,10 @@ def main():
     train_dataset = data_module.train_dataset
     eval_dataset = data_module.val_dataset
     
-    logger.info(f"✅ Dataset preparato: {len(train_dataset)} training, {len(eval_dataset) if eval_dataset else 0} validation")
+    logger.info(f"✅ Dataset prepared: {len(train_dataset)} training, {len(eval_dataset) if eval_dataset else 0} validation")
     
-    # Crea Agent Lightning Trainer
-    logger.info("🔄 Creazione Agent Lightning Trainer...")
+    # Create Agent Lightning Trainer
+    logger.info("🔄 Creating Agent Lightning Trainer...")
     
     trainer = create_agent_lightning_trainer(
         model=model,
@@ -214,13 +214,13 @@ def main():
         config=config,
     )
     
-    logger.info("✅ Trainer creato")
+    logger.info("✅ Trainer created")
     
     # Training
     train_config = config["training"]
     
     logger.info("=" * 60)
-    logger.info("🚀 AVVIO TRAINING CON AGENT LIGHTNING")
+    logger.info("🚀 STARTING TRAINING WITH AGENT LIGHTNING")
     logger.info("=" * 60)
     
     results = trainer.train(
@@ -232,26 +232,26 @@ def main():
         output_dir=output_dir,
     )
     
-    # Log risultati
+    # Log results
     logger.info("=" * 60)
-    logger.info("✅ TRAINING COMPLETATO!")
+    logger.info("✅ TRAINING COMPLETED!")
     logger.info("=" * 60)
-    logger.info(f"Checkpoint salvati in: {output_dir}")
+    logger.info(f"Checkpoints saved to: {output_dir}")
     
     if results:
-        logger.info("Metriche finali:")
+        logger.info("Final metrics:")
         for key, value in results.items():
             if isinstance(value, float):
                 logger.info(f"  {key}: {value:.4f}")
             else:
                 logger.info(f"  {key}: {value}")
     
-    # Test generazione
-    logger.info("\n🧪 Test generazione con modello allenato:")
+    # Test generation
+    logger.info("\n🧪 Test generation with trained model:")
     test_prompts = [
         "Write a Python function to calculate fibonacci numbers.",
         "What tools do you have available to help the user?",
-        "Spiega cos'è il machine learning in italiano.",
+        "Explain what machine learning is.",
     ]
     
     for prompt in test_prompts:
@@ -260,14 +260,14 @@ def main():
             response = trainer.generate(prompt, max_new_tokens=100)
             logger.info(f"🤖 Response: {response[:200]}...")
             
-            # Valuta reward
+            # Evaluate reward
             reward = trainer.evaluate_reward(prompt, response)
             logger.info(f"⭐ Reward: {reward:.3f}")
         except Exception as e:
-            logger.error(f"Errore generazione: {e}")
+            logger.error(f"Generation error: {e}")
     
     logger.info("\n" + "=" * 60)
-    logger.info("🎉 Pipeline Agent Lightning completata con successo!")
+    logger.info("🎉 Agent Lightning pipeline completed successfully!")
     logger.info("=" * 60)
     
     return 0
@@ -275,4 +275,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

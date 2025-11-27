@@ -1,39 +1,39 @@
 {
   "name": "agent_task_execution",
-  "description": "Procedura per eseguire task come agente AI con tool",
-  "trigger": "esegui, fai, completa, task, azione",
+  "description": "Procedure for executing tasks as an AI agent with tools",
+  "trigger": "execute, do, complete, task, action",
   "category": "agent",
   "priority": 9,
   "enabled": true,
   "steps": [
     {
-      "action": "Analizza la richiesta e identifica l'obiettivo principale",
-      "expected_output": "Obiettivo chiaro"
+      "action": "Analyze the request and identify the main objective",
+      "expected_output": "Clear objective"
     },
     {
-      "action": "Verifica quali tool sono disponibili per questo task",
+      "action": "Verify which tools are available for this task",
       "tools": ["search_knowledge_base", "execute_python"],
-      "expected_output": "Lista tool applicabili"
+      "expected_output": "List of applicable tools"
     },
     {
-      "action": "Pianifica la sequenza di azioni necessarie",
-      "expected_output": "Piano d'azione"
+      "action": "Plan the sequence of necessary actions",
+      "expected_output": "Action plan"
     },
     {
-      "action": "Esegui il primo step del piano",
-      "expected_output": "Risultato step 1"
+      "action": "Execute the first step of the plan",
+      "expected_output": "Step 1 result"
     },
     {
-      "action": "Valuta il risultato e decidi il prossimo passo",
-      "expected_output": "Valutazione"
+      "action": "Evaluate the result and decide the next step",
+      "expected_output": "Evaluation"
     },
     {
-      "action": "Continua fino al completamento o riporta ostacoli",
-      "expected_output": "Task completato o blocco identificato"
+      "action": "Continue until completion or report obstacles",
+      "expected_output": "Task completed or blocker identified"
     },
     {
-      "action": "Riassumi cosa è stato fatto e il risultato finale",
-      "expected_output": "Riepilogo finale"
+      "action": "Summarize what was done and the final result",
+      "expected_output": "Final summary"
     }
   ],
   "metadata": {
@@ -42,4 +42,3 @@
     "created": "2024-11-26"
   }
 }
-
